@@ -174,3 +174,102 @@ textarea {
 
     white-space: pre-wrap;
 }
+/* =========================
+   OWNER APP
+========================= */
+
+.owner-panel {
+    position: fixed;
+    inset: 0;
+
+    background: #f5f7f2;
+
+    z-index: 2000;
+
+    overflow-y: auto;
+}
+
+.owner-app {
+    max-width: 700px;
+
+    margin: auto;
+
+    padding: 30px 20px;
+}
+
+.owner-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.owner-header h1 {
+    margin: 0;
+}
+
+.owner-header p {
+    margin-top: 5px;
+}
+
+.owner-badge {
+    background: #1f2a24;
+
+    color: white;
+
+    padding: 8px 12px;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+.owner-section {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    margin-top: 20px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,0.06);
+}
+
+.owner-stats {
+    display: flex;
+
+    gap: 15px;
+}
+
+.stat-card {
+    flex: 1;
+
+    background: #f5f7f2;
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    text-align: center;
+}
+
+.stat-card strong {
+    display: block;
+
+    font-size: 32px;
+}
+
+.stat-card span {
+    color: #65736b;
+}
+
+.close-owner {
+    width: 100%;
+
+    margin-top: 20px;
+}
