@@ -4,114 +4,162 @@
 
 body {
     margin: 0;
+
     font-family: Arial, sans-serif;
+
     background: #f5f7f2;
+
     color: #1f2a24;
 }
 
+
 .app {
     max-width: 700px;
+
     margin: auto;
+
     padding: 40px 20px;
+
     text-align: center;
 }
 
+
 h1 {
     font-size: 42px;
+
     margin-bottom: 10px;
 }
 
+
 p {
     color: #65736b;
+
     font-size: 18px;
 }
 
+
 button {
     border: none;
+
     border-radius: 14px;
+
     padding: 15px 25px;
+
     font-size: 17px;
+
     cursor: pointer;
+
     background: #1f2a24;
+
     color: white;
+
     margin: 20px 0;
 }
+
 
 button:hover {
     opacity: 0.85;
 }
 
+
 section {
     background: white;
+
     border-radius: 18px;
+
     padding: 20px;
+
     margin-top: 25px;
+
     text-align: left;
+
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
 }
+
 
 h2 {
     margin-top: 0;
 }
 
+
 ul {
     padding-left: 25px;
 }
+
+
 #recipeText {
     width: 100%;
+
     min-height: 300px;
+
     padding: 15px;
+
     border: 1px solid #ddd;
+
     border-radius: 12px;
+
     resize: vertical;
+
     font-family: Arial, sans-serif;
+
     font-size: 16px;
 }
+
 
 #status {
     font-weight: bold;
+
     min-height: 25px;
 }
 
-#scanResult {
-    display: block;
-}
-.owner-login {
-    margin-top: 30px;
-}
 
-.owner-login input {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    font-size: 16px;
-}
+/* OWNER LOGIN */
 
-.owner-panel {
-    margin-top: 25px;
-}
-
-.owner-card {
-    background: #f5f7f2;
-    padding: 15px;
-    border-radius: 12px;
-    margin-top: 12px;
-}
 .owner-login {
     position: fixed;
+
     top: 50%;
     left: 50%;
+
     transform: translate(-50%, -50%);
+
+    width: min(90%, 350px);
+
     background: white;
+
     padding: 30px;
+
     border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+
     z-index: 1000;
+
+    text-align: center;
 }
 
+
 .owner-login input {
+    width: 100%;
+
     padding: 12px;
-    border-radius: 10px;
+
+    margin-bottom: 12px;
+
     border: 1px solid #ccc;
+
+    border-radius: 10px;
+
     font-size: 16px;
+}
+
+
+/* Only show owner features on mobile/tablet */
+
+@media (min-width: 769px) {
+
+    .owner-login {
+        display: none !important;
+    }
+
 }
