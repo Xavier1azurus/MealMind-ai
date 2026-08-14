@@ -15,7 +15,40 @@
 <body>
 
     <main class="app">
+<div class="owner-login">
+    <input
+        type="text"
+        id="ownerCode"
+        placeholder="Enter owner code"
+    >
 
+    <button id="ownerButton">
+        Owner Login
+    </button>
+
+    <p id="ownerStatus"></p>
+</div>
+
+<div id="ownerPanel" class="owner-panel" hidden>
+
+    <h2>🔐 MealMind Owner Dashboard</h2>
+
+    <div class="owner-card">
+        <h3>📊 App Status</h3>
+        <p>MealMind is running.</p>
+    </div>
+
+    <div class="owner-card">
+        <h3>📸 Recipe Scanner</h3>
+        <p>OCR scanner: Active</p>
+    </div>
+
+    <div class="owner-card">
+        <h3>🧠 AI</h3>
+        <p>MoonPlug integration: Coming later</p>
+    </div>
+
+</div>
         <h1>🧠 MealMind</h1>
 
         <p>Scan your recipes. Plan your meals.</p>
