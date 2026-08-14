@@ -2907,7 +2907,7 @@ function removeDuplicateLines(lines) {
 
     return result;
 }
-```
+
 
 
 /* =========================================================
@@ -2966,11 +2966,10 @@ document.addEventListener("change", event => {
     document.getElementById(
         "selectedPages"
     ).textContent =
-        `${currentScanFiles.length} page${
-            currentScanFiles.length === 1
-                ? ""
-                : "s"
-        } selected.`;
+        const pageCountText =
+    currentScanFiles.length === 1
+        ? "1 page"
+       pageCountText
 
 });
 
