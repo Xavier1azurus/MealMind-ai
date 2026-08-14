@@ -7,7 +7,10 @@ body {
 
     margin: 0;
 
-    font-family: Arial, sans-serif;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
     background: #f5f7f2;
 
@@ -22,24 +25,36 @@ button {
 
     border-radius: 14px;
 
-    padding: 15px 25px;
+    padding: 14px 20px;
 
-    font-size: 17px;
+    font-size: 16px;
 
     cursor: pointer;
 
-    background: #1f2a24;
-
-    color: white;
-
-    margin: 10px 0;
+    transition:
+        transform 0.15s,
+        opacity 0.15s;
 
 }
 
 
 button:hover {
 
-    opacity: 0.85;
+    opacity: 0.88;
+
+}
+
+
+button:active {
+
+    transform: scale(0.97);
+
+}
+
+
+[hidden] {
+
+    display: none !important;
 
 }
 
@@ -54,7 +69,8 @@ button:hover {
 
     margin: auto;
 
-    padding: 40px 20px;
+    padding:
+        45px 20px;
 
     text-align: center;
 
@@ -65,12 +81,13 @@ button:hover {
 
     font-size: 42px;
 
-    margin-bottom: 10px;
+    margin:
+        0 0 8px;
 
 }
 
 
-.app p {
+.subtitle {
 
     color: #65736b;
 
@@ -79,42 +96,32 @@ button:hover {
 }
 
 
-.app section {
+.small-text {
 
-    background: white;
+    color: #65736b;
 
-    border-radius: 18px;
-
-    padding: 20px;
-
-    margin-top: 25px;
-
-    text-align: left;
-
-    box-shadow:
-        0 4px 15px
-        rgba(0,0,0,0.06);
+    font-size: 14px;
 
 }
 
 
-textarea {
+.main-button {
 
-    width: 100%;
+    background: #1f2a24;
 
-    min-height: 300px;
+    color: white;
 
-    padding: 15px;
+}
 
-    border: 1px solid #ddd;
 
-    border-radius: 12px;
+.app > .main-button {
 
-    resize: vertical;
+    margin-top: 20px;
 
-    font-family: Arial, sans-serif;
+    padding:
+        16px 28px;
 
-    font-size: 16px;
+    font-size: 18px;
 
 }
 
@@ -129,133 +136,180 @@ textarea {
 
 
 /* =========================
-   HIDDEN ELEMENTS
+   MAIN CARD
 ========================= */
 
-[hidden] {
+.main-card {
 
-    display: none !important;
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 22px;
+
+    margin-top: 25px;
+
+    text-align: left;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.06);
+
+}
+
+
+.main-card h2 {
+
+    margin-top: 0;
+
+}
+
+
+textarea {
+
+    width: 100%;
+
+    min-height: 300px;
+
+    padding: 15px;
+
+    border:
+        1px solid #d8ddd9;
+
+    border-radius: 14px;
+
+    resize: vertical;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 16px;
+
+    color: #1f2a24;
+
+    background: #fafbfa;
+
+}
+
+
+textarea:focus {
+
+    outline: none;
+
+    border-color: #1f2a24;
 
 }
 
 
 /* =========================
-   DOWNLOAD SCREEN
+   OVERLAYS
 ========================= */
 
-.download-screen {
+.overlay {
 
     position: fixed;
 
     inset: 0;
 
-    background:
-        rgba(0,0,0,0.45);
+    z-index: 5000;
 
-    z-index: 4000;
+    background:
+        rgba(0, 0, 0, 0.45);
 
     display: flex;
 
+    align-items: center;
+
     justify-content: center;
 
-    align-items: center;
+    padding: 20px;
 
 }
 
 
-.download-box {
+.popup {
 
-    width: min(90%, 400px);
+    width:
+        min(100%, 400px);
 
     background: white;
 
-    padding: 30px;
-
     border-radius: 22px;
+
+    padding: 30px;
 
     text-align: center;
 
     box-shadow:
-        0 10px 40px
-        rgba(0,0,0,0.25);
+        0 15px 50px
+        rgba(0, 0, 0, 0.25);
+
+}
+
+
+.big-icon {
+
+    font-size: 50px;
+
+}
+
+
+.popup h1,
+.popup h2 {
+
+    margin-top: 10px;
 
 }
 
 
 .store-button {
 
+    display: block;
+
     width: 100%;
+
+    margin:
+        10px 0;
+
+    background: #1f2a24;
+
+    color: white;
 
 }
 
 
-.secondary-button {
+.back-button {
 
-    background: #e8ece8;
+    background: #e7ebe7;
 
     color: #1f2a24;
 
-    width: 100%;
-
 }
 
 
-/* =========================
-   OWNER LOGIN
-========================= */
-
-.owner-login {
-
-    position: fixed;
-
-    inset: 0;
-
-    background:
-        rgba(0,0,0,0.35);
-
-    z-index: 5000;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-}
-
-
-.login-box {
-
-    width: min(90%, 350px);
-
-    background: white;
-
-    padding: 30px;
-
-    border-radius: 20px;
-
-    text-align: center;
-
-    box-shadow:
-        0 10px 40px
-        rgba(0,0,0,0.25);
-
-}
-
-
-.login-box input {
+.owner-input {
 
     width: 100%;
 
-    padding: 12px;
+    padding: 14px;
 
-    margin-bottom: 10px;
+    border:
+        1px solid #ccc;
 
-    border: 1px solid #ccc;
-
-    border-radius: 10px;
+    border-radius: 12px;
 
     font-size: 16px;
+
+    margin:
+        10px 0;
+
+}
+
+
+.error-text {
+
+    color: #b42318;
+
+    min-height: 20px;
 
 }
 
@@ -270,9 +324,9 @@ textarea {
 
     inset: 0;
 
-    background: #f5f7f2;
-
     z-index: 3000;
+
+    background: #f5f7f2;
 
     overflow-y: auto;
 
@@ -281,11 +335,12 @@ textarea {
 
 .owner-app {
 
-    max-width: 700px;
+    max-width: 750px;
 
     margin: auto;
 
-    padding: 30px 20px;
+    padding:
+        30px 20px 50px;
 
 }
 
@@ -294,9 +349,9 @@ textarea {
 
     display: flex;
 
-    justify-content: space-between;
-
     align-items: center;
+
+    justify-content: space-between;
 
 }
 
@@ -310,7 +365,8 @@ textarea {
 
 .owner-header p {
 
-    margin-top: 5px;
+    margin:
+        5px 0 0;
 
     color: #65736b;
 
@@ -323,7 +379,8 @@ textarea {
 
     color: white;
 
-    padding: 8px 12px;
+    padding:
+        8px 12px;
 
     border-radius: 10px;
 
@@ -334,19 +391,30 @@ textarea {
 }
 
 
-.owner-section {
+/* =========================
+   OWNER CARDS
+========================= */
+
+.owner-card {
 
     background: white;
 
-    border-radius: 18px;
+    border-radius: 20px;
 
-    padding: 20px;
+    padding: 22px;
 
     margin-top: 20px;
 
     box-shadow:
-        0 4px 15px
-        rgba(0,0,0,0.05);
+        0 5px 20px
+        rgba(0, 0, 0, 0.05);
+
+}
+
+
+.owner-card h2 {
+
+    margin-top: 0;
 
 }
 
@@ -369,36 +437,65 @@ textarea {
 
 .folder {
 
-    background: #f5f7f2;
+    min-height: 125px;
+
+    background: #f1f4f0;
 
     color: #1f2a24;
-
-    margin: 0;
-
-    min-height: 100px;
 
     display: flex;
 
     flex-direction: column;
 
+    align-items: center;
+
     justify-content: center;
 
-    align-items: center;
+    gap: 5px;
 
 }
 
 
-.folder span {
+.folder-icon {
 
-    font-size: 30px;
+    font-size: 32px;
 
-    margin-bottom: 5px;
+}
+
+
+.folder-count {
+
+    min-width: 28px;
+
+    padding:
+        3px 8px;
+
+    border-radius: 20px;
+
+    background: #1f2a24;
+
+    color: white;
+
+    font-size: 13px;
+
+}
+
+
+.all-recipes-button {
+
+    width: 100%;
+
+    margin-top: 14px;
+
+    background: #e7ebe7;
+
+    color: #1f2a24;
 
 }
 
 
 /* =========================
-   RECIPE CARDS
+   RECIPES
 ========================= */
 
 .saved-recipes {
@@ -414,15 +511,13 @@ textarea {
 
 .recipe-card {
 
-    background: #f5f7f2;
+    background: #f3f6f2;
+
+    border-radius: 15px;
 
     padding: 18px;
 
-    border-radius: 14px;
-
     cursor: pointer;
-
-    transition: 0.15s;
 
 }
 
@@ -436,7 +531,8 @@ textarea {
 
 .recipe-card h3 {
 
-    margin-top: 0;
+    margin:
+        0 0 7px;
 
 }
 
@@ -446,6 +542,17 @@ textarea {
     color: #65736b;
 
     font-size: 14px;
+
+}
+
+
+.empty-recipes {
+
+    text-align: center;
+
+    padding: 25px;
+
+    color: #65736b;
 
 }
 
@@ -460,9 +567,9 @@ textarea {
 
     inset: 0;
 
-    background: #f5f7f2;
-
     z-index: 6000;
+
+    background: #f5f7f2;
 
     overflow-y: auto;
 
@@ -471,40 +578,59 @@ textarea {
 
 .recipe-details-box {
 
-    max-width: 700px;
+    max-width: 750px;
 
     margin: auto;
 
-    padding: 30px 20px;
-
-}
-
-
-.close-recipe {
-
-    margin-bottom: 20px;
+    padding:
+        25px 20px 50px;
 
 }
 
 
 .detail-text {
 
-    white-space: pre-wrap;
-
     background: white;
 
     padding: 20px;
 
-    border-radius: 15px;
+    border-radius: 16px;
+
+    white-space: pre-wrap;
 
     line-height: 1.6;
 
 }
 
 
+#detailIngredients {
+
+    background: white;
+
+    border-radius: 16px;
+
+    padding:
+        20px 20px 20px 40px;
+
+}
+
+
 #detailIngredients li {
 
-    margin-bottom: 8px;
+    margin-bottom: 9px;
+
+}
+
+
+.logout-button {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    background: #e7ebe7;
+
+    color: #1f2a24;
 
 }
 
@@ -514,6 +640,13 @@ textarea {
 ========================= */
 
 @media (max-width: 600px) {
+
+    .app {
+
+        padding-top: 30px;
+
+    }
+
 
     .app h1 {
 
@@ -526,6 +659,21 @@ textarea {
 
         grid-template-columns:
             repeat(2, 1fr);
+
+    }
+
+
+    .owner-app {
+
+        padding:
+            20px 14px 40px;
+
+    }
+
+
+    .owner-header h1 {
+
+        font-size: 30px;
 
     }
 
