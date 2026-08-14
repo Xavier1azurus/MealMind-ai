@@ -13,31 +13,22 @@ const savedRecipes = document.getElementById("savedRecipes");
 const closeOwner = document.getElementById("closeOwner");
 
 
-// ================================
-// SCAN RECIPE BUTTON
-// ================================
+// ============================
+// NORMAL RECIPE SCANNER
+// ============================
 
-scanButton.addEventListener("click", function () {
-
-    // This ONLY opens the camera/photo picker.
+scanButton.addEventListener("click", () => {
     recipeImage.click();
-
 });
 
 
-// ================================
-// READ PHOTO
-// ================================
-
-recipeImage.addEventListener("change", async function () {
+recipeImage.addEventListener("change", async () => {
 
     const file = recipeImage.files[0];
 
-    if (!file) {
-        return;
-    }
+    if (!file) return;
 
-    status.textContent = "🔍 Reading your recipe...";
+    status.textContent = "🔍 Reading recipe...";
     recipeText.value = "";
 
     try {
@@ -46,7 +37,7 @@ recipeImage.addEventListener("change", async function () {
             file,
             "eng",
             {
-                logger: function (info) {
+                logger: info => {
 
                     if (info.status === "recognizing text") {
 
@@ -54,9 +45,7 @@ recipeImage.addEventListener("change", async function () {
                             Math.round(info.progress * 100);
 
                         status.textContent =
-                            "🔍 Reading recipe... " +
-                            percent +
-                            "%";
+                            `🔍 Reading recipe... ${percent}%`;
                     }
                 }
             }
@@ -70,85 +59,73 @@ recipeImage.addEventListener("change", async function () {
 
         console.error(error);
 
-        status.textContent =
-            "❌ Something went wrong while scanning.";
+        status.textContent = "❌ Scanner error.";
 
     }
-
 });
 
 
-// ================================
-// SECRET OWNER TRIGGER
-// ================================
+// ============================
+// SECRET OWNER CODE
+// ============================
 
-// IMPORTANT:
-// This listens ONLY to the Recipe Scanner box.
+let ownerTyping = "";
 
-recipeText.addEventListener("input", function () {
 
-    const typedText = recipeText.value.trim();
+recipeText.addEventListener("keydown", (event) => {
 
-    if (typedText === "1591") {
+    // Ignore the Enter key until we check the code
+    if (event.key === "Enter") {
 
-        recipeText.value = "";
+        if (ownerTyping === "1591") {
 
-        ownerLogin.hidden = false;
+            event.preventDefault();
 
-        ownerCode.value = "";
+            openOwnerLogin();
 
-        ownerStatus.textContent = "";
-
-        ownerCode.focus();
-
-    }
-
-});
-// ================================
-// SAVE RECIPE
-// ================================
-
-document
-    .getElementById("saveRecipeButton")
-    .addEventListener("click", function () {
-
-        const recipe =
-            recipeText.value.trim();
-
-        if (!recipe) {
-
-            status.textContent =
-                "❌ There is no recipe to save.";
+            ownerTyping = "";
 
             return;
         }
 
-        const recipes =
-            JSON.parse(
-                localStorage.getItem("mealmindRecipes") || "[]"
-            );
+        ownerTyping = "";
 
-        recipes.push({
-            text: recipe,
-            date: new Date().toLocaleString()
-        });
-
-        localStorage.setItem(
-            "mealmindRecipes",
-            JSON.stringify(recipes)
-        );
-
-        status.textContent =
-            "✅ Recipe saved!";
-
-    });
+        return;
+    }
 
 
-// ================================
+    // Only watch number keys
+    if (/^[0-9]$/.test(event.key)) {
+
+        ownerTyping += event.key;
+
+        // Keep only the last 4 numbers
+        if (ownerTyping.length > 4) {
+            ownerTyping = ownerTyping.slice(-4);
+        }
+
+    }
+
+});
+
+
+// ============================
 // OWNER LOGIN
-// ================================
+// ============================
 
-ownerButton.addEventListener("click", function () {
+function openOwnerLogin() {
+
+    ownerLogin.hidden = false;
+
+    ownerCode.value = "";
+
+    ownerStatus.textContent = "";
+
+    ownerCode.focus();
+}
+
+
+ownerButton.addEventListener("click", () => {
 
     if (ownerCode.value === "BumsUp2AI") {
 
@@ -168,68 +145,92 @@ ownerButton.addEventListener("click", function () {
 });
 
 
-// ================================
-// SHOW SAVED RECIPES
-// ================================
+// ============================
+// SAVE RECIPE
+// ============================
+
+document
+    .getElementById("saveRecipeButton")
+    .addEventListener("click", () => {
+
+        const recipe = recipeText.value.trim();
+
+        if (!recipe) {
+
+            status.textContent =
+                "❌ There is no recipe to save.";
+
+            return;
+        }
+
+        const recipes = JSON.parse(
+            localStorage.getItem("mealmindRecipes") || "[]"
+        );
+
+        recipes.push({
+            text: recipe,
+            date: new Date().toLocaleString()
+        });
+
+        localStorage.setItem(
+            "mealmindRecipes",
+            JSON.stringify(recipes)
+        );
+
+        status.textContent = "✅ Recipe saved!";
+
+    });
+
+
+// ============================
+// OWNER RECIPE LIST
+// ============================
 
 function loadSavedRecipes() {
 
-    const recipes =
-        JSON.parse(
-            localStorage.getItem("mealmindRecipes") || "[]"
-        );
+    const recipes = JSON.parse(
+        localStorage.getItem("mealmindRecipes") || "[]"
+    );
 
     savedRecipes.innerHTML = "";
 
     if (recipes.length === 0) {
 
         savedRecipes.innerHTML =
-            "<p>No recipes saved yet.</p>";
+            "<p>No saved recipes yet.</p>";
 
         return;
     }
 
-    recipes.forEach(function (recipe, index) {
+    recipes.forEach((recipe, index) => {
 
-        const box =
-            document.createElement("div");
+        const box = document.createElement("div");
 
         box.className = "saved-recipe";
 
-        const title =
-            document.createElement("h3");
+        box.innerHTML = `
+            <h3>Recipe ${index + 1}</h3>
+            <p></p>
+            <small></small>
+        `;
 
-        title.textContent =
-            "Recipe " + (index + 1);
-
-        const text =
-            document.createElement("p");
-
-        text.textContent =
+        box.querySelector("p").textContent =
             recipe.text;
 
-        const date =
-            document.createElement("small");
-
-        date.textContent =
+        box.querySelector("small").textContent =
             "Saved: " + recipe.date;
-
-        box.appendChild(title);
-        box.appendChild(text);
-        box.appendChild(date);
 
         savedRecipes.appendChild(box);
 
     });
-
 }
 
 
-// ================================
+// ============================
 // CLOSE OWNER PANEL
-// ================================
+// ============================
 
-closeOwner.addEventListener("click", function () {
+closeOwner.addEventListener("click", () => {
 
     ownerPanel.hidden = true;
 
