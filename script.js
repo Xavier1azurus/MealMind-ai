@@ -50,3 +50,23 @@ recipeImage.addEventListener("change", async function () {
             "❌ Something went wrong while scanning.";
     }
 });
+const ownerCode = document.getElementById("ownerCode");
+const ownerButton = document.getElementById("ownerButton");
+const ownerPanel = document.getElementById("ownerPanel");
+const ownerStatus = document.getElementById("ownerStatus");
+
+ownerButton.addEventListener("click", function () {
+
+    if (ownerCode.value === "BumsUp2AI") {
+
+        ownerPanel.hidden = false;
+        ownerStatus.textContent = "✅ Owner access granted.";
+
+    } else {
+
+        ownerPanel.hidden = true;
+        ownerStatus.textContent = "❌ Incorrect code.";
+
+    }
+
+});
