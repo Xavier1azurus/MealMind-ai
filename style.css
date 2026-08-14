@@ -7,23 +7,27 @@ html,
 body {
     margin: 0;
     padding: 0;
+    width: 100%;
     min-height: 100%;
     font-family: -apple-system, BlinkMacSystemFont,
-                 "Segoe UI", Arial, sans-serif;
-    background: #f5f3ee;
-    color: #242424;
+        "Segoe UI", Arial, sans-serif;
+    background: #f5f5f5;
+    color: #222;
+}
+
+body {
+    min-height: 100vh;
 }
 
 button,
 input,
-textarea,
-select {
+select,
+textarea {
     font: inherit;
 }
 
 button {
     cursor: pointer;
-    touch-action: manipulation;
 }
 
 .hidden {
@@ -31,219 +35,224 @@ button {
 }
 
 
-/* HOME */
+/* ================= HOME ================= */
 
 .screen {
     min-height: 100vh;
 }
 
 .home-container {
-    width: min(92%, 520px);
-    min-height: 100vh;
+    width: 100%;
+    max-width: 500px;
     margin: auto;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
-
-    padding: 35px 10px;
+    padding: 70px 24px 40px;
+    text-align: center;
 }
 
 .logo {
-    width: 85px;
-    height: 85px;
-    border-radius: 26px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    margin: 0 auto 18px;
-
-    background: #242424;
-    color: white;
-
-    font-size: 42px;
+    font-size: 64px;
+    margin-bottom: 12px;
 }
 
 .home-container h1 {
-    text-align: center;
-    font-size: 42px;
     margin: 0;
+    font-size: 42px;
 }
 
 .subtitle {
-    text-align: center;
     color: #777;
-    margin: 10px 0 35px;
+    margin: 8px 0 40px;
+}
+
+.home-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 
-/* BUTTONS */
+/* ================= BUTTONS ================= */
 
-.big-button {
+.main-button {
     width: 100%;
     min-height: 58px;
-
     border: 0;
-    border-radius: 18px;
-
-    background: #242424;
+    border-radius: 16px;
+    background: #222;
     color: white;
-
+    padding: 15px 20px;
     font-weight: 700;
     font-size: 17px;
-
-    margin: 9px 0;
-
-    padding: 15px 20px;
+    touch-action: manipulation;
 }
 
-.big-button:active {
+.main-button:active {
     transform: scale(.98);
-}
-
-.big-button.secondary {
-    background: #e4e0d7;
-    color: #242424;
-}
-
-.secondary-button {
-    width: 100%;
-    padding: 15px;
-
-    border: 0;
-    border-radius: 15px;
-
-    background: #e8e5de;
-    color: #222;
-
-    font-weight: 700;
-}
-
-.small-button,
-.icon-button,
-.scan-button {
-    border: 0;
-    border-radius: 13px;
-    padding: 11px 14px;
-
-    background: #e8e5de;
-    color: #222;
-
-    font-weight: 700;
-}
-
-.danger {
-    color: #b42318;
 }
 
 .back-button {
     border: 0;
-    background: none;
-
-    padding: 12px 0;
-
+    background: transparent;
+    padding: 10px 0;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 17px;
+}
+
+.small-button {
+    border: 0;
+    border-radius: 12px;
+    background: #222;
+    color: white;
+    padding: 10px 14px;
+    font-weight: 700;
+}
+
+.header-button {
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 14px;
+    background: #eee;
+    font-size: 20px;
 }
 
 
-/* PAGES */
+/* ================= PAGES ================= */
 
-.page {
-    width: min(92%, 520px);
+.page-container {
+    width: 100%;
+    max-width: 600px;
     margin: auto;
-    padding: 30px 0 50px;
+    padding: 25px 20px 50px;
 }
 
-.page h1 {
-    margin: 20px 0 25px;
+.page-container h1 {
+    font-size: 32px;
+    margin: 25px 0 10px;
 }
 
+.page-description {
+    color: #777;
+    line-height: 1.5;
+    margin-bottom: 28px;
+}
 
-/* INPUTS */
+.page-container label {
+    display: block;
+    font-weight: 700;
+    margin: 20px 0 8px;
+}
 
-.input,
+.text-input,
 .search-input,
-.textarea,
+textarea,
 select {
     width: 100%;
-
-    border: 1px solid #ddd8cf;
-    border-radius: 15px;
-
+    border: 1px solid #ddd;
     background: white;
-
-    padding: 16px;
-    margin: 7px 0;
-
+    border-radius: 14px;
+    padding: 15px;
     outline: none;
 }
 
-.textarea {
-    min-height: 130px;
-    resize: vertical;
+.text-input:focus,
+.search-input:focus,
+textarea:focus {
+    border-color: #888;
 }
 
-.check-row {
-    display: flex;
-    gap: 10px;
+.checkbox-row {
+    display: flex !important;
     align-items: center;
-    margin: 12px 2px;
+    gap: 10px;
+}
+
+.checkbox-row input {
+    width: 20px;
+    height: 20px;
 }
 
 
-/* TOPBAR */
+/* ================= BOOK ================= */
 
-.topbar {
+.book-header {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 20;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 14px 18px;
+    padding: 14px 16px;
 
-    background: rgba(245,243,238,.95);
-    backdrop-filter: blur(12px);
-
-    border-bottom: 1px solid #e5e1d9;
+    background: white;
+    border-bottom: 1px solid #eee;
 }
 
-.topbar h2 {
+.book-title-area {
+    text-align: center;
+    flex: 1;
+}
+
+.book-title-area h1 {
     margin: 0;
-    font-size: 18px;
+    font-size: 20px;
 }
 
-.book-content {
-    width: min(94%, 600px);
+.main-content {
+    width: 100%;
+    max-width: 700px;
     margin: auto;
-    padding: 20px 0 60px;
+    padding: 20px 16px 60px;
 }
 
-.search-row {
-    margin-bottom: 25px;
+.search-input {
+    margin-bottom: 16px;
 }
 
-.section-title-row {
+
+/* ================= SCANNER BUTTON ================= */
+
+.scan-button {
+    width: 100%;
+    min-height: 76px;
+    border: 0;
+    border-radius: 18px;
+    background: white;
+    box-shadow: 0 3px 14px rgba(0,0,0,.07);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.scan-button:active {
+    transform: scale(.98);
+}
+
+
+/* ================= SECTIONS ================= */
+
+.section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    margin-top: 25px;
-    margin-bottom: 13px;
+    margin-top: 28px;
+    margin-bottom: 12px;
 }
 
-.section-title-row h2 {
+.section-header h2 {
     margin: 0;
+    font-size: 21px;
 }
 
 
-/* FOLDERS */
+/* ================= FOLDERS ================= */
 
 .folders {
     display: flex;
@@ -258,39 +267,61 @@ select {
 
 .folder-card {
     flex: 1;
+    min-height: 72px;
 
-    border: 0;
-    border-radius: 18px;
-
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
     background: white;
-
-    padding: 18px;
 
     display: flex;
     align-items: center;
     gap: 12px;
 
+    padding: 14px;
     text-align: left;
 }
 
-.folder-card strong {
+.folder-card.active {
+    border: 2px solid #222;
+}
+
+.folder-icon {
+    font-size: 27px;
+}
+
+.folder-info {
     flex: 1;
 }
 
+.folder-name {
+    display: block;
+    font-weight: 800;
+}
+
 .folder-count {
+    display: block;
     color: #888;
     font-size: 13px;
+    margin-top: 4px;
 }
 
-.folder-tool {
+.folder-action {
     width: 45px;
+    min-width: 45px;
+    height: 45px;
+
     border: 0;
-    border-radius: 14px;
-    background: white;
+    border-radius: 12px;
+
+    background: #eee;
+}
+
+.folder-action.delete {
+    background: #ffe5e5;
 }
 
 
-/* RECIPES */
+/* ================= RECIPES ================= */
 
 .recipes {
     display: flex;
@@ -298,30 +329,33 @@ select {
     gap: 12px;
 }
 
-.recipe-list-card {
+.recipe-card {
     width: 100%;
+    min-height: 76px;
 
-    border: 0;
-    border-radius: 18px;
-
+    border: 1px solid #e5e5e5;
+    border-radius: 17px;
     background: white;
 
-    padding: 18px;
+    padding: 14px;
 
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 13px;
 
     text-align: left;
 }
 
+.recipe-card:active {
+    transform: scale(.99);
+}
+
 .recipe-icon {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
 
-    border-radius: 15px;
-
-    background: #eeeae1;
+    border-radius: 13px;
+    background: #f0f0f0;
 
     display: flex;
     align-items: center;
@@ -330,89 +364,72 @@ select {
     font-size: 24px;
 }
 
-.recipe-list-info {
+.recipe-info {
     flex: 1;
 }
 
-.recipe-list-info strong {
+.recipe-title {
     display: block;
-    font-size: 17px;
+    font-weight: 800;
+    font-size: 16px;
 }
 
-.recipe-list-info span {
+.recipe-folder {
+    display: block;
     color: #888;
+    margin-top: 4px;
     font-size: 13px;
 }
 
-.arrow {
+.recipe-arrow {
     font-size: 25px;
     color: #999;
 }
 
 
-/* SCANNER */
+/* ================= EMPTY ================= */
 
-.scanner-overlay {
+.empty-state {
+    text-align: center;
+    padding: 45px 20px;
+    color: #888;
+}
+
+.empty-state-icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+
+/* ================= OVERLAY ================= */
+
+.overlay {
     position: fixed;
     inset: 0;
-
     z-index: 1000;
 
-    background: rgba(0,0,0,.55);
+    background: rgba(0,0,0,.45);
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 25px;
+    overflow-y: auto;
+    padding: 18px;
 }
 
-.scanner-box {
-    width: min(100%, 400px);
+.recipe-sheet,
+.editor-box {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto 30px;
 
     background: white;
-    border-radius: 25px;
-
-    padding: 30px;
-
-    text-align: center;
+    border-radius: 22px;
+    padding: 20px;
 }
 
-.scanner-icon {
-    font-size: 50px;
-}
-
-.progress-background {
-    height: 9px;
-    border-radius: 20px;
-    background: #e5e5e5;
-
-    overflow: hidden;
-
-    margin: 20px 0;
-}
-
-.progress {
-    height: 100%;
-    width: 0%;
-    background: #242424;
-}
-
-
-/* RECIPE */
-
-.recipe-page {
-    min-height: 100vh;
-    padding: 10px 0 60px;
-}
-
-.recipe-top {
-    width: min(94%, 700px);
-    margin: auto;
-
+.recipe-topbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .recipe-actions {
@@ -420,151 +437,176 @@ select {
     gap: 8px;
 }
 
-.recipe-card-large {
-    width: min(94%, 700px);
-    margin: 15px auto 0;
-
-    background: white;
-
-    border-radius: 25px;
-
-    padding: 30px 24px 45px;
-
-    box-shadow: 0 8px 30px rgba(0,0,0,.06);
+.recipe-action {
+    border: 0;
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: #eee;
 }
 
-.recipe-label {
-    font-size: 11px;
-    letter-spacing: 2px;
-    font-weight: 800;
-    color: #999;
+.recipe-action.delete {
+    background: #ffe2e2;
 }
 
-.recipe-card-large h1 {
-    font-size: 35px;
-    line-height: 1.1;
-    margin: 12px 0 5px;
+.recipe-header {
+    text-align: center;
+    padding: 30px 10px 20px;
+}
+
+.recipe-header h1 {
+    font-size: 32px;
+    margin: 10px 0;
 }
 
 .recipe-cuisine {
     color: #888;
 }
 
-.recipe-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    margin: 25px 0;
-}
-
-.recipe-info button {
-    border: 0;
-    border-radius: 10px;
-
-    width: 36px;
-    height: 36px;
-
-    background: #eeeae1;
-
-    font-size: 20px;
-}
-
-.recipe-card-large hr {
-    border: 0;
-    border-top: 1px solid #eee;
-    margin: 25px 0;
-}
-
-.recipe-card-large section {
-    margin-top: 30px;
-}
-
-.recipe-card-large h2 {
-    font-size: 22px;
-}
-
-.recipe-card-large li {
-    margin: 12px 0;
-    line-height: 1.5;
-}
-
-.recipe-pages {
-    display: flex;
-    gap: 7px;
-    margin-top: 30px;
-    flex-wrap: wrap;
-}
-
-.page-dot {
-    padding: 7px 11px;
-    border-radius: 10px;
-    background: #eeeae1;
+.recipe-label {
     font-size: 12px;
-}
-
-
-/* MODAL */
-
-.modal {
-    position: fixed;
-    inset: 0;
-
-    z-index: 2000;
-
-    background: rgba(0,0,0,.5);
-
-    overflow-y: auto;
-
-    padding: 20px;
-}
-
-.modal-card {
-    width: min(100%, 600px);
-    margin: 20px auto;
-
-    background: white;
-    border-radius: 24px;
-
-    padding: 25px;
-}
-
-.modal-card label {
-    display: block;
-    margin-top: 14px;
-    font-weight: 700;
-}
-
-.modal-buttons {
-    margin-top: 15px;
-}
-
-
-/* EMPTY */
-
-.empty {
-    background: white;
-    border-radius: 20px;
-    padding: 35px 20px;
-    text-align: center;
+    letter-spacing: 2px;
+    font-weight: 800;
     color: #888;
 }
 
+.recipe-line {
+    height: 1px;
+    background: #eee;
+}
 
-/* DESKTOP */
+.recipe-section {
+    padding: 20px 5px;
+}
 
-@media (min-width: 700px) {
+.recipe-section h2 {
+    font-size: 22px;
+    margin-top: 0;
+}
+
+.recipe-ingredients,
+.recipe-instructions {
+    padding-left: 25px;
+}
+
+.recipe-ingredients li,
+.recipe-instructions li {
+    padding: 7px 0;
+    line-height: 1.5;
+}
+
+.recipe-serving-row {
+    margin-top: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.recipe-serving-row button {
+    width: 38px;
+    height: 38px;
+
+    border: 0;
+    border-radius: 10px;
+    background: #eee;
+    font-size: 20px;
+}
+
+.recipe-footer {
+    text-align: center;
+    color: #aaa;
+    font-size: 12px;
+    padding-top: 20px;
+}
+
+
+/* ================= EDITOR ================= */
+
+.editor-box h2 {
+    margin-top: 0;
+}
+
+.editor-box label {
+    display: block;
+    font-weight: 700;
+    margin: 17px 0 7px;
+}
+
+.editor-box textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.editor-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.editor-buttons button {
+    flex: 1;
+}
+
+
+/* ================= SCANNER STATUS ================= */
+
+.scanner-status {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+
+    background: rgba(255,255,255,.96);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    padding: 30px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+
+    border: 5px solid #ddd;
+    border-top-color: #222;
+
+    border-radius: 50%;
+
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 600px) {
 
     .home-container {
-        max-width: 520px;
+        padding-top: 55px;
     }
 
-    .book-content {
-        max-width: 700px;
+    .home-container h1 {
+        font-size: 36px;
     }
 
-    .recipe-card-large {
-        padding: 45px;
+    .recipe-sheet,
+    .editor-box {
+        border-radius: 18px;
+        padding: 16px;
+    }
+
+    .recipe-header h1 {
+        font-size: 27px;
     }
 
 }
