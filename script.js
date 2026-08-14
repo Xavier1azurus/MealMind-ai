@@ -2797,7 +2797,47 @@ function renderPublicBooks() {
     );
 }
 
+/* =========================================================
+   CAMERA / SCANNER BUTTON CONNECTION
+   ========================================================= */
 
+document.addEventListener("change", event => {
+
+    if (event.target.id !== "cameraInput") {
+        return;
+    }
+
+    const file = event.target.files?.[0];
+
+    if (!file) {
+        return;
+    }
+
+    scanRecipeImage(file);
+
+    // Allows the same photo to be selected again later
+    event.target.value = "";
+});
+
+
+/* =========================================================
+   MOBILE BUTTON TOUCH SUPPORT
+   ========================================================= */
+
+document.addEventListener("click", event => {
+
+    const button = event.target.closest("button");
+
+    if (!button) {
+        return;
+    }
+
+    console.log(
+        "MealMind button pressed:",
+        button.dataset.action
+    );
+
+}, true);
 /* =========================================================
    INITIALIZE
    ========================================================= */
