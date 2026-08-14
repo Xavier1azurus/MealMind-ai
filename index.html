@@ -1,425 +1,433 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0,
+                   maximum-scale=1.0, user-scalable=no">
 
     <title>MealMind</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 
 <body>
 
-    <!-- =====================================================
-         HOME
-         ===================================================== -->
+<!-- ================= HOME ================= -->
 
-    <main id="homeScreen" class="screen">
+<section id="homeScreen" class="screen">
 
-        <div class="home-container">
+    <div class="home-container">
 
-            <div class="logo">
-                🍽️
-            </div>
+        <div class="logo">
+            🍽️
+        </div>
 
-            <h1>MealMind</h1>
+        <h1>MealMind</h1>
 
-            <p class="subtitle">
-                Your personal digital cookbook
-            </p>
+        <p class="subtitle">
+            Your recipes. Your cookbook.
+        </p>
 
-            <div class="home-buttons">
+        <button class="big-button" id="makeCookbookBtn">
+            📖 Make Cookbook
+        </button>
 
-                <button
-                    type="button"
-                    class="main-button"
-                    data-action="make-cookbook"
-                >
-                    📖 Make a Cookbook
-                </button>
+        <button class="big-button" id="joinCookbookBtn">
+            🔑 Join Cookbook
+        </button>
 
-                <button
-                    type="button"
-                    class="main-button"
-                    data-action="join-cookbook"
-                >
-                    🔑 Join a Cookbook
-                </button>
+        <button class="big-button secondary" id="publicBooksBtn">
+            🌎 Public Cookbooks
+        </button>
 
-                <button
-                    type="button"
-                    class="main-button secondary"
-                    data-action="public-books"
-                >
-                    🌎 Public Cookbooks
-                </button>
+    </div>
 
-            </div>
+</section>
+
+
+<!-- ================= MAKE BOOK ================= -->
+
+<section id="makeScreen" class="screen hidden">
+
+    <div class="page">
+
+        <button class="back-button" id="makeBackBtn">
+            ← Back
+        </button>
+
+        <h1>Make Cookbook</h1>
+
+        <input
+            id="cookbookName"
+            class="input"
+            placeholder="Cookbook name"
+        >
+
+        <input
+            id="cookbookPassword"
+            class="input"
+            type="password"
+            placeholder="Create cookbook code"
+        >
+
+        <label class="check-row">
+            <input type="checkbox" id="showPassword">
+            Show code
+        </label>
+
+        <select id="cookbookPrivacy" class="input">
+            <option value="private">🔒 Private</option>
+            <option value="public">🌎 Public</option>
+        </select>
+
+        <button class="big-button" id="createCookbookBtn">
+            Create Cookbook
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= JOIN ================= -->
+
+<section id="joinScreen" class="screen hidden">
+
+    <div class="page">
+
+        <button class="back-button" id="joinBackBtn">
+            ← Back
+        </button>
+
+        <h1>Join Cookbook</h1>
+
+        <input
+            id="joinName"
+            class="input"
+            placeholder="Cookbook name"
+        >
+
+        <input
+            id="joinPassword"
+            class="input"
+            type="password"
+            placeholder="Cookbook code"
+        >
+
+        <label class="check-row">
+            <input type="checkbox" id="joinShowPassword">
+            Show code
+        </label>
+
+        <button class="big-button" id="joinBtn">
+            Join Cookbook
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PUBLIC ================= -->
+
+<section id="publicScreen" class="screen hidden">
+
+    <div class="page">
+
+        <button class="back-button" id="publicBackBtn">
+            ← Back
+        </button>
+
+        <h1>Public Cookbooks</h1>
+
+        <div id="publicBooksList"></div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= MAIN BOOK ================= -->
+
+<section id="mainScreen" class="screen hidden">
+
+    <header class="topbar">
+
+        <button id="exitBookBtn" class="icon-button">
+            ←
+        </button>
+
+        <div>
+            <h2 id="mainBookName">Cookbook</h2>
+        </div>
+
+        <button id="scanBtn" class="scan-button">
+            📷 Scan
+        </button>
+
+    </header>
+
+
+    <main class="book-content">
+
+        <div class="search-row">
+
+            <input
+                id="searchInput"
+                class="search-input"
+                placeholder="Search recipes..."
+            >
 
         </div>
 
+
+        <div class="section-title-row">
+
+            <h2>Folders</h2>
+
+            <button id="addFolderBtn" class="small-button">
+                + Folder
+            </button>
+
+        </div>
+
+        <div id="folders" class="folders"></div>
+
+
+        <div class="section-title-row">
+
+            <h2 id="recipeListTitle">
+                Recipes
+            </h2>
+
+            <button id="clearFolderBtn" class="small-button hidden">
+                All
+            </button>
+
+        </div>
+
+        <div id="recipes" class="recipes"></div>
+
     </main>
 
+</section>
 
-    <!-- =====================================================
-         MAKE COOKBOOK
-         ===================================================== -->
 
-    <main id="makeScreen" class="screen hidden">
+<!-- ================= SCANNER ================= -->
 
-        <div class="page-container">
+<input
+    id="cameraInput"
+    type="file"
+    accept="image/*"
+    capture="environment"
+    hidden
+>
 
-            <button
-                type="button"
-                class="back-button"
-                data-action="home"
-            >
+
+<div id="scannerOverlay" class="scanner-overlay hidden">
+
+    <div class="scanner-box">
+
+        <div class="scanner-icon">
+            📷
+        </div>
+
+        <h2>Scanning Recipe</h2>
+
+        <p id="scannerStatus">
+            Preparing scanner...
+        </p>
+
+        <div class="progress-background">
+            <div id="scannerProgress"
+                 class="progress">
+            </div>
+        </div>
+
+        <button id="cancelScanBtn"
+                class="secondary-button">
+            Cancel
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ================= RECIPE VIEWER ================= -->
+
+<section id="recipeScreen" class="screen hidden">
+
+    <div class="recipe-page">
+
+        <header class="recipe-top">
+
+            <button id="recipeBackBtn"
+                    class="back-button">
                 ← Back
             </button>
 
-            <div class="form-card">
+            <div class="recipe-actions">
 
-                <h1>Make Your Cookbook</h1>
-
-                <p>
-                    Create your own private cookbook.
-                </p>
-
-                <label for="cookbookName">
-                    Cookbook name
-                </label>
-
-                <input
-                    id="cookbookName"
-                    type="text"
-                    placeholder="My Cookbook"
-                    autocomplete="off"
-                >
-
-                <label for="cookbookPassword">
-                    Create a cookbook code
-                </label>
-
-                <input
-                    id="cookbookPassword"
-                    type="password"
-                    placeholder="At least 4 characters"
-                    autocomplete="new-password"
-                >
-
-                <button
-                    type="button"
-                    class="main-button"
-                    data-action="create-cookbook"
-                >
-                    Create Cookbook
+                <button id="editRecipeBtn"
+                        class="small-button">
+                    ✏️
                 </button>
 
-            </div>
-
-        </div>
-
-    </main>
-
-
-    <!-- =====================================================
-         JOIN COOKBOOK
-         ===================================================== -->
-
-    <main id="joinScreen" class="screen hidden">
-
-        <div class="page-container">
-
-            <button
-                type="button"
-                class="back-button"
-                data-action="home"
-            >
-                ← Back
-            </button>
-
-            <div class="form-card">
-
-                <h1>Join a Cookbook</h1>
-
-                <p>
-                    Enter the cookbook name and code.
-                </p>
-
-                <label for="joinName">
-                    Cookbook name
-                </label>
-
-                <input
-                    id="joinName"
-                    type="text"
-                    placeholder="Cookbook name"
-                    autocomplete="off"
-                >
-
-                <label for="joinPassword">
-                    Cookbook code
-                </label>
-
-                <input
-                    id="joinPassword"
-                    type="password"
-                    placeholder="Cookbook code"
-                    autocomplete="off"
-                >
-
-                <button
-                    type="button"
-                    class="main-button"
-                    data-action="join"
-                >
-                    Join Cookbook
+                <button id="deleteRecipeBtn"
+                        class="small-button danger">
+                    🗑️
                 </button>
-
-            </div>
-
-        </div>
-
-    </main>
-
-
-    <!-- =====================================================
-         PUBLIC COOKBOOKS
-         ===================================================== -->
-
-    <main id="publicScreen" class="screen hidden">
-
-        <div class="page-container">
-
-            <button
-                type="button"
-                class="back-button"
-                data-action="home"
-            >
-                ← Back
-            </button>
-
-            <div class="section-header">
-
-                <h1>Public Cookbooks</h1>
-
-                <p>
-                    Browse cookbooks shared publicly.
-                </p>
-
-            </div>
-
-            <div id="publicBooksList"></div>
-
-        </div>
-
-    </main>
-
-
-    <!-- =====================================================
-         MAIN COOKBOOK
-         ===================================================== -->
-
-    <main id="mainScreen" class="screen hidden">
-
-        <header class="app-header">
-
-            <div class="header-left">
-
-                <button
-                    type="button"
-                    class="icon-button"
-                    data-action="exit-book"
-                    aria-label="Exit cookbook"
-                >
-                    ←
-                </button>
-
-                <div>
-
-                    <span class="small-label">
-                        COOKBOOK
-                    </span>
-
-                    <h1 id="mainBookName">
-                        My Cookbook
-                    </h1>
-
-                </div>
 
             </div>
 
         </header>
 
 
-        <section class="main-content">
+        <article class="recipe-card-large">
 
-            <!-- SCANNER -->
+            <div class="recipe-label">
+                MEALMIND RECIPE
+            </div>
 
-            <button
-                type="button"
-                class="scan-button"
-                data-action="scan"
-            >
+            <h1 id="recipeTitle">
+                Recipe
+            </h1>
 
-                <span class="scan-icon">
-                    📷
-                </span>
-
-                <span>
-
-                    <strong>
-                        Scan Recipe
-                    </strong>
-
-                    <small>
-                        Take a photo or choose a recipe image
-                    </small>
-
-                </span>
-
-            </button>
+            <p id="recipeCuisine"
+               class="recipe-cuisine">
+            </p>
 
 
-            <!-- Hidden camera/file input -->
+            <div class="recipe-info">
 
-            <input
-                id="cameraInput"
-                type="file"
-                accept="image/*"
-                capture="environment"
-                hidden
-            >
+                <span>🍽️ Serves</span>
 
+                <button id="servingMinus">
+                    −
+                </button>
 
-            <!-- SEARCH -->
+                <strong id="servingNumber">
+                    4
+                </strong>
 
-            <div class="search-box">
-
-                <span>
-                    🔍
-                </span>
-
-                <input
-                    id="searchInput"
-                    type="search"
-                    placeholder="Search recipes..."
-                    autocomplete="off"
-                >
+                <button id="servingPlus">
+                    +
+                </button>
 
             </div>
 
 
-            <!-- FOLDERS -->
-
-            <section class="content-section">
-
-                <div class="section-title-row">
-
-                    <div>
-
-                        <h2>
-                            Folders
-                        </h2>
-
-                        <p>
-                            Your recipes are automatically sorted.
-                        </p>
-
-                    </div>
-
-                    <button
-                        type="button"
-                        class="small-action-button"
-                        data-action="add-folder"
-                    >
-                        ＋
-                    </button>
-
-                </div>
+            <hr>
 
 
-                <div id="folders" class="folders-list"></div>
+            <section>
+
+                <h2>Ingredients</h2>
+
+                <ul id="ingredientList">
+                </ul>
 
             </section>
 
 
-            <!-- RECIPES -->
+            <section>
 
-            <section class="content-section">
+                <h2>Instructions</h2>
 
-                <div class="section-title-row">
-
-                    <div>
-
-                        <h2>
-                            Recipes
-                        </h2>
-
-                        <p>
-                            Tap a recipe to open it.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="recipes"
-                    class="recipes-list"
-                ></div>
+                <ol id="instructionList">
+                </ol>
 
             </section>
 
-        </section>
 
-    </main>
+            <section id="notesSection" class="hidden">
 
+                <h2>Notes</h2>
 
-    <!-- =====================================================
-         RECIPE VIEWER
-         Created by JavaScript
-         ===================================================== -->
+                <p id="recipeNotes"></p>
 
-    <div
-        id="recipeViewer"
-        class="hidden"
-    ></div>
+            </section>
 
 
-    <!-- =====================================================
-         RECIPE EDITOR
-         Created by JavaScript
-         ===================================================== -->
+            <div id="recipePages"
+                 class="recipe-pages">
+            </div>
 
-    <div
-        id="editorModal"
-        class="hidden"
-    ></div>
+        </article>
 
+    </div>
 
-    <!-- =====================================================
-         SCANNER STATUS
-         ===================================================== -->
-
-    <div
-        id="scannerStatus"
-        class="hidden"
-    ></div>
+</section>
 
 
-    <!-- =====================================================
-         JAVASCRIPT
-         ===================================================== -->
+<!-- ================= EDIT ================= -->
 
-    <script src="script.js"></script>
+<div id="editModal"
+     class="modal hidden">
+
+    <div class="modal-card">
+
+        <h2>Edit Recipe</h2>
+
+        <label>Title</label>
+
+        <input id="editTitle"
+               class="input">
+
+        <label>Cuisine</label>
+
+        <input id="editCuisine"
+               class="input">
+
+        <label>Servings</label>
+
+        <input id="editServings"
+               class="input"
+               type="number"
+               min="1">
+
+        <label>Ingredients</label>
+
+        <textarea id="editIngredients"
+                  class="textarea"
+                  placeholder="One ingredient per line"></textarea>
+
+        <label>Instructions</label>
+
+        <textarea id="editInstructions"
+                  class="textarea"
+                  placeholder="One instruction per line"></textarea>
+
+        <label>Notes</label>
+
+        <textarea id="editNotes"
+                  class="textarea"></textarea>
+
+        <div class="modal-buttons">
+
+            <button id="saveEditBtn"
+                    class="big-button">
+                Save
+            </button>
+
+            <button id="cancelEditBtn"
+                    class="secondary-button">
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
 
 </body>
 </html>
-```
