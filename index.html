@@ -1,371 +1,897 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MealMind</title>
+    <meta charset="UTF-8">
 
-  <link rel="stylesheet" href="style.css">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <!-- OCR scanner -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <meta
+        name="theme-color"
+        content="#111827"
+    >
+
+    <title>MealMind</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 </head>
 
+
 <body>
-<div class="creator-credit">
-  Made by Narayan Xavier Gill
-</div>
-<div class="app">
 
-  <header>
-    <h1>MealMind</h1>
-    <p>Scan recipes. Organize meals. Cook smarter.</p>
-  </header>
+    <!-- =====================================================
+         APP
+         ===================================================== -->
 
-  <!-- MAIN SCANNER -->
-  <section class="card">
-    <h2>📷 Scan Recipe</h2>
-    <p>Take a clear photo of a recipe.</p>
+    <div class="app">
 
-    <button id="scanBtn" class="primary">
-      📷 Scan Recipe
-    </button>
+        <!-- HEADER -->
 
-    <input
-      id="recipeImage"
-      type="file"
-      accept="image/*"
-      capture="environment"
-      hidden
-    >
+        <header class="topbar">
 
-    <p id="scanStatus"></p>
-  </section>
+            <div class="brand">
 
-  <!-- SCANNED RECIPE BOX -->
-  <section class="card">
+                <div class="brand-icon">
+                    🍽️
+                </div>
 
-    <label for="recipeText">
-      Scanned Recipe
-    </label>
+                <div>
 
-    <textarea
-      id="recipeText"
-      placeholder="Your cleaned recipe will appear here..."
-    ></textarea>
+                    <h1>MealMind</h1>
 
-    <button id="saveMainRecipe" class="primary">
-      💾 Save Recipe
-    </button>
+                    <p>
+                        Your smart recipe organizer
+                    </p>
 
-  </section>
+                </div>
+
+            </div>
+
+        </header>
 
 
-  <!-- PHOTO CHECK -->
-  <div id="photoCheck" class="overlay hidden">
+        <!-- =================================================
+             MAIN SCANNER
+             ================================================= -->
 
-    <div class="modal">
+        <main>
 
-      <h2>📸 Check Your Photo</h2>
+            <section class="scanner-card">
 
-      <p>
-        For the best scan:
-      </p>
+                <div class="scanner-header">
 
-      <ul>
-        <li>Keep the recipe flat</li>
-        <li>Make sure the whole recipe is visible</li>
-        <li>Use good lighting</li>
-        <li>Don't cover the recipe with objects</li>
-        <li>Avoid blurry photos</li>
-      </ul>
+                    <div>
 
-      <button id="usePhoto" class="primary">
-        Use Photo
-      </button>
+                        <h2>
+                            Scan a Recipe
+                        </h2>
 
-      <button id="retakePhoto" class="secondary">
-        Retake
-      </button>
+                        <p>
+                            Take a clear photo of a recipe
+                            and MealMind will organize it.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Hidden camera input -->
+
+                <input
+                    id="recipeImage"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    hidden
+                >
+
+
+                <button
+                    id="scanBtn"
+                    class="primary-button"
+                    type="button"
+                >
+                    📷 Scan Recipe
+                </button>
+
+
+                <div
+                    id="scanStatus"
+                    class="scan-status"
+                >
+                    Ready to scan
+                </div>
+
+
+                <!-- =================================================
+                     SCANNED RECIPE BOX
+
+                     IMPORTANT:
+                     This is where 1591 can be typed.
+                     ================================================= -->
+
+                <div class="recipe-input-area">
+
+                    <label
+                        for="recipeText"
+                    >
+                        Scanned Recipe
+                    </label>
+
+                    <textarea
+                        id="recipeText"
+                        placeholder="Your scanned recipe will appear here..."
+                        rows="12"
+                    ></textarea>
+
+                    <button
+                        id="saveMainRecipe"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        💾 Save Recipe
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 PHOTO CHECK
+                 ================================================= -->
+
+            <section
+                id="photoCheck"
+                class="modal hidden"
+            >
+
+                <div class="modal-card">
+
+                    <h2>
+                        📸 Check Your Photo
+                    </h2>
+
+                    <p>
+                        For the best results, make sure:
+                    </p>
+
+                    <ul>
+
+                        <li>
+                            The entire recipe is visible
+                        </li>
+
+                        <li>
+                            The photo is not blurry
+                        </li>
+
+                        <li>
+                            There are no other images covering the recipe
+                        </li>
+
+                        <li>
+                            The paper is as flat as possible
+                        </li>
+
+                        <li>
+                            There is good lighting
+                        </li>
+
+                    </ul>
+
+
+                    <div class="modal-buttons">
+
+                        <button
+                            id="retakePhoto"
+                            class="secondary-button"
+                            type="button"
+                        >
+                            🔄 Retake
+                        </button>
+
+                        <button
+                            id="usePhoto"
+                            class="primary-button"
+                            type="button"
+                        >
+                            ✅ Use Photo
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SCAN REVIEW
+                 ================================================= -->
+
+            <section
+                id="reviewBox"
+                class="modal hidden"
+            >
+
+                <div class="modal-card">
+
+                    <h2>
+                        ✨ Review Recipe
+                    </h2>
+
+                    <p>
+                        Check the scanned recipe before saving it.
+                    </p>
+
+
+                    <textarea
+                        id="reviewText"
+                        rows="18"
+                    ></textarea>
+
+
+                    <div class="modal-buttons">
+
+                        <button
+                            id="reviewRetake"
+                            class="secondary-button"
+                            type="button"
+                        >
+                            🔄 Retake
+                        </button>
+
+                        <button
+                            id="acceptRecipe"
+                            class="primary-button"
+                            type="button"
+                        >
+                            ✅ Accept
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 RECIPE FOLDERS
+                 ================================================= -->
+
+            <section class="folders-section">
+
+                <div class="section-title">
+
+                    <div>
+
+                        <h2>
+                            📁 Your Recipes
+                        </h2>
+
+                        <p>
+                            Automatically organized into folders.
+                        </p>
+
+                    </div>
+
+                    <button
+                        id="allRecipes"
+                        class="small-button"
+                        type="button"
+                    >
+                        All Recipes
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="folders"
+                    class="folders"
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CURRENT FOLDER
+                 ================================================= -->
+
+            <section class="recipe-section">
+
+                <div class="section-title">
+
+                    <h2 id="currentFolder">
+                        📖 All Recipes
+                    </h2>
+
+                </div>
+
+
+                <div
+                    id="recipes"
+                    class="recipes"
+                ></div>
+
+            </section>
+
+        </main>
+
+
+        <!-- =====================================================
+             OWNER LOGIN
+             ===================================================== -->
+
+        <section
+            id="ownerLogin"
+            class="modal hidden"
+        >
+
+            <div class="modal-card owner-login-card">
+
+                <div class="owner-icon">
+                    🔐
+                </div>
+
+                <h2>
+                    Owner Login
+                </h2>
+
+                <p>
+                    Enter the owner password.
+                </p>
+
+
+                <input
+                    id="ownerPassword"
+                    type="password"
+                    placeholder="Owner password"
+                    autocomplete="off"
+                >
+
+
+                <div
+                    id="ownerError"
+                    class="error-message"
+                ></div>
+
+
+                <button
+                    id="ownerLoginBtn"
+                    class="primary-button"
+                    type="button"
+                >
+                    🔓 Enter Owner Panel
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             OWNER PANEL
+             ===================================================== -->
+
+        <section
+            id="ownerPanel"
+            class="owner-panel hidden"
+        >
+
+            <div class="owner-header">
+
+                <div>
+
+                    <span class="owner-badge">
+                        OWNER
+                    </span>
+
+                    <h2>
+                        Owner Panel
+                    </h2>
+
+                    <p>
+                        Manage your MealMind recipes.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="exitOwner"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Exit
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 OWNER SCANNER
+                 ================================================= -->
+
+            <div class="owner-card">
+
+                <h3>
+                    📷 Owner Recipe Scanner
+                </h3>
+
+                <p>
+                    Scan recipes directly into the owner
+                    recipe manager.
+                </p>
+
+
+                <input
+                    id="ownerImage"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    hidden
+                >
+
+
+                <button
+                    id="ownerScan"
+                    class="primary-button"
+                    type="button"
+                >
+                    📷 Scan Recipe
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 OWNER ACTIONS
+                 ================================================= -->
+
+            <div class="owner-card">
+
+                <h3>
+                    🛠️ Recipe Management
+                </h3>
+
+
+                <div class="owner-actions">
+
+                    <button
+                        id="addRecipe"
+                        class="owner-action"
+                        type="button"
+                    >
+                        ➕ Add Recipe
+                    </button>
+
+
+                    <button
+                        id="editRecipe"
+                        class="owner-action"
+                        type="button"
+                    >
+                        ✏️ Edit Recipe
+                    </button>
+
+
+                    <button
+                        id="deleteRecipe"
+                        class="owner-action danger"
+                        type="button"
+                    >
+                        🗑️ Delete Recipe
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FOLDER / CUISINE MANAGEMENT
+                 ================================================= -->
+
+            <div class="owner-card">
+
+                <h3>
+                    📁 Organization
+                </h3>
+
+
+                <div class="owner-actions">
+
+                    <button
+                        id="addFolder"
+                        class="owner-action"
+                        type="button"
+                    >
+                        📁 Add Folder
+                    </button>
+
+
+                    <button
+                        id="deleteFolder"
+                        class="owner-action danger"
+                        type="button"
+                    >
+                        🗑️ Delete Folder
+                    </button>
+
+
+                    <button
+                        id="addCuisine"
+                        class="owner-action"
+                        type="button"
+                    >
+                        🌎 Add Cuisine
+                    </button>
+
+
+                    <button
+                        id="deleteCuisine"
+                        class="owner-action danger"
+                        type="button"
+                    >
+                        🗑️ Delete Cuisine
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 OWNER FOLDER LIST
+                 ================================================= -->
+
+            <div class="owner-card">
+
+                <h3>
+                    📊 Recipe Folders
+                </h3>
+
+                <div
+                    id="ownerFolderStats"
+                    class="folder-stats"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             RECIPE EDITOR
+             ===================================================== -->
+
+        <section
+            id="editor"
+            class="modal hidden"
+        >
+
+            <div class="modal-card editor-card">
+
+                <h2 id="editorTitle">
+                    ➕ Add Recipe
+                </h2>
+
+
+                <!-- TITLE -->
+
+                <label
+                    for="recipeTitle"
+                >
+                    Recipe Title
+                </label>
+
+                <input
+                    id="recipeTitle"
+                    type="text"
+                    placeholder="Enter recipe title..."
+                >
+
+
+                <!-- CUISINE -->
+
+                <label
+                    for="recipeCuisine"
+                >
+                    Cuisine
+                </label>
+
+                <select
+                    id="recipeCuisine"
+                ></select>
+
+
+                <!-- FOLDER -->
+
+                <label
+                    for="recipeFolder"
+                >
+                    Folder
+                </label>
+
+                <select
+                    id="recipeFolder"
+                ></select>
+
+
+                <!-- INGREDIENTS -->
+
+                <label
+                    for="ingredients"
+                >
+                    🥕 Ingredients
+                </label>
+
+                <textarea
+                    id="ingredients"
+                    rows="10"
+                    placeholder="One ingredient per line..."
+                ></textarea>
+
+
+                <!-- INSTRUCTIONS -->
+
+                <label
+                    for="instructions"
+                >
+                    👨‍🍳 Instructions
+                </label>
+
+                <textarea
+                    id="instructions"
+                    rows="10"
+                    placeholder="One instruction per line..."
+                ></textarea>
+
+
+                <!-- NOTES -->
+
+                <label
+                    for="recipeNotes"
+                >
+                    📝 Notes
+                </label>
+
+                <textarea
+                    id="recipeNotes"
+                    rows="6"
+                    placeholder="Add notes, tips, substitutions, serving ideas, etc..."
+                ></textarea>
+
+
+                <div
+                    id="editorError"
+                    class="error-message"
+                ></div>
+
+
+                <div class="modal-buttons">
+
+                    <button
+                        id="cancelEditor"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        id="saveEditor"
+                        class="primary-button"
+                        type="button"
+                    >
+                        💾 Save Recipe
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             RECIPE VIEWER
+             ===================================================== -->
+
+        <section
+            id="recipeView"
+            class="modal hidden"
+        >
+
+            <div class="modal-card recipe-view-card">
+
+                <button
+                    id="closeRecipe"
+                    class="close-button"
+                    type="button"
+                >
+                    ✕
+                </button>
+
+
+                <h2 id="viewTitle">
+                    Recipe
+                </h2>
+
+
+                <p
+                    id="viewCategory"
+                    class="recipe-category"
+                ></p>
+
+
+                <!-- INGREDIENTS -->
+
+                <div class="recipe-view-section">
+
+                    <h3>
+                        🥕 Ingredients
+                    </h3>
+
+                    <ul
+                        id="viewIngredients"
+                    ></ul>
+
+                </div>
+
+
+                <!-- INSTRUCTIONS -->
+
+                <div class="recipe-view-section">
+
+                    <h3>
+                        👨‍🍳 Instructions
+                    </h3>
+
+                    <div
+                        id="viewInstructions"
+                        class="instructions-text"
+                    ></div>
+
+                </div>
+
+
+                <!-- NOTES -->
+
+                <div class="recipe-view-section">
+
+                    <h3>
+                        📝 Notes
+                    </h3>
+
+                    <div
+                        id="viewNotes"
+                        class="notes-text"
+                    >
+                        No notes.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             MANAGER
+             ===================================================== -->
+
+        <section
+            id="manager"
+            class="modal hidden"
+        >
+
+            <div class="modal-card">
+
+                <h2 id="managerTitle">
+                    Manage
+                </h2>
+
+
+                <p
+                    id="managerDescription"
+                ></p>
+
+
+                <input
+                    id="managerInput"
+                    class="hidden"
+                    type="text"
+                >
+
+
+                <select
+                    id="managerSelect"
+                    class="hidden"
+                ></select>
+
+
+                <div
+                    id="managerError"
+                    class="error-message"
+                ></div>
+
+
+                <div class="modal-buttons">
+
+                    <button
+                        id="managerCancel"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        id="managerConfirm"
+                        class="primary-button"
+                        type="button"
+                    >
+                        Confirm
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             FOOTER
+             ===================================================== -->
+
+        <footer>
+
+            <div class="creator-credit">
+                Made by Narayan Xavier Gill
+            </div>
+
+            <div class="footer-text">
+                MealMind
+            </div>
+
+        </footer>
 
     </div>
 
-  </div>
 
+    <!-- =====================================================
+         TESSERACT OCR
 
-  <!-- REVIEW -->
-  <div id="reviewBox" class="overlay hidden">
+         This runs in the browser.
+         No AI API key is required.
+         ===================================================== -->
 
-    <div class="modal large">
+    <script
+        src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"
+    ></script>
 
-      <h2>✨ Cleaned Recipe</h2>
 
-      <p>
-        Check the recipe before saving it.
-      </p>
+    <!-- YOUR SCRIPT -->
 
-      <textarea id="reviewText"></textarea>
-
-      <button id="acceptRecipe" class="primary">
-        Accept Recipe
-      </button>
-
-      <button id="reviewRetake" class="secondary">
-        Retake
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- OWNER LOGIN -->
-  <div id="ownerLogin" class="overlay hidden">
-
-    <div class="modal">
-
-      <h2>🔐 Owner Login</h2>
-
-      <input
-        id="ownerPassword"
-        type="password"
-        placeholder="Owner password"
-      >
-
-      <p id="ownerError"></p>
-
-      <button id="ownerLoginBtn" class="primary">
-        Enter Owner Panel
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- OWNER PANEL -->
-  <section id="ownerPanel" class="owner hidden">
-
-    <div class="ownerHeader">
-
-      <div>
-        <p class="ownerLabel">OWNER MODE</p>
-        <h2>Recipe Library</h2>
-      </div>
-
-      <button id="exitOwner" class="secondary">
-        Exit
-      </button>
-
-    </div>
-
-
-    <!-- OWNER BUTTONS -->
-    <div class="ownerButtons">
-
-      <button id="ownerScan" class="ownerButton">
-        📷
-        <span>Scan Recipe</span>
-      </button>
-
-      <button id="addRecipe" class="ownerButton">
-        ➕
-        <span>Add Recipe</span>
-      </button>
-
-      <button id="addFolder" class="ownerButton">
-        📁
-        <span>Add Folder</span>
-      </button>
-
-      <button id="deleteFolder" class="ownerButton danger">
-        🗑️
-        <span>Delete Folder</span>
-      </button>
-
-      <button id="addCuisine" class="ownerButton">
-        🌎
-        <span>Add Cuisine</span>
-      </button>
-
-      <button id="deleteCuisine" class="ownerButton danger">
-        🗑️
-        <span>Delete Cuisine</span>
-      </button>
-
-      <button id="editRecipe" class="ownerButton">
-        ✏️
-        <span>Edit Recipe</span>
-      </button>
-
-      <button id="deleteRecipe" class="ownerButton danger">
-        🗑️
-        <span>Delete Recipe</span>
-      </button>
-
-    </div>
-
-
-    <input
-      id="ownerImage"
-      type="file"
-      accept="image/*"
-      capture="environment"
-      hidden
-    >
-
-
-    <!-- FOLDERS -->
-    <div class="library">
-
-      <div class="libraryTitle">
-
-        <div>
-          <p class="ownerLabel">LIBRARY</p>
-          <h3>Folders</h3>
-        </div>
-
-        <button id="allRecipes" class="smallButton">
-          All
-        </button>
-
-      </div>
-
-      <div id="folders" class="folders"></div>
-
-      <h3 id="currentFolder">
-        📖 All Recipes
-      </h3>
-
-      <div id="recipes"></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- EDITOR -->
-  <div id="editor" class="overlay hidden">
-
-    <div class="modal large">
-
-      <h2 id="editorTitle">
-        ➕ Add Recipe
-      </h2>
-
-      <label>
-        Recipe Title *
-      </label>
-
-      <input
-        id="recipeTitle"
-        placeholder="Chicken Alfredo"
-      >
-
-      <label>
-        Cuisine
-      </label>
-
-      <select id="recipeCuisine"></select>
-
-      <label>
-        Folder
-      </label>
-
-      <select id="recipeFolder"></select>
-
-      <label>
-        Ingredients
-      </label>
-
-      <textarea
-        id="ingredients"
-        placeholder="2 chicken breasts&#10;2 cups pasta&#10;1 cup cream"
-      ></textarea>
-
-      <label>
-        Instructions
-      </label>
-
-      <textarea
-        id="instructions"
-        placeholder="Cook the pasta.&#10;Cook the chicken."
-      ></textarea>
-
-      <p id="editorError"></p>
-
-      <button id="saveEditor" class="primary">
-        💾 Save Recipe
-      </button>
-
-      <button id="cancelEditor" class="secondary">
-        Cancel
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- RECIPE VIEW -->
-  <div id="recipeView" class="overlay hidden">
-
-    <div class="modal large">
-
-      <button id="closeRecipe" class="close">
-        ✕
-      </button>
-
-      <h2 id="viewTitle"></h2>
-
-      <p id="viewCategory"></p>
-
-      <h3>🥕 Ingredients</h3>
-
-      <ul id="viewIngredients"></ul>
-
-      <h3>👨‍🍳 Instructions</h3>
-
-      <div id="viewInstructions"></div>
-
-    </div>
-
-  </div>
-
-
-  <!-- MANAGER -->
-  <div id="manager" class="overlay hidden">
-
-    <div class="modal">
-
-      <h2 id="managerTitle"></h2>
-
-      <p id="managerDescription"></p>
-
-      <input
-        id="managerInput"
-        placeholder="Name"
-      >
-
-      <select id="managerSelect"></select>
-
-      <p id="managerError"></p>
-
-      <button id="managerConfirm" class="primary">
-        Confirm
-      </button>
-
-      <button id="managerCancel" class="secondary">
-        Cancel
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-<script src="script.js"></script>
+    <script
+        src="script.js"
+    ></script>
 
 </body>
+
 </html>
