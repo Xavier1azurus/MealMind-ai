@@ -1,319 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MealMind</title>
 
-    <title>MealMind</title>
+  <link rel="stylesheet" href="style.css">
 
-    <link rel="stylesheet" href="style.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <!-- OCR scanner -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 
 <body>
 
-<main class="app">
+<div class="app">
 
-    <h1>🧠 MealMind</h1>
-    <p class="subtitle">Scan recipes. Save meals. Shop smarter.</p>
+  <header>
+    <h1>MealMind</h1>
+    <p>Scan recipes. Organize meals. Cook smarter.</p>
+  </header>
 
-    <input
-        type="file"
-        id="recipeImage"
-        accept="image/*"
-        capture="environment"
-        hidden
-    >
+  <!-- MAIN SCANNER -->
+  <section class="card">
+    <h2>📷 Scan Recipe</h2>
+    <p>Take a clear photo of a recipe.</p>
 
-    <button id="scanButton" class="main-button">
-        📸 Scan Recipe
+    <button id="scanBtn" class="primary">
+      📷 Scan Recipe
     </button>
 
-    <p id="status"></p>
+    <input
+      id="recipeImage"
+      type="file"
+      accept="image/*"
+      capture="environment"
+      hidden
+    >
 
-    <section class="main-card">
+    <p id="scanStatus"></p>
+  </section>
 
-        <h2>📖 Recipe Scanner</h2>
+  <!-- SCANNED RECIPE BOX -->
+  <section class="card">
 
-        <p class="small-text">
-            You can also type or edit a recipe here.
-        </p>
+    <label for="recipeText">
+      Scanned Recipe
+    </label>
 
-        <textarea
-            id="recipeText"
-            placeholder="Your scanned recipe will appear here..."
-            spellcheck="true"
-        ></textarea>
+    <textarea
+      id="recipeText"
+      placeholder="Your cleaned recipe will appear here..."
+    ></textarea>
 
-        <button id="saveRecipeButton" class="main-button">
-            💾 Save Recipe
-        </button>
+    <button id="saveMainRecipe" class="primary">
+      💾 Save Recipe
+    </button>
 
-    </section>
-
-</main>
-
-
-<!-- PHOTO CHECK -->
-
-<div id="photoCheck" class="overlay" hidden>
-
-    <div class="popup">
-
-        <div class="big-icon">📄</div>
-
-        <h2>Check your photo</h2>
-
-        <div id="photoWarnings"></div>
-
-        <p class="photo-tips">
-            For the best scan:
-        </p>
-
-        <ul class="tips">
-            <li>Keep the recipe flat</li>
-            <li>Take the photo straight above it</li>
-            <li>Make sure all text is visible</li>
-            <li>Avoid glare and heavy shadows</li>
-            <li>Keep the camera focused</li>
-        </ul>
-
-        <button id="usePhotoButton" class="main-button">
-            Use Photo Anyway
-        </button>
-
-        <button id="retakeButton" class="back-button">
-            📸 Retake Photo
-        </button>
-
-    </div>
-
-</div>
+  </section>
 
 
-<!-- REVIEW -->
+  <!-- PHOTO CHECK -->
+  <div id="photoCheck" class="overlay hidden">
 
-<div id="reviewScreen" class="overlay" hidden>
+    <div class="modal">
 
-    <div class="popup review-popup">
+      <h2>📸 Check Your Photo</h2>
 
-        <div class="big-icon">✏️</div>
+      <p>
+        For the best scan:
+      </p>
 
-        <h2>Review Recipe</h2>
+      <ul>
+        <li>Keep the recipe flat</li>
+        <li>Make sure the whole recipe is visible</li>
+        <li>Use good lighting</li>
+        <li>Don't cover the recipe with objects</li>
+        <li>Avoid blurry photos</li>
+      </ul>
 
-        <p class="small-text">
-            Check the text before saving it.
-        </p>
+      <button id="usePhoto" class="primary">
+        Use Photo
+      </button>
 
-        <textarea
-            id="reviewText"
-            class="review-textarea"
-        ></textarea>
-
-        <button id="acceptScanButton" class="main-button">
-            ✅ Looks Good
-        </button>
-
-        <button id="reviewRetakeButton" class="back-button">
-            📸 Scan Again
-        </button>
+      <button id="retakePhoto" class="secondary">
+        Retake
+      </button>
 
     </div>
 
-</div>
+  </div>
 
 
-<!-- DOWNLOAD -->
+  <!-- REVIEW -->
+  <div id="reviewBox" class="overlay hidden">
 
-<div id="downloadScreen" class="overlay" hidden>
+    <div class="modal large">
 
-    <div class="popup">
+      <h2>✨ Cleaned Recipe</h2>
 
-        <div class="big-icon">🧠</div>
+      <p>
+        Check the recipe before saving it.
+      </p>
 
-        <h2>You've used your free scans</h2>
+      <textarea id="reviewText"></textarea>
 
-        <p>
-            Download MealMind to keep scanning recipes.
-        </p>
+      <button id="acceptRecipe" class="primary">
+        Accept Recipe
+      </button>
 
-        <button class="store-button">
-             App Store
-        </button>
-
-        <button class="store-button">
-            ▶ Google Play
-        </button>
-
-        <button id="closeDownload" class="back-button">
-            ← Back
-        </button>
+      <button id="reviewRetake" class="secondary">
+        Retake
+      </button>
 
     </div>
 
-</div>
+  </div>
 
 
-<!-- OWNER LOGIN -->
+  <!-- OWNER LOGIN -->
+  <div id="ownerLogin" class="overlay hidden">
 
-<div id="ownerLogin" class="overlay" hidden>
+    <div class="modal">
 
-    <div class="popup">
+      <h2>🔐 Owner Login</h2>
 
-        <div class="big-icon">🔐</div>
+      <input
+        id="ownerPassword"
+        type="password"
+        placeholder="Owner password"
+      >
 
-        <h2>Owner Login</h2>
+      <p id="ownerError"></p>
 
-        <input
-            id="ownerCode"
-            class="owner-input"
-            type="password"
-            placeholder="Owner code"
-            autocomplete="off"
-        >
-
-        <button id="ownerButton" class="main-button">
-            Login
-        </button>
-
-        <p id="ownerStatus" class="error-text"></p>
+      <button id="ownerLoginBtn" class="primary">
+        Enter Owner Panel
+      </button>
 
     </div>
 
-</div>
+  </div>
 
 
-<!-- OWNER PANEL -->
+  <!-- OWNER PANEL -->
+  <section id="ownerPanel" class="owner hidden">
 
-<div id="ownerPanel" class="owner-panel" hidden>
+    <div class="ownerHeader">
 
-    <div class="owner-app">
+      <div>
+        <p class="ownerLabel">OWNER MODE</p>
+        <h2>Recipe Library</h2>
+      </div>
 
-        <header class="owner-header">
-
-            <div>
-                <h1>🧠 MealMind</h1>
-                <p>Owner Dashboard</p>
-            </div>
-
-            <span class="owner-badge">
-                OWNER
-            </span>
-
-        </header>
-
-
-        <section class="owner-card">
-
-            <h2>📸 Owner Scanner</h2>
-
-            <p class="small-text">
-                Unlimited owner recipe scanning.
-            </p>
-
-            <input
-                type="file"
-                id="ownerRecipeImage"
-                accept="image/*"
-                capture="environment"
-                hidden
-            >
-
-            <button id="ownerScanButton" class="main-button">
-                📸 Scan Recipe
-            </button>
-
-            <p id="ownerScanStatus"></p>
-
-        </section>
-
-
-        <section class="owner-card">
-
-            <h2>📂 Recipe Folders</h2>
-
-            <div class="folders">
-
-                <button class="folder" data-folder="Sweet">
-                    <span class="folder-icon">🍰</span>
-                    <span>Sweet</span>
-                    <strong id="countSweet" class="folder-count">0</strong>
-                </button>
-
-                <button class="folder" data-folder="Savoury">
-                    <span class="folder-icon">🍽️</span>
-                    <span>Savoury</span>
-                    <strong id="countSavoury" class="folder-count">0</strong>
-                </button>
-
-                <button class="folder" data-folder="Fried">
-                    <span class="folder-icon">🍟</span>
-                    <span>Fried</span>
-                    <strong id="countFried" class="folder-count">0</strong>
-                </button>
-
-                <button class="folder" data-folder="International">
-                    <span class="folder-icon">🌎</span>
-                    <span>International</span>
-                    <strong id="countInternational" class="folder-count">0</strong>
-                </button>
-
-            </div>
-
-            <button id="allRecipesButton" class="all-recipes-button">
-                📖 Show All Recipes
-            </button>
-
-        </section>
-
-
-        <section class="owner-card">
-
-            <h2 id="folderTitle">
-                📖 All Recipes
-            </h2>
-
-            <div id="savedRecipes" class="saved-recipes"></div>
-
-        </section>
-
-
-        <button id="closeOwner" class="logout-button">
-            🔒 Log Out
-        </button>
+      <button id="exitOwner" class="secondary">
+        Exit
+      </button>
 
     </div>
 
-</div>
 
+    <!-- OWNER BUTTONS -->
+    <div class="ownerButtons">
 
-<!-- RECIPE DETAILS -->
+      <button id="ownerScan" class="ownerButton">
+        📷
+        <span>Scan Recipe</span>
+      </button>
 
-<div id="recipeDetails" class="recipe-details" hidden>
+      <button id="addRecipe" class="ownerButton">
+        ➕
+        <span>Add Recipe</span>
+      </button>
 
-    <div class="recipe-details-box">
+      <button id="addFolder" class="ownerButton">
+        📁
+        <span>Add Folder</span>
+      </button>
 
-        <button id="closeRecipe" class="back-button">
-            ← Back
-        </button>
+      <button id="deleteFolder" class="ownerButton danger">
+        🗑️
+        <span>Delete Folder</span>
+      </button>
 
-        <h1 id="detailTitle"></h1>
+      <button id="addCuisine" class="ownerButton">
+        🌎
+        <span>Add Cuisine</span>
+      </button>
 
-        <p id="detailCategory" class="recipe-category"></p>
+      <button id="deleteCuisine" class="ownerButton danger">
+        🗑️
+        <span>Delete Cuisine</span>
+      </button>
 
-        <h2>🥕 Ingredients</h2>
+      <button id="editRecipe" class="ownerButton">
+        ✏️
+        <span>Edit Recipe</span>
+      </button>
 
-        <ul id="detailIngredients"></ul>
-
-        <h2>📖 Recipe</h2>
-
-        <div id="detailText" class="detail-text"></div>
+      <button id="deleteRecipe" class="ownerButton danger">
+        🗑️
+        <span>Delete Recipe</span>
+      </button>
 
     </div>
 
-</div>
 
+    <input
+      id="ownerImage"
+      type="file"
+      accept="image/*"
+      capture="environment"
+      hidden
+    >
+
+
+    <!-- FOLDERS -->
+    <div class="library">
+
+      <div class="libraryTitle">
+
+        <div>
+          <p class="ownerLabel">LIBRARY</p>
+          <h3>Folders</h3>
+        </div>
+
+        <button id="allRecipes" class="smallButton">
+          All
+        </button>
+
+      </div>
+
+      <div id="folders" class="folders"></div>
+
+      <h3 id="currentFolder">
+        📖 All Recipes
+      </h3>
+
+      <div id="recipes"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- EDITOR -->
+  <div id="editor" class="overlay hidden">
+
+    <div class="modal large">
+
+      <h2 id="editorTitle">
+        ➕ Add Recipe
+      </h2>
+
+      <label>
+        Recipe Title *
+      </label>
+
+      <input
+        id="recipeTitle"
+        placeholder="Chicken Alfredo"
+      >
+
+      <label>
+        Cuisine
+      </label>
+
+      <select id="recipeCuisine"></select>
+
+      <label>
+        Folder
+      </label>
+
+      <select id="recipeFolder"></select>
+
+      <label>
+        Ingredients
+      </label>
+
+      <textarea
+        id="ingredients"
+        placeholder="2 chicken breasts&#10;2 cups pasta&#10;1 cup cream"
+      ></textarea>
+
+      <label>
+        Instructions
+      </label>
+
+      <textarea
+        id="instructions"
+        placeholder="Cook the pasta.&#10;Cook the chicken."
+      ></textarea>
+
+      <p id="editorError"></p>
+
+      <button id="saveEditor" class="primary">
+        💾 Save Recipe
+      </button>
+
+      <button id="cancelEditor" class="secondary">
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- RECIPE VIEW -->
+  <div id="recipeView" class="overlay hidden">
+
+    <div class="modal large">
+
+      <button id="closeRecipe" class="close">
+        ✕
+      </button>
+
+      <h2 id="viewTitle"></h2>
+
+      <p id="viewCategory"></p>
+
+      <h3>🥕 Ingredients</h3>
+
+      <ul id="viewIngredients"></ul>
+
+      <h3>👨‍🍳 Instructions</h3>
+
+      <div id="viewInstructions"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- MANAGER -->
+  <div id="manager" class="overlay hidden">
+
+    <div class="modal">
+
+      <h2 id="managerTitle"></h2>
+
+      <p id="managerDescription"></p>
+
+      <input
+        id="managerInput"
+        placeholder="Name"
+      >
+
+      <select id="managerSelect"></select>
+
+      <p id="managerError"></p>
+
+      <button id="managerConfirm" class="primary">
+        Confirm
+      </button>
+
+      <button id="managerCancel" class="secondary">
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
 <script src="script.js"></script>
 
