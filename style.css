@@ -57,3 +57,22 @@ h2 {
 ul {
     padding-left: 25px;
 }
+#recipeText {
+    width: 100%;
+    min-height: 300px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    resize: vertical;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+#status {
+    font-weight: bold;
+    min-height: 25px;
+}
+
+#scanResult {
+    display: block;
+}
