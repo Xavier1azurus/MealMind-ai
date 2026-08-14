@@ -1,9 +1,3 @@
-```css
-/* =========================================================
-   MEALMIND
-   Mobile / iPad Cookbook UI
-   ========================================================= */
-
 * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
@@ -14,19 +8,10 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100%;
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
-    background: #f7f5f0;
+    font-family: -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Arial, sans-serif;
+    background: #f5f3ee;
     color: #242424;
-}
-
-body {
-    min-height: 100vh;
 }
 
 button,
@@ -38,346 +23,229 @@ select {
 
 button {
     cursor: pointer;
-    border: 0;
+    touch-action: manipulation;
 }
-
-input,
-textarea {
-    outline: none;
-}
-
-
-/* =========================================================
-   GENERAL
-   ========================================================= */
 
 .hidden {
     display: none !important;
 }
 
+
+/* HOME */
+
 .screen {
     min-height: 100vh;
 }
 
-.page-container {
-    width: min(100%, 650px);
-    margin: 0 auto;
-    padding: 24px 20px 50px;
-}
-
-
-/* =========================================================
-   HOME
-   ========================================================= */
-
-#homeScreen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 25px 20px;
-}
-
 .home-container {
-    width: min(100%, 520px);
-    text-align: center;
+    width: min(92%, 520px);
+    min-height: 100vh;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+
+    padding: 35px 10px;
 }
 
 .logo {
-    width: 90px;
-    height: 90px;
-    margin: 0 auto 18px;
-    border-radius: 28px;
+    width: 85px;
+    height: 85px;
+    border-radius: 26px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #ffffff;
-    box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.08);
-    font-size: 44px;
+
+    margin: 0 auto 18px;
+
+    background: #242424;
+    color: white;
+
+    font-size: 42px;
 }
 
 .home-container h1 {
+    text-align: center;
+    font-size: 42px;
     margin: 0;
-    font-size: clamp(38px, 10vw, 58px);
-    letter-spacing: -2px;
 }
 
 .subtitle {
-    margin: 10px 0 34px;
+    text-align: center;
     color: #777;
-    font-size: 16px;
-}
-
-.home-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    margin: 10px 0 35px;
 }
 
 
-/* =========================================================
-   BUTTONS
-   ========================================================= */
+/* BUTTONS */
 
-.main-button {
+.big-button {
     width: 100%;
     min-height: 58px;
-    padding: 15px 20px;
-    border-radius: 17px;
+
+    border: 0;
+    border-radius: 18px;
+
     background: #242424;
     color: white;
+
     font-weight: 700;
-    font-size: 16px;
-    transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
+    font-size: 17px;
+
+    margin: 9px 0;
+
+    padding: 15px 20px;
 }
 
-.main-button:active {
-    transform: scale(0.97);
+.big-button:active {
+    transform: scale(.98);
 }
 
-.main-button.secondary {
-    background: white;
+.big-button.secondary {
+    background: #e4e0d7;
     color: #242424;
-    border: 1px solid #e1dfda;
+}
+
+.secondary-button {
+    width: 100%;
+    padding: 15px;
+
+    border: 0;
+    border-radius: 15px;
+
+    background: #e8e5de;
+    color: #222;
+
+    font-weight: 700;
+}
+
+.small-button,
+.icon-button,
+.scan-button {
+    border: 0;
+    border-radius: 13px;
+    padding: 11px 14px;
+
+    background: #e8e5de;
+    color: #222;
+
+    font-weight: 700;
+}
+
+.danger {
+    color: #b42318;
 }
 
 .back-button {
-    min-height: 45px;
-    padding: 8px 12px;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    background: transparent;
-    color: #242424;
-    font-weight: 700;
-}
-
-.icon-button {
-    width: 46px;
-    height: 46px;
-    border-radius: 14px;
-    background: #ffffff;
-    color: #222;
-    font-size: 23px;
-    box-shadow:
-        0 5px 18px rgba(0, 0, 0, 0.07);
-}
-
-.small-action-button {
-    width: 46px;
-    height: 46px;
-    flex-shrink: 0;
-    border-radius: 14px;
-    background: #242424;
-    color: white;
-    font-size: 25px;
-}
-
-
-/* =========================================================
-   FORMS
-   ========================================================= */
-
-.form-card {
-    background: white;
-    padding: 26px 22px;
-    border-radius: 24px;
-    box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.07);
-}
-
-.form-card h1 {
-    margin: 0 0 8px;
-    font-size: 30px;
-}
-
-.form-card p {
-    color: #777;
-    margin: 0 0 28px;
-    line-height: 1.5;
-}
-
-.form-card label {
-    display: block;
-    margin: 18px 0 8px;
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.form-card input {
-    width: 100%;
-    min-height: 54px;
-    padding: 14px 16px;
-    border: 1px solid #ddd9d2;
-    border-radius: 14px;
-    background: #faf9f7;
-}
-
-.form-card .main-button {
-    margin-top: 24px;
-}
-
-
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-.app-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    padding:
-        calc(14px + env(safe-area-inset-top))
-        18px
-        14px;
-    background: rgba(247, 245, 240, 0.94);
-    backdrop-filter: blur(15px);
-    border-bottom: 1px solid #e8e4dc;
-}
-
-.header-left {
-    width: min(100%, 760px);
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 13px;
-}
-
-.small-label {
-    display: block;
-    margin-bottom: 2px;
-    color: #999;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-}
-
-.app-header h1 {
-    margin: 0;
-    font-size: 20px;
-}
-
-
-/* =========================================================
-   MAIN CONTENT
-   ========================================================= */
-
-.main-content {
-    width: min(100%, 760px);
-    margin: 0 auto;
-    padding: 20px 18px 70px;
-}
-
-.scan-button {
-    width: 100%;
-    min-height: 86px;
-    padding: 17px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    text-align: left;
-    border-radius: 22px;
-    background: #242424;
-    color: white;
-    box-shadow:
-        0 12px 28px rgba(0, 0, 0, 0.12);
-}
-
-.scan-button:active {
-    transform: scale(0.98);
-}
-
-.scan-icon {
-    width: 52px;
-    height: 52px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 16px;
-    background: rgba(255,255,255,0.14);
-    font-size: 27px;
-}
-
-.scan-button strong,
-.scan-button small {
-    display: block;
-}
-
-.scan-button strong {
-    font-size: 17px;
-}
-
-.scan-button small {
-    margin-top: 4px;
-    color: #cfcfcf;
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
-
-.search-box {
-    height: 54px;
-    margin: 18px 0 30px;
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-radius: 16px;
-    background: white;
-    border: 1px solid #e4e0d8;
-}
-
-.search-box span {
-    font-size: 18px;
-}
-
-.search-box input {
-    width: 100%;
-    height: 100%;
     border: 0;
-    background: transparent;
+    background: none;
+
+    padding: 12px 0;
+
+    font-weight: 700;
     font-size: 16px;
 }
 
 
-/* =========================================================
-   SECTIONS
-   ========================================================= */
+/* PAGES */
 
-.content-section {
-    margin-top: 28px;
+.page {
+    width: min(92%, 520px);
+    margin: auto;
+    padding: 30px 0 50px;
+}
+
+.page h1 {
+    margin: 20px 0 25px;
+}
+
+
+/* INPUTS */
+
+.input,
+.search-input,
+.textarea,
+select {
+    width: 100%;
+
+    border: 1px solid #ddd8cf;
+    border-radius: 15px;
+
+    background: white;
+
+    padding: 16px;
+    margin: 7px 0;
+
+    outline: none;
+}
+
+.textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.check-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 12px 2px;
+}
+
+
+/* TOPBAR */
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 18px;
+
+    background: rgba(245,243,238,.95);
+    backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid #e5e1d9;
+}
+
+.topbar h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.book-content {
+    width: min(94%, 600px);
+    margin: auto;
+    padding: 20px 0 60px;
+}
+
+.search-row {
+    margin-bottom: 25px;
 }
 
 .section-title-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 14px;
+    justify-content: space-between;
+
+    margin-top: 25px;
+    margin-bottom: 13px;
 }
 
 .section-title-row h2 {
     margin: 0;
-    font-size: 22px;
-}
-
-.section-title-row p {
-    margin: 4px 0 0;
-    color: #888;
-    font-size: 13px;
 }
 
 
-/* =========================================================
-   FOLDERS
-   ========================================================= */
+/* FOLDERS */
 
-.folders-list {
+.folders {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -385,439 +253,318 @@ textarea {
 
 .folder-row {
     display: flex;
-    align-items: stretch;
     gap: 8px;
 }
 
 .folder-card {
-    min-height: 74px;
     flex: 1;
-    padding: 13px 15px;
-    display: grid;
-    grid-template-columns: 43px 1fr auto;
-    grid-template-rows: 1fr 1fr;
-    column-gap: 10px;
-    text-align: left;
-    border-radius: 18px;
-    background: white;
-    border: 1px solid #e7e3dc;
-}
 
-.folder-icon {
-    grid-row: 1 / 3;
-    width: 43px;
-    height: 43px;
+    border: 0;
+    border-radius: 18px;
+
+    background: white;
+
+    padding: 18px;
+
     display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 13px;
-    background: #f3f0e9;
-    font-size: 21px;
+    gap: 12px;
+
+    text-align: left;
 }
 
 .folder-card strong {
-    align-self: end;
-    font-size: 15px;
+    flex: 1;
 }
 
-.folder-card small {
-    align-self: start;
-    color: #999;
-    font-size: 12px;
+.folder-count {
+    color: #888;
+    font-size: 13px;
 }
 
-.recipe-action-button {
-    width: 46px;
-    min-width: 46px;
-    min-height: 46px;
+.folder-tool {
+    width: 45px;
+    border: 0;
     border-radius: 14px;
     background: white;
-    border: 1px solid #e3dfd8;
-}
-
-.recipe-action-button.danger {
-    color: #b52c2c;
 }
 
 
-/* =========================================================
-   RECIPES
-   ========================================================= */
+/* RECIPES */
 
-.recipes-list {
+.recipes {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.recipe-card {
+.recipe-list-card {
     width: 100%;
-    min-height: 78px;
-    padding: 12px;
-    display: grid;
-    grid-template-columns: 50px 1fr 24px;
-    align-items: center;
-    gap: 13px;
-    text-align: left;
-    border-radius: 19px;
+
+    border: 0;
+    border-radius: 18px;
+
     background: white;
-    border: 1px solid #e6e2db;
+
+    padding: 18px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    text-align: left;
 }
 
-.recipe-card:active {
-    transform: scale(0.985);
-}
-
-.recipe-card-icon {
+.recipe-icon {
     width: 50px;
     height: 50px;
+
+    border-radius: 15px;
+
+    background: #eeeae1;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 15px;
-    background: #f2efe8;
-    font-size: 23px;
+
+    font-size: 24px;
 }
 
-.recipe-card-text strong,
-.recipe-card-text span {
+.recipe-list-info {
+    flex: 1;
+}
+
+.recipe-list-info strong {
     display: block;
+    font-size: 17px;
 }
 
-.recipe-card-text strong {
-    font-size: 15px;
-}
-
-.recipe-card-text span {
-    margin-top: 5px;
-    color: #999;
-    font-size: 12px;
-}
-
-.recipe-arrow {
-    color: #aaa;
-    font-size: 26px;
-}
-
-
-/* =========================================================
-   EMPTY STATE
-   ========================================================= */
-
-.empty-state {
-    padding: 35px 20px;
-    text-align: center;
-    border-radius: 20px;
-    background: white;
-    border: 1px solid #e7e3dc;
-}
-
-.empty-state div {
-    font-size: 35px;
-}
-
-.empty-state h3 {
-    margin: 10px 0 5px;
-}
-
-.empty-state p {
-    margin: 0;
+.recipe-list-info span {
     color: #888;
+    font-size: 13px;
+}
+
+.arrow {
+    font-size: 25px;
+    color: #999;
 }
 
 
-/* =========================================================
-   RECIPE VIEWER
-   ========================================================= */
+/* SCANNER */
 
-.recipe-viewer {
+.scanner-overlay {
     position: fixed;
     inset: 0;
+
     z-index: 1000;
-    overflow-y: auto;
-    background: #e8e3d9;
+
+    background: rgba(0,0,0,.55);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
 }
 
-.recipe-viewer-background {
-    min-height: 100%;
-    padding: 10px 12px 35px;
+.scanner-box {
+    width: min(100%, 400px);
+
+    background: white;
+    border-radius: 25px;
+
+    padding: 30px;
+
+    text-align: center;
 }
 
-.recipe-sheet {
-    width: min(100%, 760px);
-    min-height: calc(100vh - 45px);
-    margin: 0 auto;
-    padding: 15px 20px 35px;
-    background: #fffdf8;
-    box-shadow:
-        0 10px 40px rgba(0,0,0,0.12);
+.scanner-icon {
+    font-size: 50px;
 }
 
-.recipe-topbar {
+.progress-background {
+    height: 9px;
+    border-radius: 20px;
+    background: #e5e5e5;
+
+    overflow: hidden;
+
+    margin: 20px 0;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: #242424;
+}
+
+
+/* RECIPE */
+
+.recipe-page {
+    min-height: 100vh;
+    padding: 10px 0 60px;
+}
+
+.recipe-top {
+    width: min(94%, 700px);
+    margin: auto;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-}
-
-.recipe-back-button {
-    padding: 10px 8px;
-    background: transparent;
-    font-weight: 700;
 }
 
 .recipe-actions {
     display: flex;
-    gap: 7px;
+    gap: 8px;
 }
 
-.recipe-actions .recipe-action-button {
-    width: auto;
-    min-width: 45px;
-    padding: 0 10px;
-}
+.recipe-card-large {
+    width: min(94%, 700px);
+    margin: 15px auto 0;
 
-.recipe-header {
-    padding: 35px 5px 22px;
-    text-align: center;
+    background: white;
+
+    border-radius: 25px;
+
+    padding: 30px 24px 45px;
+
+    box-shadow: 0 8px 30px rgba(0,0,0,.06);
 }
 
 .recipe-label {
-    color: #999;
-    font-size: 10px;
-    font-weight: 800;
+    font-size: 11px;
     letter-spacing: 2px;
+    font-weight: 800;
+    color: #999;
 }
 
-.recipe-header h1 {
-    margin: 10px 0 7px;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(31px, 8vw, 50px);
-    line-height: 1.05;
+.recipe-card-large h1 {
+    font-size: 35px;
+    line-height: 1.1;
+    margin: 12px 0 5px;
 }
 
 .recipe-cuisine {
-    margin: 0;
     color: #888;
-    font-style: italic;
 }
 
-.recipe-serving-row {
-    margin: 22px auto 0;
-    width: fit-content;
+.recipe-info {
     display: flex;
     align-items: center;
-    gap: 9px;
-    color: #666;
+    gap: 10px;
+
+    margin: 25px 0;
 }
 
-.recipe-serving-row strong {
-    min-width: 30px;
-    text-align: center;
-    color: #222;
-}
+.recipe-info button {
+    border: 0;
+    border-radius: 10px;
 
-.recipe-serving-row button {
     width: 36px;
     height: 36px;
+
+    background: #eeeae1;
+
+    font-size: 20px;
+}
+
+.recipe-card-large hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 25px 0;
+}
+
+.recipe-card-large section {
+    margin-top: 30px;
+}
+
+.recipe-card-large h2 {
+    font-size: 22px;
+}
+
+.recipe-card-large li {
+    margin: 12px 0;
+    line-height: 1.5;
+}
+
+.recipe-pages {
+    display: flex;
+    gap: 7px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.page-dot {
+    padding: 7px 11px;
     border-radius: 10px;
     background: #eeeae1;
-    font-size: 21px;
-}
-
-.recipe-line {
-    height: 1px;
-    background: #ded8cd;
-}
-
-.recipe-section {
-    padding: 25px 5px 5px;
-}
-
-.recipe-section h2 {
-    margin: 0 0 15px;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 25px;
-}
-
-.recipe-ingredients,
-.recipe-instructions {
-    margin: 0;
-    padding-left: 24px;
-}
-
-.recipe-ingredients li,
-.recipe-instructions li {
-    margin-bottom: 12px;
-    padding-left: 4px;
-    line-height: 1.55;
-}
-
-.recipe-instructions li::marker {
-    font-weight: 700;
-}
-
-.recipe-notes p {
-    color: #555;
-    line-height: 1.6;
-}
-
-.recipe-footer {
-    margin-top: 40px;
-    padding-top: 18px;
-    border-top: 1px solid #ddd7cc;
-    color: #aaa;
-    text-align: center;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 
-/* =========================================================
-   EDITOR
-   ========================================================= */
+/* MODAL */
 
-#editorModal {
+.modal {
     position: fixed;
     inset: 0;
-    z-index: 3000;
+
+    z-index: 2000;
+
+    background: rgba(0,0,0,.5);
+
     overflow-y: auto;
+
     padding: 20px;
-    background: rgba(0,0,0,0.55);
 }
 
-.editor-card {
-    width: min(100%, 650px);
-    margin: 30px auto;
-    padding: 22px;
-    border-radius: 24px;
+.modal-card {
+    width: min(100%, 600px);
+    margin: 20px auto;
+
     background: white;
+    border-radius: 24px;
+
+    padding: 25px;
 }
 
-.editor-card h2 {
-    margin-top: 0;
-}
-
-.editor-card label {
+.modal-card label {
     display: block;
-    margin: 17px 0 7px;
+    margin-top: 14px;
     font-weight: 700;
 }
 
-.editor-card input,
-.editor-card textarea {
-    width: 100%;
-    padding: 13px;
-    border: 1px solid #ddd8cf;
-    border-radius: 13px;
-    background: #faf9f6;
-}
-
-.editor-card textarea {
-    min-height: 130px;
-    resize: vertical;
-}
-
-.editor-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.editor-buttons button {
-    flex: 1;
+.modal-buttons {
+    margin-top: 15px;
 }
 
 
-/* =========================================================
-   SCANNER STATUS
-   ========================================================= */
+/* EMPTY */
 
-#scannerStatus {
-    position: fixed;
-    inset: 0;
-    z-index: 5000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 25px;
-    background: rgba(0,0,0,0.35);
-}
-
-.scanner-status-card {
-    width: min(100%, 340px);
-    padding: 28px;
-    text-align: center;
-    border-radius: 22px;
+.empty {
     background: white;
-    box-shadow:
-        0 20px 60px rgba(0,0,0,0.25);
-}
-
-.scanner-spinner {
-    width: 40px;
-    height: 40px;
-    margin: 0 auto 15px;
-    border: 4px solid #ddd;
-    border-top-color: #242424;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    border-radius: 20px;
+    padding: 35px 20px;
+    text-align: center;
+    color: #888;
 }
 
 
-/* =========================================================
-   TABLET / IPAD
-   ========================================================= */
+/* DESKTOP */
 
 @media (min-width: 700px) {
 
-    .main-content {
-        padding-left: 25px;
-        padding-right: 25px;
+    .home-container {
+        max-width: 520px;
     }
 
-    .recipe-sheet {
-        padding-left: 45px;
-        padding-right: 45px;
+    .book-content {
+        max-width: 700px;
     }
 
-    .folders-list {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+    .recipe-card-large {
+        padding: 45px;
     }
 
 }
-
-
-/* =========================================================
-   SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 380px) {
-
-    .page-container {
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-
-    .main-content {
-        padding-left: 13px;
-        padding-right: 13px;
-    }
-
-    .recipe-sheet {
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-
-    .recipe-actions .recipe-action-button {
-        font-size: 12px;
-    }
-
-}
-```
