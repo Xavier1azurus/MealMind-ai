@@ -14,54 +14,111 @@
 
 <body>
 
-    <main class="app">
+<main class="app">
 
-        <h1>🧠 MealMind</h1>
+    <h1>🧠 MealMind</h1>
 
-        <p>Scan your recipes. Plan your meals.</p>
+    <p>Scan your recipes. Plan your meals.</p>
 
-        <input
-            type="file"
-            id="recipeImage"
-            accept="image/*"
-            capture="environment"
-            hidden
-        >
+    <!-- CAMERA BUTTON -->
 
-        <button id="scanButton">
-            📸 Scan Recipe
+    <input
+        type="file"
+        id="recipeImage"
+        accept="image/*"
+        capture="environment"
+        hidden
+    >
+
+    <button id="scanButton">
+        📸 Scan Recipe
+    </button>
+
+    <p id="status"></p>
+
+
+    <!-- RECIPE SCANNER BOX -->
+
+    <section>
+
+        <h2>📖 Recipe Scanner</h2>
+
+        <textarea
+            id="recipeText"
+            placeholder="Scan a recipe or type recipe text here..."
+        ></textarea>
+
+        <button id="saveRecipeButton">
+            💾 Save Recipe
         </button>
 
-        <p id="status"></p>
-
-        <section id="scanResult">
-
-            <h2>📖 Scanned Recipe</h2>
-
-   <textarea
-    id="recipeText"
-    placeholder="Scan a recipe or enter text here..."
-></textarea>
-
-        </section>
-
-        <section>
-
-            <h2>🛒 Grocery List</h2>
-
-            <ul id="groceryList"></ul>
-
-        </section>
-
-    </main>
+    </section>
 
 
-    <!-- Hidden owner login -->
+    <!-- GROCERY LIST -->
+
+    <section>
+
+        <h2>🛒 Grocery List</h2>
+
+        <ul id="groceryList"></ul>
+
+    </section>
+
+</main>
 
 
+<!-- HIDDEN OWNER LOGIN -->
+
+<div
+    id="ownerLogin"
+    class="owner-login"
+    hidden
+>
+
+    <h2>🔐 Owner Login</h2>
+
+    <input
+        type="password"
+        id="ownerCode"
+        placeholder="Owner code"
+    >
+
+    <button id="ownerButton">
+        Login
+    </button>
+
+    <p id="ownerStatus"></p>
+
+</div>
 
 
-    <script src="script.js"></script>
+<!-- OWNER PANEL -->
+
+<div
+    id="ownerPanel"
+    class="owner-panel"
+    hidden
+>
+
+    <div class="owner-content">
+
+        <h1>🔐 MealMind Owner Panel</h1>
+
+        <p>Saved recipes:</p>
+
+        <div id="savedRecipes"></div>
+
+        <button id="closeOwner">
+            Close Owner Panel
+        </button>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
 
 </body>
 
