@@ -1,17 +1,17 @@
 const scanButton = document.getElementById("scanButton");
-
 const recipeImage = document.getElementById("recipeImage");
-
 const recipeText = document.getElementById("recipeText");
-
 const status = document.getElementById("status");
 
+const ownerLogin = document.getElementById("ownerLogin");
+const ownerCode = document.getElementById("ownerCode");
+const ownerButton = document.getElementById("ownerButton");
+const ownerStatus = document.getElementById("ownerStatus");
 
 
 /* =========================
    RECIPE SCANNER
 ========================= */
-
 
 scanButton.addEventListener("click", function () {
 
@@ -28,22 +28,15 @@ recipeImage.addEventListener("change", async function () {
         return;
     }
 
-
     status.textContent = "🔍 Reading your recipe...";
-
     recipeText.value = "";
-
 
     try {
 
         const result = await Tesseract.recognize(
-
             file,
-
             "eng",
-
             {
-
                 logger: function (info) {
 
                     if (info.status === "recognizing text") {
@@ -55,20 +48,14 @@ recipeImage.addEventListener("change", async function () {
                             "🔍 Reading recipe... " +
                             percent +
                             "%";
-
                     }
-
                 }
-
             }
-
         );
-
 
         recipeText.value = result.data.text;
 
         status.textContent = "✅ Recipe scanned!";
-
 
     } catch (error) {
 
@@ -76,157 +63,48 @@ recipeImage.addEventListener("change", async function () {
 
         status.textContent =
             "❌ Something went wrong while scanning.";
+    }
+
+});
+
+
+/* =========================
+   SECRET OWNER CODE
+========================= */
+
+recipeText.addEventListener("input", function () {
+
+    if (recipeText.value.trim() === "1591") {
+
+        ownerLogin.hidden = false;
+
+        ownerCode.focus();
+
+        recipeText.value = "";
+
+        status.textContent = "";
 
     }
 
 });
 
 
-
 /* =========================
    OWNER LOGIN
 ========================= */
 
+ownerButton.addEventListener("click", function () {
 
-const ownerLogin =
-    document.getElementById("ownerLogin");
+    if (ownerCode.value === "BumsUp2AI") {
 
-const ownerCode =
-    document.getElementById("ownerCode");
+        ownerStatus.textContent =
+            "✅ Owner access granted!";
 
-const ownerButton =
-    document.getElementById("ownerButton");
+    } else {
 
-const ownerStatus =
-    document.getElementById("ownerStatus");
-
-
-let startX = 0;
-
-let startY = 0;
-
-
-
-/* Start touch */
-
-document.addEventListener(
-    "touchstart",
-
-    function (event) {
-
-        /* Desktop does nothing */
-
-        if (window.innerWidth > 768) {
-            return;
-        }
-
-
-        const touch = event.touches[0];
-
-        startX = touch.clientX;
-
-        startY = touch.clientY;
-
-    },
-
-    {
-        passive: true
-    }
-
-);
-
-
-
-/* End touch */
-
-document.addEventListener(
-    "touchend",
-
-    function (event) {
-
-        /* Desktop does nothing */
-
-        if (window.innerWidth > 768) {
-            return;
-        }
-
-
-        const touch =
-            event.changedTouches[0];
-
-
-        const endX =
-            touch.clientX;
-
-
-        const endY =
-            touch.clientY;
-
-
-        const screenWidth =
-            window.innerWidth;
-
-
-        const screenHeight =
-            window.innerHeight;
-
-
-        /* Must start near bottom-right */
-
-        const startedNearBottomRight =
-
-            startX >
-                screenWidth - 120 &&
-
-            startY >
-                screenHeight - 120;
-
-
-        /* Must move upward */
-
-        const swipedUp =
-            startY - endY > 80;
-
-
-        if (
-            startedNearBottomRight &&
-            swipedUp
-        ) {
-
-            ownerLogin.hidden = false;
-
-            ownerCode.focus();
-
-        }
+        ownerStatus.textContent =
+            "❌ Incorrect code.";
 
     }
 
-);
-
-
-
-/* Owner login */
-
-ownerButton.addEventListener(
-    "click",
-
-    function () {
-
-        if (
-            ownerCode.value ===
-            "BumsUp2AI"
-        ) {
-
-            ownerStatus.textContent =
-                "✅ Owner access granted!";
-
-        } else {
-
-            ownerStatus.textContent =
-                "❌ Incorrect code.";
-
-        }
-
-    }
-
-);
+});
