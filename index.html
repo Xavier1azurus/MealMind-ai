@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0d0f12">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+    <meta name="theme-color" content="#0b0d10">
     <title>MealMind</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="app">
+<div id="app">
 
     <!-- HOME -->
-
     <section id="homeScreen" class="screen">
 
         <div class="home-card">
@@ -22,17 +24,17 @@
 
             <h1>MealMind</h1>
 
-            <p>Your digital cookbook.</p>
+            <p>Your digital cookbook</p>
 
-            <button id="makeCookbookButton" class="primary">
+            <button type="button" id="makeCookbookButton">
                 ➕ Make Cookbook
             </button>
 
-            <button id="joinCookbookButton" class="secondary">
+            <button type="button" id="joinCookbookButton">
                 🔗 Join Cookbook
             </button>
 
-            <button id="publicBooksButton" class="secondary">
+            <button type="button" id="publicBooksButton">
                 🌐 Public Books
             </button>
 
@@ -42,16 +44,15 @@
 
 
     <!-- MAKE COOKBOOK -->
-
     <section id="makeScreen" class="screen hidden">
 
-        <div class="form-card">
+        <div class="panel">
 
-            <button class="back-button" id="backFromMake">
+            <button type="button" class="back" id="backFromMake">
                 ← Back
             </button>
 
-            <h1>📖 Create Cookbook</h1>
+            <h1>Create Cookbook</h1>
 
             <label>Cookbook name</label>
 
@@ -59,33 +60,33 @@
                 id="cookbookName"
                 type="text"
                 placeholder="My Cookbook"
+                autocomplete="off"
             >
-
 
             <label>Privacy</label>
 
-            <div class="privacy-options">
+            <div class="privacy">
 
                 <button
+                    type="button"
                     id="privateButton"
-                    class="privacy-option selected"
+                    class="selected"
                 >
                     🔒 Private
                 </button>
 
                 <button
+                    type="button"
                     id="publicButton"
-                    class="privacy-option"
                 >
                     🌐 Public
                 </button>
 
             </div>
 
-
             <label>Password</label>
 
-            <div class="password-box">
+            <div class="password-row">
 
                 <input
                     id="cookbookPassword"
@@ -94,23 +95,23 @@
                 >
 
                 <button
-                    id="showPasswordButton"
                     type="button"
+                    id="showPasswordButton"
                 >
                     👁
                 </button>
 
             </div>
 
-
             <button
+                type="button"
+                class="main-button"
                 id="createCookbookButton"
-                class="primary"
             >
                 Create Cookbook
             </button>
 
-            <div id="makeError" class="error"></div>
+            <p id="makeError" class="error"></p>
 
         </div>
 
@@ -118,18 +119,17 @@
 
 
     <!-- JOIN -->
-
     <section id="joinScreen" class="screen hidden">
 
-        <div class="form-card">
+        <div class="panel">
 
-            <button class="back-button" id="backFromJoin">
+            <button type="button" class="back" id="backFromJoin">
                 ← Back
             </button>
 
-            <h1>🔗 Join Cookbook</h1>
+            <h1>Join Cookbook</h1>
 
-            <label>Cookbook name/code</label>
+            <label>Cookbook name</label>
 
             <input
                 id="joinName"
@@ -139,7 +139,7 @@
 
             <label>Password</label>
 
-            <div class="password-box">
+            <div class="password-row">
 
                 <input
                     id="joinPassword"
@@ -148,8 +148,8 @@
                 >
 
                 <button
-                    id="showJoinPassword"
                     type="button"
+                    id="showJoinPassword"
                 >
                     👁
                 </button>
@@ -157,13 +157,14 @@
             </div>
 
             <button
+                type="button"
+                class="main-button"
                 id="joinButton"
-                class="primary"
             >
                 Join Cookbook
             </button>
 
-            <div id="joinError" class="error"></div>
+            <p id="joinError" class="error"></p>
 
         </div>
 
@@ -171,20 +172,15 @@
 
 
     <!-- PUBLIC BOOKS -->
-
     <section id="publicScreen" class="screen hidden">
 
-        <div class="form-card">
+        <div class="panel">
 
-            <button class="back-button" id="backFromPublic">
+            <button type="button" class="back" id="backFromPublic">
                 ← Back
             </button>
 
-            <h1>🌐 Public Books</h1>
-
-            <p class="muted">
-                Public cookbooks will appear here.
-            </p>
+            <h1>Public Books</h1>
 
             <div id="publicBooksList"></div>
 
@@ -193,37 +189,27 @@
     </section>
 
 
-    <!-- MAIN COOKBOOK -->
-
+    <!-- COOKBOOK -->
     <main id="mainScreen" class="hidden">
 
         <header class="topbar">
 
             <div>
-
-                <div class="brand">
-                    MEALMIND
-                </div>
-
-                <h1 id="mainBookName">
-                    Cookbook
-                </h1>
-
+                <small>MEALMIND</small>
+                <h1 id="mainBookName">Cookbook</h1>
                 <span id="privacyBadge"></span>
-
             </div>
 
             <button
+                type="button"
+                class="back-icon"
                 id="exitBookButton"
-                class="icon-button"
             >
                 ←
             </button>
 
         </header>
 
-
-        <!-- SEARCH -->
 
         <input
             id="searchInput"
@@ -233,20 +219,17 @@
         >
 
 
-        <!-- SCANNER -->
-
+        <!-- SCAN -->
         <section class="scan-card">
 
-            <div class="scan-icon">
-                📷
-            </div>
+            <div class="scan-icon">📷</div>
 
             <h2>Scan Recipe</h2>
 
             <p>
-                Take a clear picture of a recipe.
-                MealMind will organize the ingredients
-                and instructions.
+                Take a clear photo of your recipe.
+                MealMind will organize the title,
+                ingredients and instructions.
             </p>
 
             <input
@@ -258,13 +241,14 @@
             >
 
             <button
+                type="button"
+                class="main-button"
                 id="scanButton"
-                class="primary"
             >
                 Scan Recipe
             </button>
 
-            <div id="scanStatus" class="scan-status">
+            <div id="scanStatus">
                 Ready
             </div>
 
@@ -272,14 +256,13 @@
 
 
         <!-- FOLDERS -->
-
         <section>
 
-            <div class="section-title">
+            <div class="section-heading">
 
                 <div>
                     <h2>📁 Folders</h2>
-                    <p>Organize your recipes.</p>
+                    <p>Organize your recipes</p>
                 </div>
 
             </div>
@@ -290,34 +273,33 @@
 
 
         <!-- MANAGEMENT -->
-
         <section class="management">
 
-            <h2>🛠️ Cookbook</h2>
+            <h2>Manage Cookbook</h2>
 
             <div class="management-grid">
 
-                <button id="makeFolderButton">
+                <button type="button" id="makeFolderButton">
                     ➕
-                    <span>Make Folder</span>
+                    <span>Add Folder</span>
                 </button>
 
-                <button id="editFolderButton">
+                <button type="button" id="editFolderButton">
                     ✏️
                     <span>Edit Folder</span>
                 </button>
 
-                <button id="deleteFolderButton" class="danger">
+                <button type="button" id="deleteFolderButton">
                     🗑️
                     <span>Delete Folder</span>
                 </button>
 
-                <button id="editRecipeButton">
+                <button type="button" id="editRecipeButton">
                     ✏️
                     <span>Edit Recipe</span>
                 </button>
 
-                <button id="deleteRecipeButton" class="danger">
+                <button type="button" id="deleteRecipeButton">
                     🗑️
                     <span>Delete Recipe</span>
                 </button>
@@ -328,10 +310,9 @@
 
 
         <!-- RECIPES -->
-
         <section>
 
-            <div class="section-title">
+            <div class="section-heading">
 
                 <div>
                     <h2 id="recipeTitle">
@@ -344,8 +325,9 @@
                 </div>
 
                 <button
-                    id="allRecipesButton"
+                    type="button"
                     class="small-button"
+                    id="allRecipesButton"
                 >
                     All
                 </button>
@@ -365,24 +347,21 @@
 
 
     <!-- PAGE COUNT -->
-
     <div id="pageCountModal" class="modal hidden">
 
         <div class="modal-card">
 
             <h2>📖 Recipe Pages</h2>
 
-            <p>
-                How many pages should this recipe use?
-            </p>
+            <p>How many pages should this recipe use?</p>
 
             <div class="page-options">
 
-                <button data-pages="1">1</button>
-                <button data-pages="2">2</button>
-                <button data-pages="3">3</button>
-                <button data-pages="4">4</button>
-                <button data-pages="5">5</button>
+                <button type="button" data-pages="1">1</button>
+                <button type="button" data-pages="2">2</button>
+                <button type="button" data-pages="3">3</button>
+                <button type="button" data-pages="4">4</button>
+                <button type="button" data-pages="5">5</button>
 
             </div>
 
@@ -391,20 +370,20 @@
     </div>
 
 
-    <!-- RECIPE EDITOR -->
-
+    <!-- EDIT RECIPE -->
     <div id="editorModal" class="modal hidden">
 
         <div class="modal-card">
 
             <button
+                type="button"
+                class="close"
                 id="closeEditor"
-                class="close-button"
             >
                 ✕
             </button>
 
-            <h2>📖 Recipe</h2>
+            <h2>Recipe</h2>
 
             <label>Title</label>
 
@@ -426,32 +405,24 @@
                 placeholder="Cuisine"
             >
 
-            <label>🥕 What You Need</label>
+            <label>🥕 Ingredients</label>
 
-            <textarea
-                id="recipeIngredients"
-                rows="10"
-            ></textarea>
+            <textarea id="recipeIngredients"></textarea>
 
             <label>👨‍🍳 Instructions</label>
 
-            <textarea
-                id="recipeInstructions"
-                rows="12"
-            ></textarea>
+            <textarea id="recipeInstructions"></textarea>
 
             <label>📝 Notes</label>
 
-            <textarea
-                id="recipeNotes"
-                rows="6"
-            ></textarea>
+            <textarea id="recipeNotes"></textarea>
 
-            <div id="editorError" class="error"></div>
+            <p id="editorError" class="error"></p>
 
             <button
+                type="button"
+                class="main-button"
                 id="saveRecipeButton"
-                class="primary"
             >
                 Save Recipe
             </button>
@@ -461,27 +432,22 @@
     </div>
 
 
-    <!-- RECIPE VIEW -->
-
+    <!-- VIEW RECIPE -->
     <div id="recipeModal" class="modal hidden">
 
         <div class="recipe-page">
 
             <button
+                type="button"
+                class="close"
                 id="closeRecipe"
-                class="close-button"
             >
                 ✕
             </button>
 
-            <div class="recipe-heading">
+            <div id="viewCuisine"></div>
 
-                <div id="viewCuisine"></div>
-
-                <h1 id="viewTitle"></h1>
-
-            </div>
-
+            <h1 id="viewTitle"></h1>
 
             <div id="viewPage1">
 
@@ -491,7 +457,6 @@
 
             </div>
 
-
             <div id="viewPage2" class="hidden">
 
                 <h2>👨‍🍳 Instructions</h2>
@@ -500,22 +465,17 @@
 
             </div>
 
-
             <div id="viewPage3" class="hidden">
 
                 <h2>📝 Notes</h2>
 
-                <div id="viewNotes"></div>
+                <p id="viewNotes"></p>
 
             </div>
 
-
             <div class="page-navigation">
 
-                <button
-                    id="previousPage"
-                    class="small-button"
-                >
+                <button type="button" id="previousPage">
                     ←
                 </button>
 
@@ -523,10 +483,7 @@
                     Page 1 of 1
                 </span>
 
-                <button
-                    id="nextPage"
-                    class="small-button"
-                >
+                <button type="button" id="nextPage">
                     →
                 </button>
 
@@ -536,14 +493,10 @@
 
     </div>
 
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"
-    ></script>
-
-    <script src="script.js"></script>
-
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
