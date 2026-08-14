@@ -1,312 +1,52 @@
-const STORAGE_KEY = "mealmind_v3";
+"use strict";
 
-let data = JSON.parse(
-    localStorage.getItem(STORAGE_KEY) || "null"
-);
+const STORAGE_KEY = "mealmind_v4";
+
+let data = loadData();
 
 let currentBook = null;
 let currentFolder = null;
-let editingRecipe = null;
-let pendingScan = null;
+
+let editingRecipeId = null;
+let pendingRecipe = null;
+
 let viewedRecipe = null;
 let viewedPage = 1;
 
-
-/* =========================
-   ELEMENTS
-========================= */
-
-const homeScreen =
-    document.getElementById("homeScreen");
-
-const makeScreen =
-    document.getElementById("makeScreen");
-
-const joinScreen =
-    document.getElementById("joinScreen");
-
-const publicScreen =
-    document.getElementById("publicScreen");
-
-const mainScreen =
-    document.getElementById("mainScreen");
+let selectedPrivacy = "private";
 
 
 /* =========================
-   HOME BUTTONS
+   DATA
 ========================= */
 
-document.getElementById(
-    "makeCookbookButton"
-).onclick = () => {
+function loadData() {
 
-    hideScreens();
+    try {
 
-    makeScreen.classList.remove(
-        "hidden"
-    );
-};
+        const saved =
+            localStorage.getItem(STORAGE_KEY);
 
+        if (!saved) {
+            return { books: [] };
+        }
 
-document.getElementById(
-    "joinCookbookButton"
-).onclick = () => {
+        const parsed =
+            JSON.parse(saved);
 
-    hideScreens();
+        return parsed &&
+            Array.isArray(parsed.books)
+            ? parsed
+            : { books: [] };
 
-    joinScreen.classList.remove(
-        "hidden"
-    );
-};
+    } catch {
 
-
-document.getElementById(
-    "publicBooksButton"
-).onclick = () => {
-
-    hideScreens();
-
-    publicScreen.classList.remove(
-        "hidden"
-    );
-
-    renderPublicBooks();
-};
-
-
-/* =========================
-   BACK BUTTONS
-========================= */
-
-document.getElementById(
-    "backFromMake"
-).onclick = goHome;
-
-
-document.getElementById(
-    "backFromJoin"
-).onclick = goHome;
-
-
-document.getElementById(
-    "backFromPublic"
-).onclick = goHome;
-
-
-function goHome() {
-
-    currentBook = null;
-
-    currentFolder = null;
-
-    hideScreens();
-
-    homeScreen.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-/*
- * IMPORTANT:
- * Every time the page loads,
- * it starts at Home.
- */
-
-function hideScreens() {
-
-    homeScreen.classList.add(
-        "hidden"
-    );
-
-    makeScreen.classList.add(
-        "hidden"
-    );
-
-    joinScreen.classList.add(
-        "hidden"
-    );
-
-    publicScreen.classList.add(
-        "hidden"
-    );
-
-    mainScreen.classList.add(
-        "hidden"
-    );
-
-}
-
-
-/* =========================
-   PRIVACY
-========================= */
-
-let privacy =
-    "private";
-
-
-document.getElementById(
-    "privateButton"
-).onclick = () => {
-
-    privacy = "private";
-
-    document.getElementById(
-        "privateButton"
-    ).classList.add("selected");
-
-    document.getElementById(
-        "publicButton"
-    ).classList.remove("selected");
-
-};
-
-
-document.getElementById(
-    "publicButton"
-).onclick = () => {
-
-    privacy = "public";
-
-    document.getElementById(
-        "publicButton"
-    ).classList.add("selected");
-
-    document.getElementById(
-        "privateButton"
-    ).classList.remove("selected");
-
-};
-
-
-/* =========================
-   SHOW PASSWORD
-========================= */
-
-document.getElementById(
-    "showPasswordButton"
-).onclick = () => {
-
-    const input =
-        document.getElementById(
-            "cookbookPassword"
-        );
-
-    input.type =
-        input.type === "password"
-            ? "text"
-            : "password";
-
-};
-
-
-document.getElementById(
-    "showJoinPassword"
-).onclick = () => {
-
-    const input =
-        document.getElementById(
-            "joinPassword"
-        );
-
-    input.type =
-        input.type === "password"
-            ? "text"
-            : "password";
-
-};
-
-
-/* =========================
-   CREATE COOKBOOK
-========================= */
-
-document.getElementById(
-    "createCookbookButton"
-).onclick = () => {
-
-    const name =
-        document.getElementById(
-            "cookbookName"
-        ).value.trim();
-
-    const password =
-        document.getElementById(
-            "cookbookPassword"
-        ).value;
-
-
-    const error =
-        document.getElementById(
-            "makeError"
-        );
-
-
-    error.textContent = "";
-
-
-    if (!name) {
-
-        error.textContent =
-            "Enter a cookbook name.";
-
-        return;
+        return { books: [] };
 
     }
 
+}
 
-    if (
-        password.length < 4
-    ) {
-
-        error.textContent =
-            "Password must be at least 4 characters.";
-
-        return;
-
-    }
-
-
-    /*
-     * Each recipe gets its own page count.
-     */
-
-    currentBook = {
-
-        id:
-            crypto.randomUUID(),
-
-        name,
-
-        privacy,
-
-        password,
-
-        recipes: [],
-
-        folders: [
-            "Sweet",
-            "Savoury",
-            "Fried",
-            "International"
-        ]
-
-    };
-
-
-    saveData();
-
-
-    openBook();
-
-};
-
-
-/* =========================
-   SAVE
-========================= */
 
 function saveData() {
 
@@ -319,88 +59,302 @@ function saveData() {
 
 
 /* =========================
-   OPEN BOOK
+   SCREEN CONTROL
 ========================= */
 
-function openBook() {
+const screens = [
+    "homeScreen",
+    "makeScreen",
+    "joinScreen",
+    "publicScreen"
+];
+
+function hideScreens() {
+
+    screens.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+            element.classList.add("hidden");
+        }
+
+    });
+
+    document
+        .getElementById("mainScreen")
+        .classList.add("hidden");
+
+}
+
+
+function showScreen(id) {
 
     hideScreens();
 
-    mainScreen.classList.remove(
-        "hidden"
-    );
-
-
-    document.getElementById(
-        "mainBookName"
-    ).textContent =
-        currentBook.name;
-
-
-    document.getElementById(
-        "privacyBadge"
-    ).textContent =
-        currentBook.privacy === "public"
-            ? "🌐 Public"
-            : "🔒 Private";
-
-
-    render();
+    document
+        .getElementById(id)
+        .classList.remove("hidden");
 
 }
 
 
 /* =========================
-   EXIT BOOK
+   HOME
 ========================= */
 
-document.getElementById(
-    "exitBookButton"
-).onclick = goHome;
+document
+    .getElementById("makeCookbookButton")
+    .addEventListener("click", () => {
+
+        showScreen("makeScreen");
+
+    });
+
+
+document
+    .getElementById("joinCookbookButton")
+    .addEventListener("click", () => {
+
+        showScreen("joinScreen");
+
+    });
+
+
+document
+    .getElementById("publicBooksButton")
+    .addEventListener("click", () => {
+
+        showScreen("publicScreen");
+
+        renderPublicBooks();
+
+    });
 
 
 /* =========================
-   JOIN
+   BACK
 ========================= */
 
-document.getElementById(
-    "joinButton"
-).onclick = () => {
+document
+    .getElementById("backFromMake")
+    .addEventListener("click", goHome);
+
+document
+    .getElementById("backFromJoin")
+    .addEventListener("click", goHome);
+
+document
+    .getElementById("backFromPublic")
+    .addEventListener("click", goHome);
+
+
+function goHome() {
+
+    currentBook = null;
+    currentFolder = null;
+
+    hideScreens();
+
+    document
+        .getElementById("homeScreen")
+        .classList.remove("hidden");
+
+}
+
+
+/* =========================
+   PRIVACY
+========================= */
+
+document
+    .getElementById("privateButton")
+    .addEventListener("click", () => {
+
+        selectedPrivacy = "private";
+
+        document
+            .getElementById("privateButton")
+            .classList.add("selected");
+
+        document
+            .getElementById("publicButton")
+            .classList.remove("selected");
+
+    });
+
+
+document
+    .getElementById("publicButton")
+    .addEventListener("click", () => {
+
+        selectedPrivacy = "public";
+
+        document
+            .getElementById("publicButton")
+            .classList.add("selected");
+
+        document
+            .getElementById("privateButton")
+            .classList.remove("selected");
+
+    });
+
+
+/* =========================
+   PASSWORD
+========================= */
+
+document
+    .getElementById("showPasswordButton")
+    .addEventListener("click", () => {
+
+        togglePassword(
+            "cookbookPassword"
+        );
+
+    });
+
+
+document
+    .getElementById("showJoinPassword")
+    .addEventListener("click", () => {
+
+        togglePassword(
+            "joinPassword"
+        );
+
+    });
+
+
+function togglePassword(id) {
+
+    const input =
+        document.getElementById(id);
+
+    input.type =
+        input.type === "password"
+            ? "text"
+            : "password";
+
+}
+
+
+/* =========================
+   CREATE COOKBOOK
+========================= */
+
+document
+    .getElementById("createCookbookButton")
+    .addEventListener("click", createCookbook);
+
+
+function createCookbook() {
 
     const name =
-        document.getElementById(
-            "joinName"
-        ).value.trim();
+        document
+            .getElementById("cookbookName")
+            .value
+            .trim();
 
     const password =
-        document.getElementById(
-            "joinPassword"
-        ).value;
-
+        document
+            .getElementById("cookbookPassword")
+            .value;
 
     const error =
-        document.getElementById(
-            "joinError"
-        );
+        document.getElementById("makeError");
 
 
     error.textContent = "";
 
 
-    if (!data || !data.books) {
+    if (!name) {
 
         error.textContent =
-            "No cookbooks are available on this device.";
+            "Please enter a cookbook name.";
 
         return;
 
     }
 
 
+    if (password.length < 4) {
+
+        error.textContent =
+            "Password must be at least 4 characters.";
+
+        return;
+
+    }
+
+
+    currentBook = {
+
+        id: crypto.randomUUID(),
+
+        name,
+
+        privacy: selectedPrivacy,
+
+        password,
+
+        folders: [
+            "Sweet",
+            "Savoury",
+            "Fried",
+            "International"
+        ],
+
+        recipes: []
+
+    };
+
+
+    data.books.push(currentBook);
+
+    saveData();
+
+    openBook();
+
+}
+
+
+/* =========================
+   JOIN
+========================= */
+
+document
+    .getElementById("joinButton")
+    .addEventListener("click", joinBook);
+
+
+function joinBook() {
+
+    const name =
+        document
+            .getElementById("joinName")
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById("joinPassword")
+            .value;
+
+    const error =
+        document.getElementById("joinError");
+
+
+    error.textContent = "";
+
+
     const book =
         data.books.find(
             item =>
-                item.name === name
+                item.name.toLowerCase() ===
+                name.toLowerCase()
         );
 
 
@@ -415,7 +369,6 @@ document.getElementById(
 
 
     if (
-        book.privacy === "private" &&
         book.password !== password
     ) {
 
@@ -427,13 +380,11 @@ document.getElementById(
     }
 
 
-    currentBook =
-        book;
-
+    currentBook = book;
 
     openBook();
 
-};
+}
 
 
 /* =========================
@@ -442,43 +393,26 @@ document.getElementById(
 
 function renderPublicBooks() {
 
-    const container =
+    const list =
         document.getElementById(
             "publicBooksList"
         );
 
-
-    container.innerHTML = "";
-
-
-    if (
-        !data ||
-        !data.books
-    ) {
-
-        container.innerHTML =
-            `<p class="muted">
-                No public books yet.
-            </p>`;
-
-        return;
-
-    }
+    list.innerHTML = "";
 
 
     const books =
         data.books.filter(
             book =>
-                book.privacy ===
-                "public"
+                book.privacy === "public"
         );
 
 
     if (!books.length) {
 
-        container.innerHTML =
-            `<p class="muted">
-                No public books yet.
+        list.innerHTML =
+            `<p style="color:#9298a2">
+                No public cookbooks yet.
             </p>`;
 
         return;
@@ -486,107 +420,125 @@ function renderPublicBooks() {
     }
 
 
-    books.forEach(
-        book => {
+    books.forEach(book => {
 
-            const item =
-                document.createElement(
-                    "button"
-                );
+        const button =
+            document.createElement("button");
 
+        button.type = "button";
 
-            item.className =
-                "secondary";
+        button.className =
+            "main-button";
 
+        button.textContent =
+            `📖 ${book.name}`;
 
-            item.textContent =
-                `📖 ${book.name}`;
+        button.addEventListener(
+            "click",
+            () => {
 
+                currentBook = book;
 
-            item.onclick =
-                () => {
+                openBook();
 
-                    currentBook =
-                        book;
+            }
+        );
 
-                    openBook();
+        list.appendChild(button);
 
-                };
-
-
-            container.appendChild(
-                item
-            );
-
-        }
-    );
+    });
 
 }
+
+
+/* =========================
+   OPEN BOOK
+========================= */
+
+function openBook() {
+
+    hideScreens();
+
+    document
+        .getElementById("mainScreen")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("mainBookName")
+        .textContent =
+        currentBook.name;
+
+    document
+        .getElementById("privacyBadge")
+        .textContent =
+        currentBook.privacy === "public"
+            ? "🌐 Public"
+            : "🔒 Private";
+
+    currentFolder = null;
+
+    document
+        .getElementById("searchInput")
+        .value = "";
+
+    render();
+
+}
+
+
+/* =========================
+   EXIT
+========================= */
+
+document
+    .getElementById("exitBookButton")
+    .addEventListener("click", goHome);
 
 
 /* =========================
    SCANNER
 ========================= */
 
-document.getElementById(
-    "scanButton"
-).onclick = () => {
+document
+    .getElementById("scanButton")
+    .addEventListener("click", () => {
 
-    document.getElementById(
-        "cameraInput"
-    ).click();
+        document
+            .getElementById("cameraInput")
+            .click();
 
-};
+    });
 
 
-document.getElementById(
-    "cameraInput"
-).onchange =
-    async event => {
+document
+    .getElementById("cameraInput")
+    .addEventListener("change", async event => {
 
         const file =
             event.target.files[0];
 
+        if (!file) return;
 
-        if (!file)
-            return;
+        document
+            .getElementById("pageCountModal")
+            .classList.remove("hidden");
 
+        pendingRecipe =
+            await readRecipe(file);
 
-        pendingScan =
-            file;
-
-
-        /*
-         * Ask for recipe pages AFTER scanning.
-         */
-
-        document.getElementById(
-            "pageCountModal"
-        ).classList.remove(
-            "hidden"
-        );
-
-
-        await scanRecipe(
-            file
-        );
-
-    };
+    });
 
 
 /* =========================
    OCR
 ========================= */
 
-async function scanRecipe(
-    file
-) {
+async function readRecipe(file) {
 
     const status =
         document.getElementById(
             "scanStatus"
         );
-
 
     try {
 
@@ -599,123 +551,94 @@ async function scanRecipe(
                 file,
                 "eng",
                 {
+                    logger(message) {
 
-                    logger:
-                        message => {
+                        if (
+                            message.status ===
+                            "recognizing text"
+                        ) {
 
-                            if (
-                                message.status ===
-                                "recognizing text"
-                            ) {
-
-                                status.textContent =
-                                    `🔎 Reading ${Math.round(
+                            status.textContent =
+                                `🔎 Reading ${
+                                    Math.round(
                                         message.progress * 100
-                                    )}%`;
-
-                            }
+                                    )
+                                }%`;
 
                         }
 
+                    }
                 }
             );
 
 
         const text =
-            cleanText(
+            cleanOCR(
                 result.data.text
             );
 
 
-        pendingScan =
-            parseRecipe(
-                text
-            );
-
-
         status.textContent =
-            "✅ Recipe scanned. Choose pages.";
+            "✅ Recipe read. Choose pages.";
 
-    } catch (
-        error
-    ) {
 
-        console.error(
-            error
-        );
+        return parseRecipe(text);
+
+
+    } catch (error) {
+
+        console.error(error);
 
         status.textContent =
             "❌ Could not read recipe.";
+
+        document
+            .getElementById("pageCountModal")
+            .classList.add("hidden");
+
+        return null;
 
     }
 
 }
 
 
-/* =========================
-   CLEAN OCR
-========================= */
-
-function cleanText(
-    text
-) {
+function cleanOCR(text) {
 
     return text
         .normalize("NFKC")
-        .replace(
-            /[^\S\r\n]+/g,
-            " "
-        )
-        .replace(
-            /[░▒▓█■□◆◇]/g,
-            ""
-        )
+        .replace(/[░▒▓█■□◆◇]/g, "")
+        .replace(/[^\S\r\n]+/g, " ")
         .split("\n")
-        .map(
-            line =>
-                line.trim()
-        )
+        .map(line => line.trim())
         .filter(Boolean)
         .join("\n");
 
 }
 
 
-/* =========================
-   PARSE
-========================= */
-
-function parseRecipe(
-    text
-) {
+function parseRecipe(text) {
 
     const lines =
         text
             .split("\n")
+            .map(line => line.trim())
             .filter(Boolean);
 
 
     let title = "";
 
-    let mode = "";
+    let section = "";
 
     const ingredients = [];
-
     const instructions = [];
-
     const notes = [];
 
 
-    for (
-        const original of lines
-    ) {
-
-        let line =
-            original.trim();
-
+    for (const original of lines) {
 
         const lower =
-            line.toLowerCase();
+            original.toLowerCase();
 
 
         if (
@@ -723,9 +646,7 @@ function parseRecipe(
                 .test(lower)
         ) {
 
-            mode =
-                "ingredients";
-
+            section = "ingredients";
             continue;
 
         }
@@ -736,9 +657,7 @@ function parseRecipe(
                 .test(lower)
         ) {
 
-            mode =
-                "instructions";
-
+            section = "instructions";
             continue;
 
         }
@@ -749,16 +668,14 @@ function parseRecipe(
                 .test(lower)
         ) {
 
-            mode =
-                "notes";
-
+            section = "notes";
             continue;
 
         }
 
 
-        line =
-            line
+        let line =
+            original
                 .replace(
                     /^[•●▪◦*-]\s*/,
                     ""
@@ -770,54 +687,36 @@ function parseRecipe(
                 .trim();
 
 
-        if (!line)
-            continue;
+        if (!line) continue;
 
 
         if (
             !title &&
-            !mode &&
-            line.length < 80
+            !section &&
+            line.length <= 80
         ) {
 
-            title =
-                line;
-
+            title = line;
             continue;
 
         }
 
 
-        if (
-            mode ===
-            "ingredients"
-        ) {
+        if (section === "ingredients") {
 
-            ingredients.push(
-                line
-            );
+            ingredients.push(line);
 
         }
 
-        else if (
-            mode ===
-            "instructions"
-        ) {
+        else if (section === "instructions") {
 
-            instructions.push(
-                line
-            );
+            instructions.push(line);
 
         }
 
-        else if (
-            mode ===
-            "notes"
-        ) {
+        else if (section === "notes") {
 
-            notes.push(
-                line
-            );
+            notes.push(line);
 
         }
 
@@ -829,14 +728,10 @@ function parseRecipe(
         title,
 
         ingredients:
-            [...new Set(
-                ingredients
-            )],
+            [...new Set(ingredients)],
 
         instructions:
-            [...new Set(
-                instructions
-            )],
+            [...new Set(instructions)],
 
         notes:
             notes.join(" ")
@@ -850,13 +745,16 @@ function parseRecipe(
    PAGE COUNT
 ========================= */
 
-document.querySelectorAll(
-    "[data-pages]"
-).forEach(
-    button => {
+document
+    .querySelectorAll("[data-pages]")
+    .forEach(button => {
 
-        button.onclick =
+        button.addEventListener(
+            "click",
             () => {
+
+                if (!pendingRecipe) return;
+
 
                 const pages =
                     Number(
@@ -864,87 +762,76 @@ document.querySelectorAll(
                     );
 
 
-                document.getElementById(
-                    "pageCountModal"
-                ).classList.add(
-                    "hidden"
-                );
+                pendingRecipe.pages =
+                    pages;
 
 
-                if (
-                    !pendingScan
-                )
-                    return;
+                document
+                    .getElementById(
+                        "pageCountModal"
+                    )
+                    .classList.add("hidden");
 
 
                 openEditor(
-                    pendingScan,
-                    pages
+                    pendingRecipe
                 );
 
-            };
+            }
+        );
 
-    }
-);
+    });
 
 
 /* =========================
    EDITOR
 ========================= */
 
-function openEditor(
-    recipe,
-    pages = 1
-) {
+function openEditor(recipe) {
 
-    editingRecipe =
+    editingRecipeId =
         recipe.id || null;
 
 
-    recipe.pages =
-        pages;
-
-
-    document.getElementById(
-        "recipeTitleInput"
-    ).value =
+    document
+        .getElementById("recipeTitleInput")
+        .value =
         recipe.title || "";
 
 
-    document.getElementById(
-        "recipeCuisine"
-    ).value =
-        recipe.cuisine ||
-        "General";
+    document
+        .getElementById("recipeCuisine")
+        .value =
+        recipe.cuisine || "";
 
 
-    document.getElementById(
-        "recipeIngredients"
-    ).value =
+    document
+        .getElementById("recipeIngredients")
+        .value =
         (recipe.ingredients || [])
             .join("\n");
 
 
-    document.getElementById(
-        "recipeInstructions"
-    ).value =
+    document
+        .getElementById("recipeInstructions")
+        .value =
         (recipe.instructions || [])
             .join("\n");
 
 
-    document.getElementById(
-        "recipeNotes"
-    ).value =
+    document
+        .getElementById("recipeNotes")
+        .value =
         recipe.notes || "";
 
 
-    const select =
+    const folderSelect =
         document.getElementById(
             "recipeFolder"
         );
 
 
-    select.innerHTML = "";
+    folderSelect.innerHTML = "";
 
 
     currentBook.folders.forEach(
@@ -955,13 +842,11 @@ function openEditor(
                     "option"
                 );
 
-            option.value =
-                folder;
+            option.value = folder;
 
-            option.textContent =
-                folder;
+            option.textContent = folder;
 
-            select.appendChild(
+            folderSelect.appendChild(
                 option
             );
 
@@ -969,16 +854,14 @@ function openEditor(
     );
 
 
-    select.value =
+    folderSelect.value =
         recipe.folder ||
         currentBook.folders[0];
 
 
-    document.getElementById(
-        "editorModal"
-    ).classList.remove(
-        "hidden"
-    );
+    document
+        .getElementById("editorModal")
+        .classList.remove("hidden");
 
 }
 
@@ -987,67 +870,85 @@ function openEditor(
    SAVE RECIPE
 ========================= */
 
-document.getElementById(
-    "saveRecipeButton"
-).onclick = () => {
+document
+    .getElementById("saveRecipeButton")
+    .addEventListener(
+        "click",
+        saveRecipe
+    );
+
+
+function saveRecipe() {
 
     const title =
+        document
+            .getElementById("recipeTitleInput")
+            .value
+            .trim();
+
+
+    const error =
         document.getElementById(
-            "recipeTitleInput"
-        ).value.trim();
+            "editorError"
+        );
 
 
-    const ingredients =
-        document.getElementById(
-            "recipeIngredients"
-        ).value
-        .split("\n")
-        .map(
-            x => x.trim()
-        )
-        .filter(Boolean);
+    if (!title) {
+
+        error.textContent =
+            "Recipe title is required.";
+
+        return;
+
+    }
 
 
-    const instructions =
-        document.getElementById(
-            "recipeInstructions"
-        ).value
-        .split("\n")
-        .map(
-            x => x.trim()
-        )
-        .filter(Boolean);
+    error.textContent = "";
 
 
     const recipe = {
 
         id:
-            editingRecipe ||
+            editingRecipeId ||
             crypto.randomUUID(),
 
         title,
 
-        folder:
-            document.getElementById(
-                "recipeFolder"
-            ).value,
-
         cuisine:
-            document.getElementById(
-                "recipeCuisine"
-            ).value.trim(),
+            document
+                .getElementById("recipeCuisine")
+                .value
+                .trim(),
 
-        ingredients,
+        folder:
+            document
+                .getElementById("recipeFolder")
+                .value,
 
-        instructions,
+        ingredients:
+            document
+                .getElementById("recipeIngredients")
+                .value
+                .split("\n")
+                .map(x => x.trim())
+                .filter(Boolean),
+
+        instructions:
+            document
+                .getElementById("recipeInstructions")
+                .value
+                .split("\n")
+                .map(x => x.trim())
+                .filter(Boolean),
 
         notes:
-            document.getElementById(
-                "recipeNotes"
-            ).value.trim(),
+            document
+                .getElementById("recipeNotes")
+                .value
+                .trim(),
 
         pages:
-            pendingScan?.pages ||
+            pendingRecipe?.pages ||
             1
 
     };
@@ -1056,18 +957,13 @@ document.getElementById(
     const index =
         currentBook.recipes.findIndex(
             item =>
-                item.id ===
-                recipe.id
+                item.id === recipe.id
         );
 
 
-    if (
-        index === -1
-    ) {
+    if (index === -1) {
 
-        currentBook.recipes.push(
-            recipe
-        );
+        currentBook.recipes.push(recipe);
 
     } else {
 
@@ -1080,53 +976,36 @@ document.getElementById(
     saveCurrentBook();
 
 
-    document.getElementById(
-        "editorModal"
-    ).classList.add(
-        "hidden"
-    );
+    document
+        .getElementById("editorModal")
+        .classList.add("hidden");
 
 
-    pendingScan =
-        null;
+    pendingRecipe = null;
 
+    editingRecipeId = null;
 
     render();
 
-};
+}
 
 
 /* =========================
-   SAVE CURRENT BOOK
+   SAVE BOOK
 ========================= */
 
 function saveCurrentBook() {
 
-    if (!data)
-        data = {
-            books: []
-        };
-
-
-    if (!data.books)
-        data.books = [];
-
-
     const index =
         data.books.findIndex(
             book =>
-                book.id ===
-                currentBook.id
+                book.id === currentBook.id
         );
 
 
-    if (
-        index === -1
-    ) {
+    if (index === -1) {
 
-        data.books.push(
-            currentBook
-        );
+        data.books.push(currentBook);
 
     } else {
 
@@ -1154,17 +1033,10 @@ function render() {
 }
 
 
-/* =========================
-   FOLDERS
-========================= */
-
 function renderFolders() {
 
     const container =
-        document.getElementById(
-            "folders"
-        );
-
+        document.getElementById("folders");
 
     container.innerHTML = "";
 
@@ -1175,60 +1047,51 @@ function renderFolders() {
             const count =
                 currentBook.recipes.filter(
                     recipe =>
-                        recipe.folder ===
-                        folder
+                        recipe.folder === folder
                 ).length;
 
 
             const button =
-                document.createElement(
-                    "button"
-                );
+                document.createElement("button");
 
+
+            button.type = "button";
 
             button.className =
                 "folder-card";
 
 
             button.innerHTML = `
-                <div class="folder-icon">
-                    📁
-                </div>
-
-                <strong>
-                    ${escapeHTML(folder)}
-                </strong>
-
+                <div class="folder-icon">📁</div>
+                <strong>${escapeHTML(folder)}</strong>
                 <div class="folder-count">
-                    ${count} ${
-                        count === 1
-                            ? "recipe"
-                            : "recipes"
-                    }
+                    ${count}
+                    ${count === 1 ? "recipe" : "recipes"}
                 </div>
             `;
 
 
-            button.onclick =
+            button.addEventListener(
+                "click",
                 () => {
 
                     currentFolder =
                         folder;
 
-                    document.getElementById(
-                        "recipeTitle"
-                    ).textContent =
-                        "📁 " +
-                        folder;
+                    document
+                        .getElementById(
+                            "recipeTitle"
+                        )
+                        .textContent =
+                        "📁 " + folder;
 
                     renderRecipes();
 
-                };
-
-
-            container.appendChild(
-                button
+                }
             );
+
+
+            container.appendChild(button);
 
         }
     );
@@ -1236,28 +1099,19 @@ function renderFolders() {
 }
 
 
-/* =========================
-   RECIPES
-========================= */
-
 function renderRecipes() {
 
     const container =
-        document.getElementById(
-            "recipes"
-        );
-
+        document.getElementById("recipes");
 
     container.innerHTML = "";
 
 
     let recipes =
-        currentBook.recipes;
+        [...currentBook.recipes];
 
 
-    if (
-        currentFolder
-    ) {
+    if (currentFolder) {
 
         recipes =
             recipes.filter(
@@ -1270,16 +1124,14 @@ function renderRecipes() {
 
 
     const search =
-        document.getElementById(
-            "searchInput"
-        ).value
-        .toLowerCase()
-        .trim();
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase()
+            .trim();
 
 
-    if (
-        search
-    ) {
+    if (search) {
 
         recipes =
             recipes.filter(
@@ -1297,9 +1149,9 @@ function renderRecipes() {
     }
 
 
-    document.getElementById(
-        "recipeCount"
-    ).textContent =
+    document
+        .getElementById("recipeCount")
+        .textContent =
         `${recipes.length} ${
             recipes.length === 1
                 ? "recipe"
@@ -1307,76 +1159,51 @@ function renderRecipes() {
         }`;
 
 
-    recipes.forEach(
-        recipe => {
+    recipes.forEach(recipe => {
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+        const card =
+            document.createElement("div");
 
-
-            card.className =
-                "recipe-card";
+        card.className =
+            "recipe-card";
 
 
-            card.innerHTML = `
-                <h3>
-                    ${escapeHTML(
-                        recipe.title
-                    )}
-                </h3>
+        card.innerHTML = `
+            <h3>${escapeHTML(recipe.title)}</h3>
 
-                <div class="recipe-meta">
-                    ${escapeHTML(
-                        recipe.cuisine ||
-                        "General"
-                    )}
-                    ·
-                    ${escapeHTML(
-                        recipe.folder
-                    )}
-                    ·
-                    ${recipe.pages || 1} page${
-                        (recipe.pages || 1) === 1
-                            ? ""
-                            : "s"
-                    }
-                </div>
-            `;
+            <div class="recipe-meta">
+                ${escapeHTML(recipe.cuisine || "General")}
+                ·
+                ${escapeHTML(recipe.folder)}
+                ·
+                ${recipe.pages || 1} page${(recipe.pages || 1) === 1 ? "" : "s"}
+            </div>
+        `;
 
 
-            const open =
-                document.createElement(
-                    "button"
-                );
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className =
+            "recipe-open";
+
+        button.textContent =
+            "Open Recipe";
 
 
-            open.className =
-                "recipe-open";
+        button.addEventListener(
+            "click",
+            () => openRecipe(recipe)
+        );
 
 
-            open.textContent =
-                "Open Recipe";
+        card.appendChild(button);
 
+        container.appendChild(card);
 
-            open.onclick =
-                () => openRecipe(
-                    recipe
-                );
-
-
-            card.appendChild(
-                open
-            );
-
-
-            container.appendChild(
-                card
-            );
-
-        }
-    );
+    });
 
 }
 
@@ -1385,57 +1212,53 @@ function renderRecipes() {
    SEARCH
 ========================= */
 
-document.getElementById(
-    "searchInput"
-).oninput =
-    renderRecipes;
+document
+    .getElementById("searchInput")
+    .addEventListener(
+        "input",
+        renderRecipes
+    );
 
 
-/* =========================
-   ALL RECIPES
-========================= */
+document
+    .getElementById("allRecipesButton")
+    .addEventListener(
+        "click",
+        () => {
 
-document.getElementById(
-    "allRecipesButton"
-).onclick = () => {
+            currentFolder = null;
 
-    currentFolder =
-        null;
+            document
+                .getElementById("recipeTitle")
+                .textContent =
+                "📖 All Recipes";
 
-    document.getElementById(
-        "recipeTitle"
-    ).textContent =
-        "📖 All Recipes";
+            renderRecipes();
 
-    renderRecipes();
-
-};
+        }
+    );
 
 
 /* =========================
    VIEW RECIPE
 ========================= */
 
-function openRecipe(
-    recipe
-) {
+function openRecipe(recipe) {
 
-    viewedRecipe =
-        recipe;
+    viewedRecipe = recipe;
 
-    viewedPage =
-        1;
+    viewedPage = 1;
 
 
-    document.getElementById(
-        "viewTitle"
-    ).textContent =
+    document
+        .getElementById("viewTitle")
+        .textContent =
         recipe.title;
 
 
-    document.getElementById(
-        "viewCuisine"
-    ).textContent =
+    document
+        .getElementById("viewCuisine")
+        .textContent =
         recipe.cuisine || "";
 
 
@@ -1444,24 +1267,18 @@ function openRecipe(
             "viewIngredients"
         );
 
-
     ingredients.innerHTML = "";
 
 
     recipe.ingredients.forEach(
-        ingredient => {
+        item => {
 
             const li =
-                document.createElement(
-                    "li"
-                );
+                document.createElement("li");
 
-            li.textContent =
-                ingredient;
+            li.textContent = item;
 
-            ingredients.appendChild(
-                li
-            );
+            ingredients.appendChild(li);
 
         }
     );
@@ -1472,41 +1289,32 @@ function openRecipe(
             "viewInstructions"
         );
 
-
     instructions.innerHTML = "";
 
 
     recipe.instructions.forEach(
-        instruction => {
+        item => {
 
             const li =
-                document.createElement(
-                    "li"
-                );
+                document.createElement("li");
 
-            li.textContent =
-                instruction;
+            li.textContent = item;
 
-            instructions.appendChild(
-                li
-            );
+            instructions.appendChild(li);
 
         }
     );
 
 
-    document.getElementById(
-        "viewNotes"
-    ).textContent =
-        recipe.notes ||
-        "No notes.";
+    document
+        .getElementById("viewNotes")
+        .textContent =
+        recipe.notes || "No notes.";
 
 
-    document.getElementById(
-        "recipeModal"
-    ).classList.remove(
-        "hidden"
-    );
+    document
+        .getElementById("recipeModal")
+        .classList.remove("hidden");
 
 
     updateRecipePage();
@@ -1521,260 +1329,78 @@ function openRecipe(
 function updateRecipePage() {
 
     const total =
-        viewedRecipe.pages ||
-        1;
+        viewedRecipe.pages || 1;
 
 
-    document.getElementById(
-        "viewPage1"
-    ).classList.add(
-        "hidden"
-    );
+    document
+        .getElementById("viewPage1")
+        .classList.add("hidden");
 
-    document.getElementById(
-        "viewPage2"
-    ).classList.add(
-        "hidden"
-    );
+    document
+        .getElementById("viewPage2")
+        .classList.add("hidden");
 
-    document.getElementById(
-        "viewPage3"
-    ).classList.add(
-        "hidden"
-    );
+    document
+        .getElementById("viewPage3")
+        .classList.add("hidden");
 
 
-    /*
-     * Page 1:
-     * What You Need
-     *
-     * Page 2:
-     * Instructions
-     *
-     * Page 3+:
-     * Notes
-     */
+    if (viewedPage === 1) {
 
-
-    if (
-        viewedPage === 1
-    ) {
-
-        document.getElementById(
-            "viewPage1"
-        ).classList.remove(
-            "hidden"
-        );
+        document
+            .getElementById("viewPage1")
+            .classList.remove("hidden");
 
     }
 
+    else if (viewedPage === 2) {
 
-    else if (
-        viewedPage === 2
-    ) {
-
-        document.getElementById(
-            "viewPage2"
-        ).classList.remove(
-            "hidden"
-        );
+        document
+            .getElementById("viewPage2")
+            .classList.remove("hidden");
 
     }
-
 
     else {
 
-        document.getElementById(
-            "viewPage3"
-        ).classList.remove(
-            "hidden"
-        );
+        document
+            .getElementById("viewPage3")
+            .classList.remove("hidden");
 
     }
 
 
-    document.getElementById(
-        "pageNumber"
-    ).textContent =
+    document
+        .getElementById("pageNumber")
+        .textContent =
         `Page ${viewedPage} of ${total}`;
 
 
-    document.getElementById(
-        "previousPage"
-    ).disabled =
+    document
+        .getElementById("previousPage")
+        .disabled =
         viewedPage <= 1;
 
 
-    document.getElementById(
-        "nextPage"
-    ).disabled =
+    document
+        .getElementById("nextPage")
+        .disabled =
         viewedPage >= total;
 
 }
 
 
-document.getElementById(
-    "previousPage"
-).onclick = () => {
+document
+    .getElementById("previousPage")
+    .addEventListener(
+        "click",
+        () => {
 
-    if (
-        viewedPage > 1
-    ) {
+            if (viewedPage > 1) {
 
-        viewedPage--;
+                viewedPage--;
 
-        updateRecipePage();
-
-    }
-
-};
-
-
-document.getElementById(
-    "nextPage"
-).onclick = () => {
-
-    const total =
-        viewedRecipe.pages ||
-        1;
-
-
-    if (
-        viewedPage < total
-    ) {
-
-        viewedPage++;
-
-        updateRecipePage();
-
-    }
-
-};
-
-
-document.getElementById(
-    "closeRecipe"
-).onclick = () => {
-
-    document.getElementById(
-        "recipeModal"
-    ).classList.add(
-        "hidden"
-    );
-
-};
-
-
-/* =========================
-   MAKE FOLDER
-========================= */
-
-document.getElementById(
-    "makeFolderButton"
-).onclick = () => {
-
-    const name =
-        prompt(
-            "New folder name:"
-        );
-
-
-    if (
-        !name ||
-        !name.trim()
-    )
-        return;
-
-
-    const clean =
-        name.trim();
-
-
-    if (
-        currentBook.folders.includes(
-            clean
-        )
-    ) {
-
-        alert(
-            "That folder already exists."
-        );
-
-        return;
-
-    }
-
-
-    currentBook.folders.push(
-        clean
-    );
-
-
-    saveCurrentBook();
-
-    render();
-
-};
-
-
-/* =========================
-   EDIT FOLDER
-========================= */
-
-document.getElementById(
-    "editFolderButton"
-).onclick = () => {
-
-    const oldName =
-        prompt(
-            "Folder to edit:\n\n" +
-            currentBook.folders.join("\n")
-        );
-
-
-    if (
-        !currentBook.folders.includes(
-            oldName
-        )
-    )
-        return;
-
-
-    const newName =
-        prompt(
-            "New folder name:"
-        );
-
-
-    if (
-        !newName ||
-        currentBook.folders.includes(
-            newName
-        )
-    )
-        return;
-
-
-    const index =
-        currentBook.folders.indexOf(
-            oldName
-        );
-
-
-    currentBook.folders[index] =
-        newName;
-
-
-    currentBook.recipes.forEach(
-        recipe => {
-
-            if (
-                recipe.folder ===
-                oldName
-            ) {
-
-                recipe.folder =
-                    newName;
+                updateRecipePage();
 
             }
 
@@ -1782,79 +1408,20 @@ document.getElementById(
     );
 
 
-    saveCurrentBook();
+document
+    .getElementById("nextPage")
+    .addEventListener(
+        "click",
+        () => {
 
-    render();
+            const total =
+                viewedRecipe.pages || 1;
 
-};
+            if (viewedPage < total) {
 
+                viewedPage++;
 
-/* =========================
-   DELETE FOLDER
-========================= */
-
-document.getElementById(
-    "deleteFolderButton"
-).onclick = () => {
-
-    if (
-        currentBook.folders.length <= 1
-    ) {
-
-        alert(
-            "You need at least one folder."
-        );
-
-        return;
-
-    }
-
-
-    const name =
-        prompt(
-            "Folder to delete:\n\n" +
-            currentBook.folders.join("\n")
-        );
-
-
-    if (
-        !currentBook.folders.includes(
-            name
-        )
-    )
-        return;
-
-
-    if (
-        !confirm(
-            `Delete ${name}?`
-        )
-    )
-        return;
-
-
-    currentBook.folders =
-        currentBook.folders.filter(
-            folder =>
-                folder !==
-                name
-        );
-
-
-    const replacement =
-        currentBook.folders[0];
-
-
-    currentBook.recipes.forEach(
-        recipe => {
-
-            if (
-                recipe.folder ===
-                name
-            ) {
-
-                recipe.folder =
-                    replacement;
+                updateRecipePage();
 
             }
 
@@ -1862,207 +1429,366 @@ document.getElementById(
     );
 
 
-    currentFolder =
-        null;
+document
+    .getElementById("closeRecipe")
+    .addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById("recipeModal")
+                .classList.add("hidden");
+
+        }
+    );
 
 
-    saveCurrentBook();
+/* =========================
+   FOLDERS
+========================= */
 
-    render();
+document
+    .getElementById("makeFolderButton")
+    .addEventListener(
+        "click",
+        () => {
 
-};
+            const name =
+                prompt("Folder name:");
+
+            if (!name?.trim()) return;
+
+            const clean =
+                name.trim();
+
+
+            if (
+                currentBook.folders.includes(
+                    clean
+                )
+            ) {
+
+                alert("That folder already exists.");
+
+                return;
+
+            }
+
+
+            currentBook.folders.push(clean);
+
+            saveCurrentBook();
+
+            render();
+
+        }
+    );
+
+
+document
+    .getElementById("editFolderButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            const oldName =
+                prompt(
+                    "Folder to edit:\n\n" +
+                    currentBook.folders.join("\n")
+                );
+
+
+            if (
+                !currentBook.folders.includes(
+                    oldName
+                )
+            ) return;
+
+
+            const newName =
+                prompt("New folder name:");
+
+
+            if (!newName?.trim()) return;
+
+
+            const index =
+                currentBook.folders.indexOf(
+                    oldName
+                );
+
+
+            currentBook.folders[index] =
+                newName.trim();
+
+
+            currentBook.recipes.forEach(
+                recipe => {
+
+                    if (
+                        recipe.folder === oldName
+                    ) {
+
+                        recipe.folder =
+                            newName.trim();
+
+                    }
+
+                }
+            );
+
+
+            saveCurrentBook();
+
+            render();
+
+        }
+    );
+
+
+document
+    .getElementById("deleteFolderButton")
+    .addEventListener(
+        "click",
+        () => {
+
+            if (
+                currentBook.folders.length <= 1
+            ) {
+
+                alert(
+                    "You need at least one folder."
+                );
+
+                return;
+
+            }
+
+
+            const name =
+                prompt(
+                    "Folder to delete:\n\n" +
+                    currentBook.folders.join("\n")
+                );
+
+
+            if (
+                !currentBook.folders.includes(name)
+            ) return;
+
+
+            if (
+                !confirm(
+                    `Delete "${name}"?`
+                )
+            ) return;
+
+
+            currentBook.folders =
+                currentBook.folders.filter(
+                    folder =>
+                        folder !== name
+                );
+
+
+            const replacement =
+                currentBook.folders[0];
+
+
+            currentBook.recipes.forEach(
+                recipe => {
+
+                    if (
+                        recipe.folder === name
+                    ) {
+
+                        recipe.folder =
+                            replacement;
+
+                    }
+
+                }
+            );
+
+
+            currentFolder = null;
+
+            saveCurrentBook();
+
+            render();
+
+        }
+    );
 
 
 /* =========================
    EDIT RECIPE
 ========================= */
 
-document.getElementById(
-    "editRecipeButton"
-).onclick = () => {
+document
+    .getElementById("editRecipeButton")
+    .addEventListener(
+        "click",
+        () => {
 
-    if (
-        !currentBook.recipes.length
-    ) {
+            if (!currentBook.recipes.length) {
 
-        alert(
-            "No recipes yet."
-        );
+                alert("No recipes yet.");
 
-        return;
+                return;
 
-    }
+            }
 
 
-    const list =
-        currentBook.recipes
-            .map(
-                (recipe, i) =>
-                    `${i + 1}. ${recipe.title}`
-            )
-            .join("\n");
+            const list =
+                currentBook.recipes
+                    .map(
+                        (recipe, index) =>
+                            `${index + 1}. ${recipe.title}`
+                    )
+                    .join("\n");
 
 
-    const answer =
-        Number(
-            prompt(
-                list +
-                "\n\nRecipe number:"
-            )
-        ) - 1;
+            const number =
+                Number(
+                    prompt(
+                        list +
+                        "\n\nEnter recipe number:"
+                    )
+                );
 
 
-    if (
-        !currentBook.recipes[answer]
-    )
-        return;
+            const recipe =
+                currentBook.recipes[
+                    number - 1
+                ];
 
 
-    openEditor(
-        currentBook.recipes[answer],
-        currentBook.recipes[answer].pages || 1
+            if (!recipe) return;
+
+
+            pendingRecipe =
+                recipe;
+
+
+            openEditor(recipe);
+
+        }
     );
-
-};
 
 
 /* =========================
    DELETE RECIPE
 ========================= */
 
-document.getElementById(
-    "deleteRecipeButton"
-).onclick = () => {
+document
+    .getElementById("deleteRecipeButton")
+    .addEventListener(
+        "click",
+        () => {
 
-    if (
-        !currentBook.recipes.length
-    ) {
+            if (!currentBook.recipes.length) {
 
-        alert(
-            "No recipes yet."
-        );
+                alert("No recipes yet.");
 
-        return;
+                return;
 
-    }
+            }
 
 
-    const list =
-        currentBook.recipes
-            .map(
-                (recipe, i) =>
-                    `${i + 1}. ${recipe.title}`
-            )
-            .join("\n");
+            const list =
+                currentBook.recipes
+                    .map(
+                        (recipe, index) =>
+                            `${index + 1}. ${recipe.title}`
+                    )
+                    .join("\n");
 
 
-    const answer =
-        Number(
-            prompt(
-                list +
-                "\n\nRecipe number to delete:"
-            )
-        ) - 1;
+            const number =
+                Number(
+                    prompt(
+                        list +
+                        "\n\nEnter recipe number:"
+                    )
+                );
 
 
-    if (
-        !currentBook.recipes[answer]
-    )
-        return;
+            const index =
+                number - 1;
 
 
-    if (
-        !confirm(
-            `Delete "${currentBook.recipes[answer].title}"?`
-        )
-    )
-        return;
+            if (
+                !currentBook.recipes[index]
+            ) return;
 
 
-    currentBook.recipes.splice(
-        answer,
-        1
+            if (
+                !confirm(
+                    `Delete "${currentBook.recipes[index].title}"?`
+                )
+            ) return;
+
+
+            currentBook.recipes.splice(
+                index,
+                1
+            );
+
+
+            saveCurrentBook();
+
+            render();
+
+        }
     );
-
-
-    saveCurrentBook();
-
-    render();
-
-};
 
 
 /* =========================
    CLOSE EDITOR
 ========================= */
 
-document.getElementById(
-    "closeEditor"
-).onclick = () => {
+document
+    .getElementById("closeEditor")
+    .addEventListener(
+        "click",
+        () => {
 
-    document.getElementById(
-        "editorModal"
-    ).classList.add(
-        "hidden"
+            document
+                .getElementById("editorModal")
+                .classList.add("hidden");
+
+        }
     );
 
-};
-
 
 /* =========================
-   ESCAPE HTML
+   ESCAPE
 ========================= */
 
-function escapeHTML(
-    value
-) {
+function escapeHTML(value) {
 
     return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
 
 
 /* =========================
-   INITIAL DATA
+   START
 ========================= */
 
-if (!data) {
-
-    data = {
-        books: []
-    };
-
-    saveData();
-
-}
-
-
 /*
- * ALWAYS START AT HOME.
+ * Always open on the MealMind
+ * starter screen.
  */
 
 hideScreens();
 
-homeScreen.classList.remove(
-    "hidden"
-);
+document
+    .getElementById("homeScreen")
+    .classList.remove("hidden");
