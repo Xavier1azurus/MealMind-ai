@@ -1828,43 +1828,1086 @@ function scaleIngredient(
 
 }
 
-
+```javascript
 /* =========================================================
-   SCANNER
+   MEALMIND SCANNER — FIXED VERSION
    ========================================================= */
 
-function startScanner() {
+/*
+   What this version does:
+
+   1. Scans the recipe.
+   2. Finds the title.
+   3. Separates ingredients from instructions.
+   4. Cleans common OCR garbage.
+   5. Shows the complete recipe immediately.
+   6. Saves the recipe into the current folder.
+   7. ALWAYS makes a copy in the main "Recipes" folder.
+   8. Does NOT make a duplicate when already inside Recipes.
+*/
+
+
+async function scanRecipeImage(file) {
 
     if (!currentBook) {
+        alert("Open your cookbook first.");
+        return;
+    }
 
-        alert(
-            "Open a cookbook first."
+    if (!file) {
+        alert("Please select a recipe image.");
+        return;
+    }
+
+    showScannerStatus("Reading recipe...");
+
+    try {
+
+        await loadOCR();
+
+        const result = await Tesseract.recognize(
+            file,
+            "eng",
+            {
+                logger: message => {
+
+                    if (
+                        message.status ===
+                        "recognizing text"
+                    ) {
+
+                        const percent =
+                            Math.round(
+                                (message.progress || 0) * 100
+                            );
+
+                        showScannerStatus(
+                            `Reading recipe... ${percent}%`
+                        );
+                    }
+                }
+            }
         );
 
-        return;
+        const rawText =
+            result?.data?.text || "";
 
+        if (!rawText.trim()) {
+
+            hideScannerStatus();
+
+            alert(
+                "I couldn't find any text in that image. Try taking a clearer photo."
+            );
+
+            return;
+        }
+
+
+        /* -------------------------------------------------
+           TURN OCR INTO A REAL RECIPE
+           ------------------------------------------------- */
+
+        const recipe =
+            parseRecipeTextFixed(rawText);
+
+
+        if (
+            !recipe.ingredients.length &&
+            !recipe.instructions.length
+        ) {
+
+            hideScannerStatus();
+
+            alert(
+                "I couldn't find the recipe sections. Try a clearer photo showing the whole recipe."
+            );
+
+            return;
+        }
+
+
+        /* -------------------------------------------------
+           MAKE SURE THE MAIN RECIPES FOLDER EXISTS
+           ------------------------------------------------- */
+
+        if (
+            !Array.isArray(currentBook.folders)
+        ) {
+
+            currentBook.folders = [];
+        }
+
+
+        if (
+            !currentBook.folders.includes("Recipes")
+        ) {
+
+            currentBook.folders.unshift("Recipes");
+        }
+
+
+        if (
+            !Array.isArray(currentBook.recipes)
+        ) {
+
+            currentBook.recipes = [];
+        }
+
+
+        /* -------------------------------------------------
+           CURRENT FOLDER
+           ------------------------------------------------- */
+
+        const destinationFolder =
+            currentFolder ||
+            "Recipes";
+
+
+        /*
+           The recipe itself goes into the folder
+           the user is currently viewing.
+        */
+
+        const mainRecipe = {
+
+            ...recipe,
+
+            id: makeID(),
+
+            folder: destinationFolder,
+
+            pages: 1
+
+        };
+
+
+        currentBook.recipes.push(
+            mainRecipe
+        );
+
+
+        /* -------------------------------------------------
+           ALWAYS COPY INTO MAIN RECIPES FOLDER
+           ------------------------------------------------- */
+
+        if (
+            destinationFolder !== "Recipes"
+        ) {
+
+            const recipesCopy = {
+
+                ...recipe,
+
+                id: makeID(),
+
+                folder: "Recipes",
+
+                pages: 1
+
+            };
+
+
+            /*
+               Make completely separate ingredient
+               and instruction arrays so editing one
+               copy does not accidentally edit the other.
+            */
+
+            recipesCopy.ingredients =
+                [...recipe.ingredients];
+
+            recipesCopy.instructions =
+                [...recipe.instructions];
+
+
+            currentBook.recipes.push(
+                recipesCopy
+            );
+        }
+
+
+        saveData();
+
+        hideScannerStatus();
+
+
+        /* -------------------------------------------------
+           REFRESH FOLDERS + RECIPES
+           ------------------------------------------------- */
+
+        renderFolders();
+        renderRecipes();
+
+
+        /*
+           Open the actual recipe the user just scanned.
+           This guarantees the Ingredients AND
+           Instructions appear immediately.
+        */
+
+        openRecipe(
+            mainRecipe
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "MealMind scanner error:",
+            error
+        );
+
+        hideScannerStatus();
+
+        alert(
+            "The scanner couldn't read that recipe. Try a clearer picture with the entire recipe visible."
+        );
+    }
+}
+
+
+/* =========================================================
+   RECIPE PARSER
+   ========================================================= */
+
+function parseRecipeTextFixed(rawText) {
+
+    const lines =
+        rawText
+            .split(/\r?\n/)
+            .map(cleanRecipeOCRLine)
+            .filter(Boolean);
+
+
+    let title = "";
+
+    let cuisine = "";
+
+    let servings = 4;
+
+    const ingredients = [];
+
+    const instructions = [];
+
+    let section = "unknown";
+
+
+    const ingredientHeadings = [
+
+        "ingredients",
+        "ingredient",
+        "what you need",
+        "you will need",
+        "you'll need"
+
+    ];
+
+
+    const instructionHeadings = [
+
+        "instructions",
+        "instruction",
+        "directions",
+        "direction",
+        "method",
+        "preparation",
+        "steps",
+        "how to make"
+
+    ];
+
+
+    /*
+       First find the title.
+
+       Usually the recipe title is near the
+       beginning of the page.
+    */
+
+    for (
+        let i = 0;
+        i < Math.min(lines.length, 8);
+        i++
+    ) {
+
+        const line =
+            lines[i];
+
+        const lower =
+            line.toLowerCase();
+
+
+        if (
+            ingredientHeadings.includes(lower) ||
+            instructionHeadings.includes(lower)
+        ) {
+            continue;
+        }
+
+
+        if (
+            isUsefulRecipeTitle(line)
+        ) {
+
+            title = line;
+
+            break;
+        }
     }
 
 
-    showScreen("scannerScreen");
+    /*
+       Now separate the recipe into sections.
+    */
+
+    for (
+        let i = 0;
+        i < lines.length;
+        i++
+    ) {
+
+        const original =
+            lines[i];
+
+        const lower =
+            original.toLowerCase();
 
 
-    const input =
-        document.getElementById(
-            "scannerInput"
+        /* INGREDIENT HEADING */
+
+        if (
+            ingredientHeadings.some(
+                heading =>
+                    lower === heading
+            )
+        ) {
+
+            section =
+                "ingredients";
+
+            continue;
+        }
+
+
+        /* INSTRUCTION HEADING */
+
+        if (
+            instructionHeadings.some(
+                heading =>
+                    lower === heading
+            )
+        ) {
+
+            section =
+                "instructions";
+
+            continue;
+        }
+
+
+        /*
+           Servings
+        */
+
+        const servingMatch =
+            original.match(
+                /(?:serves|servings|makes)\s*:?\s*(\d+)/i
+            );
+
+
+        if (servingMatch) {
+
+            servings =
+                Math.max(
+                    1,
+                    Number(
+                        servingMatch[1]
+                    )
+                );
+
+            continue;
+        }
+
+
+        /*
+           Ignore the title when we encounter it
+           again.
+        */
+
+        if (
+            title &&
+            original === title
+        ) {
+
+            continue;
+        }
+
+
+        /*
+           INGREDIENTS
+        */
+
+        if (
+            section === "ingredients"
+        ) {
+
+            const ingredient =
+                cleanIngredientLine(
+                    original
+                );
+
+
+            if (
+                isValidIngredient(
+                    ingredient
+                )
+            ) {
+
+                ingredients.push(
+                    ingredient
+                );
+            }
+
+            continue;
+        }
+
+
+        /*
+           INSTRUCTIONS
+        */
+
+        if (
+            section === "instructions"
+        ) {
+
+            const instruction =
+                cleanInstructionLine(
+                    original
+                );
+
+
+            if (
+                isValidInstruction(
+                    instruction
+                )
+            ) {
+
+                instructions.push(
+                    instruction
+                );
+            }
+
+            continue;
+        }
+    }
+
+
+    /*
+       If the headings were missing,
+       intelligently split the page.
+    */
+
+    if (
+        ingredients.length === 0 ||
+        instructions.length === 0
+    ) {
+
+        const fallback =
+            intelligentRecipeSplit(
+                lines,
+                title
+            );
+
+
+        if (
+            ingredients.length === 0
+        ) {
+
+            ingredients.push(
+                ...fallback.ingredients
+            );
+        }
+
+
+        if (
+            instructions.length === 0
+        ) {
+
+            instructions.push(
+                ...fallback.instructions
+            );
+        }
+    }
+
+
+    /*
+       Remove duplicates.
+    */
+
+    const finalIngredients =
+        removeDuplicateLines(
+            ingredients
         );
 
 
-    input.value = "";
+    const finalInstructions =
+        removeDuplicateLines(
+            instructions
+        );
 
-    currentScanFiles = [];
 
-    document.getElementById(
-        "selectedPages"
-    ).textContent =
-        "No pages selected.";
+    return {
 
+        title:
+            title ||
+            "Scanned Recipe",
+
+        cuisine,
+
+        servings,
+
+        ingredients:
+            finalIngredients,
+
+        instructions:
+            finalInstructions,
+
+        notes: ""
+
+    };
 }
+
+
+/* =========================================================
+   OCR CLEANUP
+   ========================================================= */
+
+function cleanRecipeOCRLine(line) {
+
+    if (!line) {
+        return "";
+    }
+
+
+    let text =
+        String(line);
+
+
+    /*
+       Remove obvious OCR garbage.
+
+       Examples:
+
+       :73
+       7:3
+       ::::
+       @@@
+       ###
+
+       But DON'T remove legitimate recipe
+       measurements such as:
+
+       1/2 cup
+       250 g
+       2 tbsp
+    */
+
+    text =
+        text.replace(
+            /(^|\s)[:;|]{2,}\s*\d*\b/g,
+            " "
+        );
+
+
+    text =
+        text.replace(
+            /\b\d+\s*:\s*\d+\b/g,
+            ""
+        );
+
+
+    text =
+        text.replace(
+            /[|]{2,}/g,
+            " "
+        );
+
+
+    text =
+        text.replace(
+            /[^\S\r\n]+/g,
+            " "
+        );
+
+
+    /*
+       Remove bullets and numbering.
+    */
+
+    text =
+        text.replace(
+            /^\s*[•●▪◦*]\s*/,
+            ""
+        );
+
+
+    text =
+        text.replace(
+            /^\s*\d+\s*[.)-]\s*/,
+            ""
+        );
+
+
+    /*
+       Remove random punctuation from the
+       beginning/end of OCR lines.
+    */
+
+    text =
+        text.replace(
+            /^[,;:|]+/,
+            ""
+        );
+
+
+    text =
+        text.replace(
+            /[,;:|]+$/,
+            ""
+        );
+
+
+    /*
+       Never allow a line consisting only of
+       symbols/numbers.
+    */
+
+    if (
+        !/[A-Za-z]/.test(text)
+    ) {
+
+        return "";
+    }
+
+
+    return text.trim();
+}
+
+
+/* =========================================================
+   TITLE CHECK
+   ========================================================= */
+
+function isUsefulRecipeTitle(line) {
+
+    if (!line) {
+        return false;
+    }
+
+
+    if (
+        line.length < 3 ||
+        line.length > 100
+    ) {
+
+        return false;
+    }
+
+
+    /*
+       A title needs actual letters.
+    */
+
+    if (
+        !/[A-Za-z]{2,}/.test(line)
+    ) {
+
+        return false;
+    }
+
+
+    /*
+       Don't use measurements as titles.
+    */
+
+    if (
+        looksLikeIngredientFixed(line)
+    ) {
+
+        return false;
+    }
+
+
+    /*
+       Don't use instruction sentences as titles.
+    */
+
+    if (
+        looksLikeInstructionFixed(line)
+    ) {
+
+        return false;
+    }
+
+
+    return true;
+}
+
+
+/* =========================================================
+   INGREDIENT CLEANUP
+   ========================================================= */
+
+function cleanIngredientLine(line) {
+
+    let text =
+        cleanRecipeOCRLine(line);
+
+
+    /*
+       Keep normal recipe measurements.
+
+       Example:
+
+       2 cups flour
+       1/2 cup sugar
+       3 eggs
+    */
+
+    text =
+        text.replace(
+            /\s+/g,
+            " "
+        );
+
+
+    return text.trim();
+}
+
+
+function isValidIngredient(line) {
+
+    if (!line) {
+        return false;
+    }
+
+
+    /*
+       Must contain at least one real word.
+    */
+
+    if (
+        !/[A-Za-z]{2,}/.test(line)
+    ) {
+
+        return false;
+    }
+
+
+    /*
+       Reject obvious OCR garbage.
+    */
+
+    if (
+        /^[:;|@#$%^&*]+/.test(line)
+    ) {
+
+        return false;
+    }
+
+
+    if (
+        looksLikeInstructionFixed(line) &&
+        !looksLikeIngredientFixed(line)
+    ) {
+
+        return false;
+    }
+
+
+    return true;
+}
+
+
+/* =========================================================
+   INSTRUCTION CLEANUP
+   ========================================================= */
+
+function cleanInstructionLine(line) {
+
+    let text =
+        cleanRecipeOCRLine(line);
+
+
+    /*
+       Remove step numbers.
+    */
+
+    text =
+        text.replace(
+            /^\d+\s*[.)-]\s*/,
+            ""
+        );
+
+
+    /*
+       Fix spaces.
+    */
+
+    text =
+        text.replace(
+            /\s+/g,
+            " "
+        );
+
+
+    return text.trim();
+}
+
+
+function isValidInstruction(line) {
+
+    if (!line) {
+        return false;
+    }
+
+
+    /*
+       Instructions must contain real words.
+    */
+
+    if (
+        !/[A-Za-z]{2,}/.test(line)
+    ) {
+
+        return false;
+    }
+
+
+    /*
+       Reject obvious OCR garbage.
+    */
+
+    if (
+        /^[:;|@#$%^&*]+/.test(line)
+    ) {
+
+        return false;
+    }
+
+
+    return true;
+}
+
+
+/* =========================================================
+   INGREDIENT DETECTION
+   ========================================================= */
+
+function looksLikeIngredientFixed(line) {
+
+    return /(?:\d+\s*(?:\/\s*\d+)?\s*)?(?:cup|cups|tbsp|tablespoon|tablespoons|tsp|teaspoon|teaspoons|oz|ounce|ounces|lb|lbs|pound|pounds|g|gram|grams|kg|kilogram|kilograms|ml|milliliter|milliliters|l|liter|liters)\b/i
+        .test(line);
+}
+
+
+/* =========================================================
+   INSTRUCTION DETECTION
+   ========================================================= */
+
+function looksLikeInstructionFixed(line) {
+
+    return /^(?:add|mix|stir|bake|cook|heat|combine|place|pour|remove|serve|chop|slice|preheat|whisk|fold|boil|simmer|let|allow|season|transfer|spread|cover|cool|drain|blend|blend|beat|knead|roll|fry|saute|sauté|roast|grill|marinate)\b/i
+        .test(line);
+}
+
+
+/* =========================================================
+   INTELLIGENT FALLBACK
+   ========================================================= */
+
+function intelligentRecipeSplit(
+    lines,
+    title
+) {
+
+    const ingredients = [];
+
+    const instructions = [];
+
+
+    let instructionStarted =
+        false;
+
+
+    for (
+        const line of lines
+    ) {
+
+        if (
+            !line ||
+            line === title
+        ) {
+            continue;
+        }
+
+
+        if (
+            looksLikeInstructionFixed(line)
+        ) {
+
+            instructionStarted =
+                true;
+        }
+
+
+        if (
+            instructionStarted
+        ) {
+
+            const instruction =
+                cleanInstructionLine(
+                    line
+                );
+
+
+            if (
+                isValidInstruction(
+                    instruction
+                )
+            ) {
+
+                instructions.push(
+                    instruction
+                );
+            }
+
+        } else {
+
+            const ingredient =
+                cleanIngredientLine(
+                    line
+                );
+
+
+            if (
+                isValidIngredient(
+                    ingredient
+                )
+            ) {
+
+                ingredients.push(
+                    ingredient
+                );
+            }
+        }
+    }
+
+
+    /*
+       If OCR didn't recognize instruction
+       verbs, use the lower portion of the
+       page as a final fallback.
+    */
+
+    if (
+        instructions.length === 0 &&
+        lines.length >= 6
+    ) {
+
+        const usable =
+            lines.filter(
+                line =>
+                    line !== title
+            );
+
+
+        const split =
+            Math.max(
+                2,
+                Math.floor(
+                    usable.length * 0.55
+                )
+            );
+
+
+        return {
+
+            ingredients:
+                usable
+                    .slice(0, split)
+                    .map(
+                        cleanIngredientLine
+                    )
+                    .filter(
+                        isValidIngredient
+                    ),
+
+            instructions:
+                usable
+                    .slice(split)
+                    .map(
+                        cleanInstructionLine
+                    )
+                    .filter(
+                        isValidInstruction
+                    )
+
+        };
+    }
+
+
+    return {
+
+        ingredients,
+
+        instructions
+
+    };
+}
+
+
+/* =========================================================
+   REMOVE DUPLICATES
+   ========================================================= */
+
+function removeDuplicateLines(lines) {
+
+    const seen =
+        new Set();
+
+    const result = [];
+
+
+    for (
+        const line of lines
+    ) {
+
+        const key =
+            line
+                .toLowerCase()
+                .replace(/\s+/g, " ")
+                .trim();
+
+
+        if (
+            !key ||
+            seen.has(key)
+        ) {
+            continue;
+        }
+
+
+        seen.add(key);
+
+        result.push(line);
+    }
+
+
+    return result;
+}
+```
 
 
 /* =========================================================
