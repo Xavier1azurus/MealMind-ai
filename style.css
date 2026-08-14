@@ -12,7 +12,6 @@ body {
     color: #1f2a24;
 }
 
-
 .app {
     max-width: 700px;
 
@@ -23,20 +22,17 @@ body {
     text-align: center;
 }
 
-
 h1 {
     font-size: 42px;
 
     margin-bottom: 10px;
 }
 
-
 p {
     color: #65736b;
 
     font-size: 18px;
 }
-
 
 button {
     border: none;
@@ -53,14 +49,12 @@ button {
 
     color: white;
 
-    margin: 20px 0;
+    margin: 10px 0;
 }
-
 
 button:hover {
     opacity: 0.85;
 }
-
 
 section {
     background: white;
@@ -76,18 +70,11 @@ section {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
 }
 
-
 h2 {
     margin-top: 0;
 }
 
-
-ul {
-    padding-left: 25px;
-}
-
-
-#recipeText {
+textarea {
     width: 100%;
 
     min-height: 300px;
@@ -104,7 +91,6 @@ ul {
 
     font-size: 16px;
 }
-
 
 #status {
     font-weight: bold;
@@ -131,20 +117,19 @@ ul {
 
     border-radius: 20px;
 
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
 
     z-index: 1000;
 
     text-align: center;
 }
 
-
 .owner-login input {
     width: 100%;
 
     padding: 12px;
 
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 
     border: 1px solid #ccc;
 
@@ -154,12 +139,38 @@ ul {
 }
 
 
-/* Only show owner features on mobile/tablet */
+/* OWNER PANEL */
 
-@media (min-width: 769px) {
+.owner-panel {
+    position: fixed;
 
-    .owner-login {
-        display: none !important;
-    }
+    inset: 0;
 
+    background: #f5f7f2;
+
+    z-index: 2000;
+
+    overflow-y: auto;
+}
+
+.owner-content {
+    max-width: 800px;
+
+    margin: auto;
+
+    padding: 30px 20px;
+}
+
+.saved-recipe {
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 16px;
+
+    margin: 15px 0;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+
+    white-space: pre-wrap;
 }
