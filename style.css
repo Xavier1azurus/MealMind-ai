@@ -1,12 +1,6 @@
 ```css
-/* =========================================================
-   MEALMIND
-   Clean Mobile Cookbook Design
-   ========================================================= */
-
 * {
     box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -17,35 +11,20 @@ body {
 }
 
 body {
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "SF Pro Display",
-        "SF Pro Text",
-        "Segoe UI",
-        sans-serif;
-
     background: #f6f4ef;
-    color: #252525;
-
-    -webkit-font-smoothing: antialiased;
+    color: #171717;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
 }
-
-
-/* =========================================================
-   GENERAL
-   ========================================================= */
 
 button,
 input,
-textarea,
-select {
+textarea {
     font: inherit;
 }
 
 button {
     cursor: pointer;
-    border: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .hidden {
@@ -53,1034 +32,519 @@ button {
 }
 
 
-/* =========================================================
-   HOME / START SCREEN
-   ========================================================= */
+/* =========================
+   SCREENS
+========================= */
 
-#homeScreen {
+.screen {
     min-height: 100vh;
+    min-height: 100dvh;
+    padding:
+        max(24px, env(safe-area-inset-top))
+        18px
+        max(30px, env(safe-area-inset-bottom))
+        18px;
+}
 
+.container {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.center {
+    min-height: calc(100vh - 50px);
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-
-    padding: 32px 22px;
+    align-items: center;
 }
 
 
-#homeScreen h1 {
+/* =========================
+   HOME
+========================= */
+
+.logo {
+    font-size: 64px;
+    margin-bottom: 8px;
+}
+
+h1 {
     margin: 0;
-
-    font-size: clamp(42px, 10vw, 72px);
-    font-weight: 800;
-
-    letter-spacing: -2px;
+    font-size: 36px;
 }
 
-
-#homeScreen p {
+.subtitle {
     margin: 10px 0 30px;
-
     color: #777;
-
-    text-align: center;
-
-    font-size: 16px;
 }
 
+.button-stack {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
-.main-button {
-    width: min(100%, 420px);
-
-    min-height: 58px;
-
-    margin: 8px 0;
-
-    padding: 15px 20px;
-
-    border-radius: 18px;
-
-    background: #ffffff;
-
-    color: #222;
-
+.primary,
+.secondary,
+.smallButton,
+.back {
+    border: 0;
+    border-radius: 16px;
+    min-height: 54px;
+    padding: 14px 18px;
     font-weight: 700;
+}
 
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.06);
+.primary {
+    background: #171717;
+    color: white;
+}
 
-    transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
+.secondary {
+    background: #e7e3db;
+    color: #171717;
+}
+
+.smallButton {
+    min-height: 44px;
+    padding: 9px 13px;
+    background: #e9e5dd;
+    color: #171717;
+}
+
+.back {
+    background: transparent;
+    padding-left: 0;
+}
+
+.danger {
+    color: #b00020;
+}
+
+.primary:active,
+.secondary:active,
+.smallButton:active {
+    transform: scale(.97);
 }
 
 
-.main-button:active {
-    transform: scale(0.97);
+/* =========================
+   CARDS / FORMS
+========================= */
+
+.card {
+    background: white;
+    border-radius: 25px;
+    padding: 24px;
+    box-shadow: 0 12px 45px rgba(0,0,0,.08);
 }
 
+.muted {
+    color: #777;
+}
 
-/* =========================================================
-   INPUTS
-   ========================================================= */
+label {
+    display: block;
+    margin: 18px 0 7px;
+    font-weight: 700;
+}
 
 input,
-textarea,
-select {
+textarea {
     width: 100%;
-
-    border: 1px solid #dedbd3;
-
-    border-radius: 15px;
-
-    background: #ffffff;
-
-    padding: 15px 16px;
-
+    border: 1px solid #d9d5cd;
+    border-radius: 14px;
+    padding: 14px;
+    background: white;
     outline: none;
-
-    color: #222;
 }
-
 
 input:focus,
-textarea:focus,
-select:focus {
-    border-color: #999;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(0, 0, 0, 0.05);
+textarea:focus {
+    border-color: #777;
 }
-
 
 textarea {
     min-height: 130px;
-
     resize: vertical;
 }
 
-
-/* =========================================================
-   MAIN COOKBOOK SCREEN
-   ========================================================= */
-
-#mainScreen {
-    min-height: 100vh;
-
-    padding:
-        max(20px, env(safe-area-inset-top))
-        18px
-        max(30px, env(safe-area-inset-bottom));
-}
-
-
-#mainScreen {
-    max-width: 900px;
-
-    margin: auto;
-}
-
-
-/* =========================================================
-   BOOK HEADER
-   ========================================================= */
-
-.book-header {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 12px;
-
-    margin-bottom: 22px;
-}
-
-
-.book-header h1 {
-    margin: 0;
-
-    font-size: 30px;
-
-    letter-spacing: -0.8px;
-}
-
-
-#privacyBadge {
-    display: inline-flex;
-
-    align-items: center;
-
-    padding: 7px 11px;
-
-    border-radius: 999px;
-
-    background: #ebe8e0;
-
-    color: #666;
-
-    font-size: 12px;
-
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
-
-#searchInput {
-    margin-bottom: 22px;
-
-    height: 52px;
-
-    font-size: 16px;
-}
-
-
-/* =========================================================
-   FOLDERS
-   ========================================================= */
-
-#folders {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 12px;
-
-    margin-bottom: 26px;
-}
-
-
-.folder-card {
-    min-height: 110px;
-
-    padding: 17px;
-
-    border-radius: 20px;
-
-    background: #ffffff;
-
-    text-align: left;
-
-    box-shadow:
-        0 3px 12px
-        rgba(0, 0, 0, 0.05);
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
-
-    gap: 5px;
-
-    transition:
-        transform 0.15s ease;
-}
-
-
-.folder-card:active {
-    transform: scale(0.97);
-}
-
-
-.folder-icon {
-    font-size: 25px;
-}
-
-
-.folder-card strong {
-    font-size: 16px;
-}
-
-
-.folder-card small {
-    color: #888;
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   RECIPES
-   ========================================================= */
-
-#recipes {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-}
-
-
-.recipe-card {
+.card .primary,
+.card .secondary {
     width: 100%;
+    margin-top: 18px;
+}
 
-    min-height: 76px;
 
+/* =========================
+   BOOK HEADER
+========================= */
+
+.bookHeader {
     display: flex;
-
     align-items: center;
-
-    gap: 14px;
-
-    padding: 13px 15px;
-
-    border-radius: 18px;
-
-    background: #ffffff;
-
-    text-align: left;
-
-    box-shadow:
-        0 2px 10px
-        rgba(0, 0, 0, 0.05);
-
-    transition:
-        transform 0.15s ease;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-
-.recipe-card:active {
-    transform: scale(0.98);
+.bookHeader small {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #999;
+    font-weight: 800;
 }
 
-
-.recipe-card-icon {
-    width: 48px;
-    height: 48px;
-
-    display: grid;
-
-    place-items: center;
-
-    flex-shrink: 0;
-
-    border-radius: 14px;
-
-    background: #f0eee8;
-
-    font-size: 22px;
+.bookHeader h1 {
+    font-size: 28px;
+    margin: 4px 0;
 }
 
-
-.recipe-card-text {
-    flex: 1;
-
-    min-width: 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 5px;
-}
-
-
-.recipe-card-text strong {
-    overflow: hidden;
-
-    white-space: nowrap;
-
-    text-overflow: ellipsis;
-
-    font-size: 16px;
-}
-
-
-.recipe-card-text span {
-    color: #888;
-
+#privacyText {
     font-size: 13px;
-}
-
-
-.recipe-arrow {
-    color: #aaa;
-
-    font-size: 26px;
-}
-
-
-/* =========================================================
-   EMPTY STATE
-   ========================================================= */
-
-.empty-state {
-    text-align: center;
-
-    padding: 55px 20px;
-
     color: #777;
 }
 
 
-.empty-state div {
-    font-size: 42px;
+/* =========================
+   SEARCH
+========================= */
 
+.search {
+    margin-bottom: 18px;
+}
+
+
+/* =========================
+   ACTIONS
+========================= */
+
+.actionGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+    margin-bottom: 30px;
+}
+
+.actionButton {
+    border: 0;
+    border-radius: 18px;
+    min-height: 90px;
+    background: #171717;
+    color: white;
+    font-weight: 700;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.actionButton span {
+    font-size: 28px;
+}
+
+
+/* =========================
+   SECTIONS
+========================= */
+
+.section {
+    margin-bottom: 30px;
+}
+
+.sectionTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sectionTitle h2 {
+    font-size: 21px;
+}
+
+
+/* =========================
+   FOLDERS
+========================= */
+
+.folderRow {
+    display: flex;
+    gap: 7px;
     margin-bottom: 10px;
 }
 
+.folderButton {
+    flex: 1;
+    min-height: 70px;
+    border: 1px solid #ddd8cf;
+    border-radius: 17px;
+    background: white;
 
-.empty-state h3 {
-    margin: 0 0 5px;
-
-    color: #333;
-}
-
-
-/* =========================================================
-   RECIPE VIEWER
-   ========================================================= */
-
-.recipe-viewer {
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 9999;
-
-    overflow-y: auto;
-
-    background: #f2efe8;
-
-    -webkit-overflow-scrolling: touch;
-}
-
-
-.recipe-viewer-background {
-    min-height: 100%;
-
-    padding:
-        max(12px, env(safe-area-inset-top))
-        12px
-        max(30px, env(safe-area-inset-bottom));
-}
-
-
-/* =========================================================
-   RECIPE PAPER
-   ========================================================= */
-
-.recipe-sheet {
-    width: 100%;
-
-    max-width: 760px;
-
-    margin: 0 auto;
-
-    background: #fffdf9;
-
-    border-radius: 24px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 10px 35px
-        rgba(0, 0, 0, 0.08);
-}
-
-
-/* =========================================================
-   RECIPE TOP BAR
-   ========================================================= */
-
-.recipe-topbar {
     display: flex;
-
     align-items: center;
-
-    justify-content: space-between;
-
-    gap: 10px;
-
-    padding: 15px 16px;
-
-    border-bottom: 1px solid #eeeae2;
-
-    background: #fffdf9;
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 5;
+    gap: 12px;
+    padding: 14px;
+    text-align: left;
 }
 
+.folderIcon {
+    font-size: 27px;
+}
 
-.recipe-back-button,
-.recipe-action-button {
-    min-height: 42px;
-
-    padding: 9px 14px;
-
-    border-radius: 12px;
-
-    background: #f0eee8;
-
-    color: #333;
-
+.folderName {
     font-weight: 700;
 }
 
+.folderCount {
+    margin-left: auto;
+    color: #999;
+    font-size: 12px;
+}
 
-.recipe-back-button:active,
-.recipe-action-button:active {
-    transform: scale(0.96);
+.folderTools {
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
 
 
-.recipe-actions {
-    display: flex;
+/* =========================
+   RECIPES
+========================= */
 
+.recipeCard {
+    width: 100%;
+    min-height: 76px;
+    border: 1px solid #ddd8cf;
+    border-radius: 17px;
+    background: white;
+    padding: 13px;
+    margin-bottom: 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    text-align: left;
+}
+
+.recipeIcon {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: #eeeae2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 23px;
+}
+
+.recipeInfo {
+    min-width: 0;
+    flex: 1;
+}
+
+.recipeInfo strong {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.recipeInfo span {
+    display: block;
+    margin-top: 4px;
+    color: #999;
+    font-size: 13px;
+}
+
+.arrow {
+    color: #aaa;
+    font-size: 25px;
+}
+
+.empty {
+    text-align: center;
+    padding: 35px 10px;
+    color: #888;
+}
+
+
+/* =========================
+   RECIPE VIEW
+========================= */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: #f6f4ef;
+    overflow-y: auto;
+}
+
+.recipePage {
+    width: 100%;
+    max-width: 650px;
+    min-height: 100vh;
+    margin: auto;
+    background: white;
+    padding:
+        max(18px, env(safe-area-inset-top))
+        20px
+        35px;
+}
+
+.recipeTop {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.recipeActions {
+    display: flex;
     gap: 7px;
 }
 
-
-.recipe-action-button.danger {
-    background: #f8e7e5;
-
-    color: #a33;
-}
-
-
-/* =========================================================
-   RECIPE HEADER
-   ========================================================= */
-
-.recipe-header {
-    padding:
-        34px
-        28px
-        27px;
-
+.recipeHeading {
     text-align: center;
+    margin: 35px 0 20px;
 }
 
-
-.recipe-label {
-    margin-bottom: 12px;
-
-    color: #999;
-
-    font-size: 11px;
-
-    font-weight: 800;
-
+.recipeHeading small {
     letter-spacing: 2px;
-}
-
-
-.recipe-header h1 {
-    margin: 0;
-
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    font-size: clamp(
-        36px,
-        9vw,
-        62px
-    );
-
-    line-height: 1.02;
-
-    letter-spacing: -1.5px;
-
-    color: #242424;
-}
-
-
-.recipe-cuisine {
-    margin: 12px 0 0;
-
-    color: #888;
-
-    font-size: 15px;
-
-    font-style: italic;
-}
-
-
-/* =========================================================
-   SERVINGS
-   ========================================================= */
-
-.recipe-serving-row {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    margin-top: 23px;
-
-    padding: 7px 8px 7px 13px;
-
-    border-radius: 999px;
-
-    background: #f1eee7;
-
-    color: #666;
-
-    font-size: 14px;
-}
-
-
-.recipe-serving-row strong {
-    min-width: 22px;
-
-    color: #222;
-
-    text-align: center;
-}
-
-
-.recipe-serving-row button {
-    width: 34px;
-    height: 34px;
-
-    border-radius: 50%;
-
-    background: #ffffff;
-
-    color: #333;
-
-    font-size: 21px;
-
-    line-height: 1;
-
-    box-shadow:
-        0 1px 4px
-        rgba(0, 0, 0, 0.08);
-}
-
-
-.recipe-serving-row button:active {
-    transform: scale(0.9);
-}
-
-
-/* =========================================================
-   DIVIDER
-   ========================================================= */
-
-.recipe-line {
-    height: 1px;
-
-    margin: 0 28px;
-
-    background: #e8e3da;
-}
-
-
-/* =========================================================
-   RECIPE SECTIONS
-   ========================================================= */
-
-.recipe-section {
-    padding:
-        27px 28px
-        5px;
-}
-
-
-.recipe-section h2 {
-    margin: 0 0 17px;
-
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    font-size: 25px;
-
-    letter-spacing: -0.4px;
-
-    color: #272727;
-}
-
-
-/* =========================================================
-   INGREDIENTS
-   ========================================================= */
-
-.recipe-ingredients {
-    margin: 0;
-
-    padding: 0;
-
-    list-style: none;
-}
-
-
-.recipe-ingredients li {
-    position: relative;
-
-    padding:
-        10px
-        0
-        10px
-        25px;
-
-    border-bottom: 1px solid #eeeae3;
-
-    color: #414141;
-
-    font-size: 16px;
-
-    line-height: 1.45;
-}
-
-
-.recipe-ingredients li::before {
-    content: "";
-
-    position: absolute;
-
-    left: 2px;
-
-    top: 19px;
-
-    width: 7px;
-    height: 7px;
-
-    border-radius: 50%;
-
-    background: #777;
-}
-
-
-/* =========================================================
-   INSTRUCTIONS
-   ========================================================= */
-
-.recipe-instructions {
-    margin: 0;
-
-    padding: 0;
-
-    list-style: none;
-
-    counter-reset: recipe-step;
-}
-
-
-.recipe-instructions li {
-    counter-increment: recipe-step;
-
-    position: relative;
-
-    padding:
-        4px
-        0
-        22px
-        52px;
-
-    margin-bottom: 20px;
-
-    color: #414141;
-
-    font-size: 16px;
-
-    line-height: 1.65;
-}
-
-
-.recipe-instructions li::before {
-    content:
-        counter(recipe-step);
-
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 36px;
-    height: 36px;
-
-    display: grid;
-
-    place-items: center;
-
-    border-radius: 50%;
-
-    background: #eeeae2;
-
-    color: #555;
-
-    font-weight: 800;
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   NOTES
-   ========================================================= */
-
-.recipe-notes {
-    margin:
-        15px 28px
-        28px;
-
-    padding:
-        20px;
-
-    border-radius: 17px;
-
-    background: #f5f1e8;
-}
-
-
-.recipe-notes h2 {
-    margin-bottom: 8px;
-
-    font-size: 21px;
-}
-
-
-.recipe-notes p {
-    margin: 0;
-
-    color: #666;
-
-    line-height: 1.6;
-}
-
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-.recipe-footer {
-    padding:
-        25px;
-
-    text-align: center;
-
     color: #aaa;
+    font-weight: 800;
+}
 
+.recipeHeading h1 {
+    font-size: 34px;
+    margin: 10px 0;
+}
+
+.recipeHeading p {
+    color: #777;
+}
+
+.servings {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 13px;
+    margin: 20px 0;
+}
+
+.servings button {
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: #eeeae2;
+    font-size: 22px;
+}
+
+.recipePage hr {
+    border: 0;
+    border-top: 1px solid #e6e1d9;
+    margin: 28px 0;
+}
+
+.recipePage section {
+    margin-bottom: 30px;
+}
+
+.recipePage h2 {
+    font-size: 22px;
+}
+
+.recipePage li {
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.notes {
+    background: #f6f4ef;
+    padding: 16px;
+    border-radius: 16px;
+}
+
+
+/* =========================
+   MADE BY
+========================= */
+
+.made-by {
+    text-align: center;
+    color: #aaa;
     font-size: 12px;
-
-    letter-spacing: 0.5px;
+    margin-top: 35px;
 }
 
 
-/* =========================================================
-   MODALS
-   ========================================================= */
+/* =========================
+   SCANNER STATUS
+========================= */
 
-.modal,
-#editorModal,
-#pageCountModal {
+#scannerStatus {
     position: fixed;
-
     inset: 0;
+    z-index: 3000;
 
-    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    display: grid;
-
-    place-items: center;
-
-    padding: 20px;
-
-    background:
-        rgba(0, 0, 0, 0.42);
+    background: rgba(0,0,0,.35);
 }
 
-
-.modal.hidden,
-#editorModal.hidden,
-#pageCountModal.hidden {
-    display: none;
-}
-
-
-.modal-content {
-    width: min(
-        100%,
-        520px
-    );
-
-    max-height: 90vh;
-
-    overflow-y: auto;
-
+.statusBox {
+    background: white;
+    border-radius: 20px;
     padding: 25px;
-
-    border-radius: 23px;
-
-    background: #fffdf9;
-
-    box-shadow:
-        0 20px 60px
-        rgba(0, 0, 0, 0.18);
+    text-align: center;
+    width: calc(100% - 40px);
+    max-width: 350px;
 }
 
 
-/* =========================================================
-   EDITOR
-   ========================================================= */
-
-#editorModal > *,
-#pageCountModal > * {
-    width: min(
-        100%,
-        540px
-    );
-
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    padding: 25px;
-
-    border-radius: 23px;
-
-    background: #fffdf9;
-}
-
-
-#recipeIngredients,
-#recipeInstructions {
-    margin-top: 8px;
-
-    min-height: 170px;
-}
-
-
-/* =========================================================
+/* =========================
    MOBILE
-   ========================================================= */
+========================= */
 
-@media (max-width: 600px) {
+@media (max-width: 390px) {
 
-    #mainScreen {
-        padding-left: 14px;
-        padding-right: 14px;
+    .actionGrid {
+        grid-template-columns: 1fr;
     }
 
-
-    #folders {
-        gap: 9px;
+    .recipeHeading h1 {
+        font-size: 28px;
     }
 
-
-    .folder-card {
-        min-height: 100px;
-
-        padding: 14px;
+    .recipeActions .smallButton {
+        padding: 8px;
     }
-
-
-    .recipe-sheet {
-        border-radius: 18px;
-    }
-
-
-    .recipe-header {
-        padding:
-            30px 20px
-            24px;
-    }
-
-
-    .recipe-section {
-        padding:
-            24px 20px
-            4px;
-    }
-
-
-    .recipe-line {
-        margin:
-            0 20px;
-    }
-
-
-    .recipe-notes {
-        margin:
-            15px 20px
-            24px;
-    }
-
-
-    .recipe-topbar {
-        padding:
-            11px;
-    }
-
-
-    .recipe-action-button,
-    .recipe-back-button {
-        min-height: 40px;
-
-        padding:
-            8px 11px;
-
-        font-size: 13px;
-    }
-
 }
 
 
-/* =========================================================
+/* =========================
    IPAD
-   ========================================================= */
+========================= */
 
-@media (
-    min-width: 601px
-) and (
-    max-width: 1100px
-) {
+@media (min-width: 600px) {
 
-    #mainScreen {
-        max-width: 850px;
-
-        padding:
-            30px;
+    .screen {
+        padding-left: 35px;
+        padding-right: 35px;
     }
 
-
-    .recipe-viewer-background {
-        padding: 25px;
-    }
-
-
-    .recipe-sheet {
-        border-radius: 28px;
-    }
-
-}
-
-
-/* =========================================================
-   REDUCE MOTION
-   ========================================================= */
-
-@media (
-    prefers-reduced-motion: reduce
-) {
-
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
-
-        transition: none !important;
-
-        animation: none !important;
+    .container {
+        max-width: 650px;
     }
 
 }
