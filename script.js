@@ -2914,15 +2914,17 @@ function removeDuplicateLines(lines) {
    SELECT SCANNER PAGES
    ========================================================= */
 
+/* =========================================================
+   SELECT SCANNER PAGES
+   ========================================================= */
+
 document.addEventListener("change", event => {
 
     if (
         event.target.id !==
         "scannerInput"
     ) {
-
         return;
-
     }
 
 
@@ -2936,13 +2938,19 @@ document.addEventListener("change", event => {
 
         currentScanFiles = [];
 
-        document.getElementById(
-            "selectedPages"
-        ).textContent =
-            "No pages selected.";
+        const selectedPages =
+            document.getElementById(
+                "selectedPages"
+            );
+
+        if (selectedPages) {
+
+            selectedPages.textContent =
+                "No pages selected.";
+
+        }
 
         return;
-
     }
 
 
@@ -2963,183 +2971,26 @@ document.addEventListener("change", event => {
     }
 
 
-    document.getElementById(
-        "selectedPages"
-    ).textContent =
-        const pageCountText =
-    currentScanFiles.length === 1
-        ? "1 page"
-       pageCountText
+    const pageCountText =
+        currentScanFiles.length === 1
+            ? "1 page"
+            : `${currentScanFiles.length} pages`;
+
+
+    const selectedPages =
+        document.getElementById(
+            "selectedPages"
+        );
+
+
+    if (selectedPages) {
+
+        selectedPages.textContent =
+            pageCountText;
+
+    }
 
 });
-
-
-/* =========================================================
-   PROCESS SCAN
-   ========================================================= */
-
-async function processScan() {
-
-    if (!currentBook) {
-
-        alert("Open a cookbook first.");
-        return;
-
-    }
-
-
-    if (!currentScanFiles.length) {
-
-        alert(
-            "Select at least one recipe page first."
-        );
-
-        return;
-
-    }
-
-
-    showScannerStatus(
-        "Starting scanner..."
-    );
-
-
-    try {
-
-        await loadTesseract();
-
-
-        let combinedText = "";
-
-
-        for (
-            let i = 0;
-            i < currentScanFiles.length;
-            i++
-        ) {
-
-            const file =
-                currentScanFiles[i];
-
-
-            updateScannerStatus(
-                `Reading page ${i + 1} of ${currentScanFiles.length}...`
-            );
-
-
-            const result =
-                await Tesseract.recognize(
-                    file,
-                    "eng",
-                    {
-
-                        logger: message => {
-
-                            if (
-                                message.status ===
-                                "recognizing text"
-                            ) {
-
-                                const percent =
-                                    Math.round(
-                                        (
-                                            message.progress ||
-                                            0
-                                        ) * 100
-                                    );
-
-                                updateScannerStatus(
-                                    `Reading page ${i + 1} of ${currentScanFiles.length}... ${percent}%`
-                                );
-
-                            }
-
-                        }
-
-                    }
-                );
-
-
-            combinedText +=
-                "\n" +
-                result.data.text;
-
-        }
-
-
-        updateScannerStatus(
-            "Turning the scan into a recipe..."
-        );
-
-
-        const recipe =
-            parseRecipe(
-                combinedText
-            );
-
-
-        recipe.id =
-            makeID();
-
-
-        recipe.folder =
-            currentFolder ||
-            "Recipes";
-
-
-        recipe.pages =
-            currentScanFiles.length;
-
-
-        currentBook.recipes.push(
-            recipe
-        );
-
-
-        if (
-            !currentBook.folders.includes(
-                recipe.folder
-            )
-        ) {
-
-            currentBook.folders.push(
-                recipe.folder
-            );
-
-        }
-
-
-        saveData();
-
-
-        hideScannerStatus();
-
-        showScreen("mainScreen");
-
-        renderFolders();
-        renderRecipes();
-
-        openRecipe(recipe);
-
-
-    } catch (error) {
-
-        console.error(
-            "Scanner error:",
-            error
-        );
-
-
-        hideScannerStatus();
-
-
-        alert(
-            "The scanner could not read the image. Try a clearer photo with good lighting."
-        );
-
-    }
-
-}
 
 
 /* =========================================================
