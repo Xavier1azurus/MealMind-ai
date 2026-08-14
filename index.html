@@ -1,224 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="theme-color"
-        content="#101114"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0d0f12">
     <title>MealMind</title>
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
 <div class="app">
 
-    <!-- =================================================
-         SETUP SCREEN
-         ================================================= -->
+    <!-- HOME -->
 
-    <section
-        id="setupScreen"
-        class="screen hidden"
-    >
+    <section id="homeScreen" class="screen">
 
-        <div class="setup-card">
+        <div class="home-card">
 
-            <div class="logo">
-                🌙
-            </div>
+            <div class="logo">📖</div>
 
-            <h1>
-                MealMind
-            </h1>
+            <h1>MealMind</h1>
 
-            <p class="subtitle">
-                Create your private recipe cookbook.
-            </p>
+            <p>Your digital cookbook.</p>
 
+            <button id="makeCookbookButton" class="primary">
+                ➕ Make Cookbook
+            </button>
 
-            <!-- STEP 1 -->
+            <button id="joinCookbookButton" class="secondary">
+                🔗 Join Cookbook
+            </button>
 
-            <div
-                id="codeSetup"
-                class="setup-step"
-            >
-
-                <h2>
-                    🔐 Create Your Cookbook Code
-                </h2>
-
-                <p>
-                    This code protects your cookbook
-                    on this device.
-                </p>
-
-
-                <label>
-                    Create code
-                </label>
-
-                <input
-                    id="newCode"
-                    type="password"
-                    placeholder="Create a code"
-                    autocomplete="new-password"
-                >
-
-
-                <label>
-                    Confirm code
-                </label>
-
-                <input
-                    id="confirmCode"
-                    type="password"
-                    placeholder="Confirm your code"
-                    autocomplete="new-password"
-                >
-
-
-                <div
-                    id="setupError"
-                    class="error"
-                ></div>
-
-
-                <button
-                    id="continueSetup"
-                    class="primary"
-                >
-                    Continue
-                </button>
-
-            </div>
-
-
-            <!-- STEP 2 -->
-
-            <div
-                id="cookbookSetup"
-                class="setup-step hidden"
-            >
-
-                <h2>
-                    📖 Create Your Cookbook
-                </h2>
-
-
-                <label>
-                    Cookbook name
-                </label>
-
-                <input
-                    id="cookbookName"
-                    type="text"
-                    placeholder="My Cookbook"
-                >
-
-
-                <label>
-                    Recipe pages
-                </label>
-
-                <select id="pageCount">
-
-                    <option value="1">
-                        1 page
-                    </option>
-
-                    <option value="2">
-                        2 pages
-                    </option>
-
-                    <option value="3">
-                        3 pages
-                    </option>
-
-                    <option value="4">
-                        4 pages
-                    </option>
-
-                    <option value="5">
-                        5 pages
-                    </option>
-
-                </select>
-
-
-                <button
-                    id="createCookbook"
-                    class="primary"
-                >
-                    Create Cookbook
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         LOCK SCREEN
-         ================================================= -->
-
-    <section
-        id="lockScreen"
-        class="screen hidden"
-    >
-
-        <div class="lock-card">
-
-            <div class="logo">
-                🔐
-            </div>
-
-            <h1 id="lockedCookbookName">
-                My Cookbook
-            </h1>
-
-            <p>
-                Enter your cookbook code to continue.
-            </p>
-
-
-            <input
-                id="unlockCode"
-                type="password"
-                placeholder="Cookbook code"
-                autocomplete="off"
-            >
-
-
-            <div
-                id="unlockError"
-                class="error"
-            ></div>
-
-
-            <button
-                id="unlockButton"
-                class="primary"
-            >
-                🔓 Unlock Cookbook
+            <button id="publicBooksButton" class="secondary">
+                🌐 Public Books
             </button>
 
         </div>
@@ -226,36 +41,183 @@
     </section>
 
 
-    <!-- =================================================
-         MAIN COOKBOOK
-         ================================================= -->
+    <!-- MAKE COOKBOOK -->
 
-    <main
-        id="mainScreen"
-        class="hidden"
-    >
+    <section id="makeScreen" class="screen hidden">
 
-        <header class="topbar">
+        <div class="form-card">
 
-            <div>
+            <button class="back-button" id="backFromMake">
+                ← Back
+            </button>
 
-                <div class="small-brand">
-                    MEALMIND
-                </div>
+            <h1>📖 Create Cookbook</h1>
 
-                <h1 id="mainCookbookName">
-                    My Cookbook
-                </h1>
+            <label>Cookbook name</label>
+
+            <input
+                id="cookbookName"
+                type="text"
+                placeholder="My Cookbook"
+            >
+
+
+            <label>Privacy</label>
+
+            <div class="privacy-options">
+
+                <button
+                    id="privateButton"
+                    class="privacy-option selected"
+                >
+                    🔒 Private
+                </button>
+
+                <button
+                    id="publicButton"
+                    class="privacy-option"
+                >
+                    🌐 Public
+                </button>
+
+            </div>
+
+
+            <label>Password</label>
+
+            <div class="password-box">
+
+                <input
+                    id="cookbookPassword"
+                    type="password"
+                    placeholder="Create a password"
+                >
+
+                <button
+                    id="showPasswordButton"
+                    type="button"
+                >
+                    👁
+                </button>
 
             </div>
 
 
             <button
-                id="lockButton"
-                class="icon-button"
-                title="Lock Cookbook"
+                id="createCookbookButton"
+                class="primary"
             >
-                🔒
+                Create Cookbook
+            </button>
+
+            <div id="makeError" class="error"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- JOIN -->
+
+    <section id="joinScreen" class="screen hidden">
+
+        <div class="form-card">
+
+            <button class="back-button" id="backFromJoin">
+                ← Back
+            </button>
+
+            <h1>🔗 Join Cookbook</h1>
+
+            <label>Cookbook name/code</label>
+
+            <input
+                id="joinName"
+                type="text"
+                placeholder="Cookbook name"
+            >
+
+            <label>Password</label>
+
+            <div class="password-box">
+
+                <input
+                    id="joinPassword"
+                    type="password"
+                    placeholder="Password"
+                >
+
+                <button
+                    id="showJoinPassword"
+                    type="button"
+                >
+                    👁
+                </button>
+
+            </div>
+
+            <button
+                id="joinButton"
+                class="primary"
+            >
+                Join Cookbook
+            </button>
+
+            <div id="joinError" class="error"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PUBLIC BOOKS -->
+
+    <section id="publicScreen" class="screen hidden">
+
+        <div class="form-card">
+
+            <button class="back-button" id="backFromPublic">
+                ← Back
+            </button>
+
+            <h1>🌐 Public Books</h1>
+
+            <p class="muted">
+                Public cookbooks will appear here.
+            </p>
+
+            <div id="publicBooksList"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MAIN COOKBOOK -->
+
+    <main id="mainScreen" class="hidden">
+
+        <header class="topbar">
+
+            <div>
+
+                <div class="brand">
+                    MEALMIND
+                </div>
+
+                <h1 id="mainBookName">
+                    Cookbook
+                </h1>
+
+                <span id="privacyBadge"></span>
+
+            </div>
+
+            <button
+                id="exitBookButton"
+                class="icon-button"
+            >
+                ←
             </button>
 
         </header>
@@ -263,34 +225,29 @@
 
         <!-- SEARCH -->
 
-        <section class="search-section">
-
-            <input
-                id="searchInput"
-                type="search"
-                placeholder="🔍 Search recipes..."
-            >
-
-        </section>
+        <input
+            id="searchInput"
+            class="search"
+            type="search"
+            placeholder="🔍 Search recipes..."
+        >
 
 
-        <!-- SCAN -->
+        <!-- SCANNER -->
 
         <section class="scan-card">
 
-            <div>
-
-                <h2>
-                    📷 Scan Recipe
-                </h2>
-
-                <p>
-                    Take a clear photo and MealMind
-                    will organize the recipe.
-                </p>
-
+            <div class="scan-icon">
+                📷
             </div>
 
+            <h2>Scan Recipe</h2>
+
+            <p>
+                Take a clear picture of a recipe.
+                MealMind will organize the ingredients
+                and instructions.
+            </p>
 
             <input
                 id="cameraInput"
@@ -300,7 +257,6 @@
                 hidden
             >
 
-
             <button
                 id="scanButton"
                 class="primary"
@@ -308,12 +264,8 @@
                 Scan Recipe
             </button>
 
-
-            <div
-                id="scanStatus"
-                class="scan-status"
-            >
-                Ready to scan
+            <div id="scanStatus" class="scan-status">
+                Ready
             </div>
 
         </section>
@@ -323,27 +275,16 @@
 
         <section>
 
-            <div class="section-header">
+            <div class="section-title">
 
                 <div>
-
-                    <h2>
-                        📁 Folders
-                    </h2>
-
-                    <p>
-                        Your recipes, organized automatically.
-                    </p>
-
+                    <h2>📁 Folders</h2>
+                    <p>Organize your recipes.</p>
                 </div>
 
             </div>
 
-
-            <div
-                id="folders"
-                class="folder-grid"
-            ></div>
+            <div id="folders" class="folder-grid"></div>
 
         </section>
 
@@ -352,65 +293,33 @@
 
         <section class="management">
 
-            <h2>
-                🛠️ Cookbook
-            </h2>
-
+            <h2>🛠️ Cookbook</h2>
 
             <div class="management-grid">
 
-                <button
-                    id="makeFolderButton"
-                    class="management-button"
-                >
+                <button id="makeFolderButton">
                     ➕
-                    <span>
-                        Make Folder
-                    </span>
+                    <span>Make Folder</span>
                 </button>
 
-
-                <button
-                    id="editFolderButton"
-                    class="management-button"
-                >
+                <button id="editFolderButton">
                     ✏️
-                    <span>
-                        Edit Folder
-                    </span>
+                    <span>Edit Folder</span>
                 </button>
 
-
-                <button
-                    id="deleteFolderButton"
-                    class="management-button danger"
-                >
+                <button id="deleteFolderButton" class="danger">
                     🗑️
-                    <span>
-                        Delete Folder
-                    </span>
+                    <span>Delete Folder</span>
                 </button>
 
-
-                <button
-                    id="editRecipeButton"
-                    class="management-button"
-                >
+                <button id="editRecipeButton">
                     ✏️
-                    <span>
-                        Edit Recipe
-                    </span>
+                    <span>Edit Recipe</span>
                 </button>
 
-
-                <button
-                    id="deleteRecipeButton"
-                    class="management-button danger"
-                >
+                <button id="deleteRecipeButton" class="danger">
                     🗑️
-                    <span>
-                        Delete Recipe
-                    </span>
+                    <span>Delete Recipe</span>
                 </button>
 
             </div>
@@ -422,20 +331,17 @@
 
         <section>
 
-            <div class="section-header">
+            <div class="section-title">
 
                 <div>
-
-                    <h2 id="recipeSectionTitle">
+                    <h2 id="recipeTitle">
                         📖 All Recipes
                     </h2>
 
-                    <p id="recipeSectionCount">
+                    <p id="recipeCount">
                         0 recipes
                     </p>
-
                 </div>
-
 
                 <button
                     id="allRecipesButton"
@@ -446,78 +352,73 @@
 
             </div>
 
-
-            <div
-                id="recipes"
-                class="recipe-list"
-            ></div>
+            <div id="recipes"></div>
 
         </section>
 
 
         <footer>
-
-            <p>
-                Made by Narayan Xavier Gill
-            </p>
-
-            <small>
-                MealMind
-            </small>
-
+            Made by Narayan Xavier Gill
         </footer>
 
     </main>
 
 
-    <!-- =================================================
-         RECIPE EDITOR
-         ================================================= -->
+    <!-- PAGE COUNT -->
 
-    <div
-        id="editorModal"
-        class="modal hidden"
-    >
+    <div id="pageCountModal" class="modal hidden">
 
         <div class="modal-card">
 
-            <div class="modal-header">
+            <h2>📖 Recipe Pages</h2>
 
-                <h2 id="editorHeading">
-                    Recipe
-                </h2>
+            <p>
+                How many pages should this recipe use?
+            </p>
 
-                <button
-                    id="closeEditor"
-                    class="close-button"
-                >
-                    ✕
-                </button>
+            <div class="page-options">
+
+                <button data-pages="1">1</button>
+                <button data-pages="2">2</button>
+                <button data-pages="3">3</button>
+                <button data-pages="4">4</button>
+                <button data-pages="5">5</button>
 
             </div>
 
+        </div>
 
-            <label>
-                Recipe Title
-            </label>
+    </div>
+
+
+    <!-- RECIPE EDITOR -->
+
+    <div id="editorModal" class="modal hidden">
+
+        <div class="modal-card">
+
+            <button
+                id="closeEditor"
+                class="close-button"
+            >
+                ✕
+            </button>
+
+            <h2>📖 Recipe</h2>
+
+            <label>Title</label>
 
             <input
-                id="recipeTitle"
+                id="recipeTitleInput"
                 type="text"
                 placeholder="Recipe title"
             >
 
-
-            <label>
-                Folder
-            </label>
+            <label>Folder</label>
 
             <select id="recipeFolder"></select>
 
-
-            <label>
-                Cuisine
-            </label>
+            <label>Cuisine</label>
 
             <input
                 id="recipeCuisine"
@@ -525,55 +426,34 @@
                 placeholder="Cuisine"
             >
 
-
-            <label>
-                🥕 What You Need
-            </label>
+            <label>🥕 What You Need</label>
 
             <textarea
                 id="recipeIngredients"
                 rows="10"
-                placeholder="Ingredient 1
-Ingredient 2
-Ingredient 3"
             ></textarea>
 
-
-            <label>
-                👨‍🍳 Instructions
-            </label>
+            <label>👨‍🍳 Instructions</label>
 
             <textarea
                 id="recipeInstructions"
                 rows="12"
-                placeholder="Step 1
-Step 2
-Step 3"
             ></textarea>
 
-
-            <label>
-                📝 Notes
-            </label>
+            <label>📝 Notes</label>
 
             <textarea
                 id="recipeNotes"
                 rows="6"
-                placeholder="Recipe notes..."
             ></textarea>
 
-
-            <div
-                id="editorError"
-                class="error"
-            ></div>
-
+            <div id="editorError" class="error"></div>
 
             <button
                 id="saveRecipeButton"
                 class="primary"
             >
-                💾 Save Recipe
+                Save Recipe
             </button>
 
         </div>
@@ -581,14 +461,9 @@ Step 3"
     </div>
 
 
-    <!-- =================================================
-         RECIPE VIEW
-         ================================================= -->
+    <!-- RECIPE VIEW -->
 
-    <div
-        id="recipeModal"
-        class="modal hidden"
-    >
+    <div id="recipeModal" class="modal hidden">
 
         <div class="recipe-page">
 
@@ -599,85 +474,38 @@ Step 3"
                 ✕
             </button>
 
-
             <div class="recipe-heading">
 
-                <div
-                    id="viewCuisine"
-                    class="recipe-cuisine"
-                >
-                </div>
+                <div id="viewCuisine"></div>
 
-                <h1 id="viewTitle">
-                    Recipe
-                </h1>
+                <h1 id="viewTitle"></h1>
 
             </div>
 
 
-            <!-- PAGE 1 -->
+            <div id="viewPage1">
 
-            <div
-                id="recipePage1"
-                class="recipe-page-content"
-            >
+                <h2>🥕 What You Need</h2>
 
-                <div class="recipe-section">
-
-                    <h2>
-                        🥕 What You Need
-                    </h2>
-
-                    <ul
-                        id="viewIngredients"
-                    ></ul>
-
-                </div>
+                <ul id="viewIngredients"></ul>
 
             </div>
 
 
-            <!-- PAGE 2 -->
+            <div id="viewPage2" class="hidden">
 
-            <div
-                id="recipePage2"
-                class="recipe-page-content hidden"
-            >
+                <h2>👨‍🍳 Instructions</h2>
 
-                <div class="recipe-section">
-
-                    <h2>
-                        👨‍🍳 Instructions
-                    </h2>
-
-                    <ol
-                        id="viewInstructions"
-                    ></ol>
-
-                </div>
+                <ol id="viewInstructions"></ol>
 
             </div>
 
 
-            <!-- PAGE 3 -->
+            <div id="viewPage3" class="hidden">
 
-            <div
-                id="recipePage3"
-                class="recipe-page-content hidden"
-            >
+                <h2>📝 Notes</h2>
 
-                <div class="recipe-section">
-
-                    <h2>
-                        📝 Notes
-                    </h2>
-
-                    <div
-                        id="viewNotes"
-                        class="notes"
-                    ></div>
-
-                </div>
+                <div id="viewNotes"></div>
 
             </div>
 
@@ -709,68 +537,13 @@ Step 3"
     </div>
 
 
-    <!-- =================================================
-         FOLDER MODAL
-         ================================================= -->
-
-    <div
-        id="folderModal"
-        class="modal hidden"
-    >
-
-        <div class="modal-card">
-
-            <button
-                id="closeFolderModal"
-                class="close-button"
-            >
-                ✕
-            </button>
-
-
-            <h2 id="folderModalTitle">
-                Make Folder
-            </h2>
-
-
-            <input
-                id="folderNameInput"
-                type="text"
-                placeholder="Folder name"
-            >
-
-
-            <div
-                id="folderError"
-                class="error"
-            ></div>
-
-
-            <button
-                id="saveFolderButton"
-                class="primary"
-            >
-                Save Folder
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         OCR
-         ================================================= -->
-
     <script
         src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"
     ></script>
-
 
     <script src="script.js"></script>
 
 </div>
 
 </body>
-
 </html>
