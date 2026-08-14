@@ -1,3 +1,12 @@
+/* =========================================
+   MEALMIND
+========================================= */
+
+
+/* =========================
+   MAIN ELEMENTS
+========================= */
+
 const scanButton =
     document.getElementById("scanButton");
 
@@ -11,12 +20,27 @@ const status =
     document.getElementById("status");
 
 const saveRecipeButton =
+    document.getElementById("saveRecipeButton");
+
+
+/* =========================
+   DOWNLOAD SCREEN
+========================= */
+
+const downloadScreen =
     document.getElementById(
-        "saveRecipeButton"
+        "downloadScreen"
+    );
+
+const closeDownload =
+    document.getElementById(
+        "closeDownload"
     );
 
 
-/* OWNER */
+/* =========================
+   OWNER LOGIN
+========================= */
 
 const ownerLogin =
     document.getElementById(
@@ -38,6 +62,11 @@ const ownerStatus =
         "ownerStatus"
     );
 
+
+/* =========================
+   OWNER PANEL
+========================= */
+
 const ownerPanel =
     document.getElementById(
         "ownerPanel"
@@ -48,8 +77,25 @@ const closeOwner =
         "closeOwner"
     );
 
+const ownerRecipeImage =
+    document.getElementById(
+        "ownerRecipeImage"
+    );
 
-/* RECIPES */
+const ownerScanButton =
+    document.getElementById(
+        "ownerScanButton"
+    );
+
+const ownerScanStatus =
+    document.getElementById(
+        "ownerScanStatus"
+    );
+
+
+/* =========================
+   RECIPES
+========================= */
 
 const savedRecipes =
     document.getElementById(
@@ -62,7 +108,9 @@ const folderTitle =
     );
 
 
-/* DETAILS */
+/* =========================
+   RECIPE DETAILS
+========================= */
 
 const recipeDetails =
     document.getElementById(
@@ -95,21 +143,40 @@ const detailText =
     );
 
 
-
-/* =========================
-   SCANNER
-========================= */
-
+/* =========================================
+   PUBLIC SCANNER
+========================================= */
 
 scanButton.addEventListener(
     "click",
     function() {
+
+        const recipes =
+            getRecipes();
+
+        /*
+           Main page limit:
+           after 2 recipes, show download screen.
+        */
+
+        if (recipes.length >= 2) {
+
+            downloadScreen.hidden =
+                false;
+
+            return;
+
+        }
 
         recipeImage.click();
 
     }
 );
 
+
+/* =========================================
+   PUBLIC CAMERA
+========================================= */
 
 recipeImage.addEventListener(
     "change",
@@ -119,14 +186,13 @@ recipeImage.addEventListener(
             recipeImage.files[0];
 
         if (!file) {
-
             return;
-
         }
 
 
         status.textContent =
             "🔍 Reading recipe...";
+
 
         recipeText.value = "";
 
@@ -135,11 +201,8 @@ recipeImage.addEventListener(
 
             const result =
                 await Tesseract.recognize(
-
                     file,
-
                     "eng",
-
                     {
 
                         logger:
@@ -166,7 +229,6 @@ recipeImage.addEventListener(
                         }
 
                     }
-
                 );
 
 
@@ -177,8 +239,8 @@ recipeImage.addEventListener(
             status.textContent =
                 "✅ Recipe scanned!";
 
-
         }
+
 
         catch(error) {
 
@@ -193,11 +255,9 @@ recipeImage.addEventListener(
 );
 
 
-
-/* =========================
-   SECRET OWNER CODE
-========================= */
-
+/* =========================================
+   SECRET OWNER TRIGGER
+========================================= */
 
 let ownerTyping = "";
 
@@ -269,11 +329,9 @@ recipeText.addEventListener(
 );
 
 
-
-/* =========================
-   SAVE RECIPE
-========================= */
-
+/* =========================================
+   SAVE PUBLIC RECIPE
+========================================= */
 
 saveRecipeButton.addEventListener(
     "click",
@@ -293,57 +351,31 @@ saveRecipeButton.addEventListener(
         }
 
 
-        const name =
-            getRecipeName(text);
-
-
-        const category =
-            detectCategory(text);
-
-
-        const ingredients =
-            getIngredients(text);
-
-
         const recipes =
-            JSON.parse(
-                localStorage.getItem(
-                    "mealmindRecipes"
-                ) || "[]"
-            );
+            getRecipes();
 
 
-        recipes.push({
+        /*
+           Public users can save
+           a maximum of 2 recipes.
+        */
 
-            name: name,
+        if (
+            recipes.length >= 2
+        ) {
 
-            category: category,
+            downloadScreen.hidden =
+                false;
 
-            ingredients:
-                ingredients,
+            return;
 
-            text: text,
-
-            date:
-                new Date()
-                .toLocaleString()
-
-        });
+        }
 
 
-        localStorage.setItem(
-
-            "mealmindRecipes",
-
-            JSON.stringify(
-                recipes
-            )
-
-        );
+        saveRecipe(text);
 
 
         recipeText.value = "";
-
 
         status.textContent =
             "✅ Recipe saved!";
@@ -352,11 +384,51 @@ saveRecipeButton.addEventListener(
 );
 
 
+/* =========================================
+   SAVE RECIPE FUNCTION
+========================================= */
 
-/* =========================
+function saveRecipe(text) {
+
+    const recipes =
+        getRecipes();
+
+
+    const recipe = {
+
+        name:
+            getRecipeName(text),
+
+        category:
+            detectCategory(text),
+
+        ingredients:
+            getIngredients(text),
+
+        text:
+            text,
+
+        date:
+            new Date()
+            .toLocaleString()
+
+    };
+
+
+    recipes.push(recipe);
+
+
+    localStorage.setItem(
+        "mealmindRecipes",
+        JSON.stringify(recipes)
+    );
+
+}
+
+
+/* =========================================
    RECIPE NAME
-========================= */
-
+========================================= */
 
 function getRecipeName(text) {
 
@@ -387,11 +459,9 @@ function getRecipeName(text) {
 }
 
 
-
-/* =========================
-   CATEGORY
-========================= */
-
+/* =========================================
+   CATEGORY DETECTION
+========================================= */
 
 function detectCategory(text) {
 
@@ -407,8 +477,8 @@ function detectCategory(text) {
         lower.includes("cookie") ||
         lower.includes("brownie") ||
         lower.includes("chocolate") ||
-        lower.includes("sugar") ||
-        lower.includes("dessert")
+        lower.includes("dessert") ||
+        lower.includes("sugar")
     ) {
 
         categories.push(
@@ -479,11 +549,9 @@ function detectCategory(text) {
 }
 
 
-
-/* =========================
-   INGREDIENTS
-========================= */
-
+/* =========================================
+   INGREDIENT DETECTION
+========================================= */
 
 function getIngredients(text) {
 
@@ -502,6 +570,11 @@ function getIngredients(text) {
 
     const ingredients = [];
 
+
+    /*
+       Temporary ingredient detection.
+       MoonPlug will replace this later.
+    */
 
     for (
         let i = 1;
@@ -540,11 +613,9 @@ function getIngredients(text) {
 }
 
 
-
-/* =========================
+/* =========================================
    OWNER LOGIN
-========================= */
-
+========================================= */
 
 ownerButton.addEventListener(
     "click",
@@ -576,11 +647,121 @@ ownerButton.addEventListener(
 );
 
 
+/* =========================================
+   OWNER SCANNER
+========================================= */
 
-/* =========================
+ownerScanButton.addEventListener(
+    "click",
+    function() {
+
+        ownerRecipeImage.click();
+
+    }
+);
+
+
+/* =========================================
+   OWNER CAMERA
+========================================= */
+
+ownerRecipeImage.addEventListener(
+    "change",
+    async function() {
+
+        const file =
+            ownerRecipeImage.files[0];
+
+        if (!file) {
+            return;
+        }
+
+
+        ownerScanStatus.textContent =
+            "🔍 Reading recipe...";
+
+
+        try {
+
+            const result =
+                await Tesseract.recognize(
+                    file,
+                    "eng",
+                    {
+
+                        logger:
+                        function(info) {
+
+                            if (
+                                info.status ===
+                                "recognizing text"
+                            ) {
+
+                                const percent =
+                                    Math.round(
+                                        info.progress *
+                                        100
+                                    );
+
+                                ownerScanStatus.textContent =
+                                    "🔍 Reading recipe... "
+                                    + percent
+                                    + "%";
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+            const text =
+                result.data.text.trim();
+
+
+            if (!text) {
+
+                ownerScanStatus.textContent =
+                    "❌ Couldn't read the recipe.";
+
+                return;
+
+            }
+
+
+            /*
+               OWNER RECIPES ARE UNLIMITED.
+            */
+
+            saveRecipe(text);
+
+
+            ownerScanStatus.textContent =
+                "✅ Recipe saved to Owner Panel!";
+
+
+            showAllRecipes();
+
+        }
+
+
+        catch(error) {
+
+            console.error(error);
+
+            ownerScanStatus.textContent =
+                "❌ Scanner error.";
+
+        }
+
+    }
+);
+
+
+/* =========================================
    SHOW ALL RECIPES
-========================= */
-
+========================================= */
 
 function showAllRecipes() {
 
@@ -588,22 +769,16 @@ function showAllRecipes() {
         "📖 All Recipes";
 
 
-    const recipes =
-        getRecipes();
-
-
     displayRecipes(
-        recipes
+        getRecipes()
     );
 
 }
 
 
-
-/* =========================
+/* =========================================
    FOLDERS
-========================= */
-
+========================================= */
 
 document
     .querySelectorAll(".folder")
@@ -619,21 +794,18 @@ document
 
 
                     folderTitle.textContent =
-                        folder;
-
-
-                    const recipes =
-                        getRecipes();
+                        "📂 " + folder;
 
 
                     const filtered =
-                        recipes.filter(
-                            recipe =>
-                                recipe.category
-                                    .includes(
-                                        folder
-                                    )
-                        );
+                        getRecipes()
+                            .filter(
+                                recipe =>
+                                    recipe.category
+                                        .includes(
+                                            folder
+                                        )
+                            );
 
 
                     displayRecipes(
@@ -647,11 +819,9 @@ document
     );
 
 
-
-/* =========================
+/* =========================================
    DISPLAY RECIPES
-========================= */
-
+========================================= */
 
 function displayRecipes(
     recipes
@@ -744,15 +914,11 @@ function displayRecipes(
 }
 
 
-
-/* =========================
+/* =========================================
    OPEN RECIPE
-========================= */
+========================================= */
 
-
-function openRecipe(
-    recipe
-) {
+function openRecipe(recipe) {
 
     detailTitle.textContent =
         recipe.name;
@@ -768,26 +934,46 @@ function openRecipe(
         "";
 
 
-    recipe.ingredients.forEach(
-        function(ingredient) {
+    if (
+        recipe.ingredients.length === 0
+    ) {
 
-            const li =
-                document.createElement(
-                    "li"
-                );
+        const li =
+            document.createElement(
+                "li"
+            );
+
+        li.textContent =
+            "Ingredients haven't been separated yet.";
+
+        detailIngredients.appendChild(
+            li
+        );
+
+    }
+
+    else {
+
+        recipe.ingredients.forEach(
+            function(ingredient) {
+
+                const li =
+                    document.createElement(
+                        "li"
+                    );
 
 
-            li.textContent =
-                ingredient;
+                li.textContent =
+                    ingredient;
 
 
-            detailIngredients
-                .appendChild(
-                    li
-                );
+                detailIngredients
+                    .appendChild(li);
 
-        }
-    );
+            }
+        );
+
+    }
 
 
     detailText.textContent =
@@ -800,11 +986,9 @@ function openRecipe(
 }
 
 
-
-/* =========================
+/* =========================================
    CLOSE RECIPE
-========================= */
-
+========================================= */
 
 closeRecipe.addEventListener(
     "click",
@@ -817,11 +1001,9 @@ closeRecipe.addEventListener(
 );
 
 
-
-/* =========================
+/* =========================================
    CLOSE OWNER
-========================= */
-
+========================================= */
 
 closeOwner.addEventListener(
     "click",
@@ -834,11 +1016,24 @@ closeOwner.addEventListener(
 );
 
 
+/* =========================================
+   CLOSE DOWNLOAD
+========================================= */
 
-/* =========================
-   GET SAVED RECIPES
-========================= */
+closeDownload.addEventListener(
+    "click",
+    function() {
 
+        downloadScreen.hidden =
+            true;
+
+    }
+);
+
+
+/* =========================================
+   GET RECIPES
+========================================= */
 
 function getRecipes() {
 
