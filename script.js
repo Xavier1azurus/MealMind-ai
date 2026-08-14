@@ -1,11 +1,24 @@
 const scanButton = document.getElementById("scanButton");
+
 const recipeImage = document.getElementById("recipeImage");
+
 const recipeText = document.getElementById("recipeText");
+
 const status = document.getElementById("status");
 
+
+
+/* =========================
+   RECIPE SCANNER
+========================= */
+
+
 scanButton.addEventListener("click", function () {
+
     recipeImage.click();
+
 });
+
 
 recipeImage.addEventListener("change", async function () {
 
@@ -15,32 +28,47 @@ recipeImage.addEventListener("change", async function () {
         return;
     }
 
+
     status.textContent = "🔍 Reading your recipe...";
 
     recipeText.value = "";
 
+
     try {
 
         const result = await Tesseract.recognize(
+
             file,
+
             "eng",
+
             {
+
                 logger: function (info) {
 
                     if (info.status === "recognizing text") {
-                        const percent = Math.round(info.progress * 100);
+
+                        const percent =
+                            Math.round(info.progress * 100);
 
                         status.textContent =
-                            "🔍 Reading recipe... " + percent + "%";
+                            "🔍 Reading recipe... " +
+                            percent +
+                            "%";
+
                     }
 
                 }
+
             }
+
         );
+
 
         recipeText.value = result.data.text;
 
         status.textContent = "✅ Recipe scanned!";
+
 
     } catch (error) {
 
@@ -48,60 +76,157 @@ recipeImage.addEventListener("change", async function () {
 
         status.textContent =
             "❌ Something went wrong while scanning.";
-    }
-});
-const ownerCode = document.getElementById("ownerCode");
-const ownerButton = document.getElementById("ownerButton");
-const ownerPanel = document.getElementById("ownerPanel");
-const ownerStatus = document.getElementById("ownerStatus");
-
-ownerButton.addEventListener("click", function () {
-
-    if (ownerCode.value === "BumsUp2AI") {
-
-        ownerPanel.hidden = false;
-        ownerStatus.textContent = "✅ Owner access granted.";
-
-    } else {
-
-        ownerPanel.hidden = true;
-        ownerStatus.textContent = "❌ Incorrect code.";
 
     }
 
 });
-const ownerLogin = document.getElementById("ownerLogin");
-const ownerCode = document.getElementById("ownerCode");
-const ownerButton = document.getElementById("ownerButton");
-const ownerStatus = document.getElementById("ownerStatus");
 
-let escPressed = false;
 
-document.addEventListener("keydown", function(event) {
 
-    if (event.key === "Escape") {
-        escPressed = true;
+/* =========================
+   OWNER LOGIN
+========================= */
+
+
+const ownerLogin =
+    document.getElementById("ownerLogin");
+
+const ownerCode =
+    document.getElementById("ownerCode");
+
+const ownerButton =
+    document.getElementById("ownerButton");
+
+const ownerStatus =
+    document.getElementById("ownerStatus");
+
+
+let startX = 0;
+
+let startY = 0;
+
+
+
+/* Start touch */
+
+document.addEventListener(
+    "touchstart",
+
+    function (event) {
+
+        /* Desktop does nothing */
+
+        if (window.innerWidth > 768) {
+            return;
+        }
+
+
+        const touch = event.touches[0];
+
+        startX = touch.clientX;
+
+        startY = touch.clientY;
+
+    },
+
+    {
+        passive: true
     }
 
-    if (event.code === "Space" && escPressed) {
-        ownerLogin.hidden = false;
-        ownerCode.focus();
+);
+
+
+
+/* End touch */
+
+document.addEventListener(
+    "touchend",
+
+    function (event) {
+
+        /* Desktop does nothing */
+
+        if (window.innerWidth > 768) {
+            return;
+        }
+
+
+        const touch =
+            event.changedTouches[0];
+
+
+        const endX =
+            touch.clientX;
+
+
+        const endY =
+            touch.clientY;
+
+
+        const screenWidth =
+            window.innerWidth;
+
+
+        const screenHeight =
+            window.innerHeight;
+
+
+        /* Must start near bottom-right */
+
+        const startedNearBottomRight =
+
+            startX >
+                screenWidth - 120 &&
+
+            startY >
+                screenHeight - 120;
+
+
+        /* Must move upward */
+
+        const swipedUp =
+            startY - endY > 80;
+
+
+        if (
+            startedNearBottomRight &&
+            swipedUp
+        ) {
+
+            ownerLogin.hidden = false;
+
+            ownerCode.focus();
+
+        }
+
     }
-});
 
-document.addEventListener("keyup", function(event) {
+);
 
-    if (event.key === "Escape") {
-        escPressed = false;
+
+
+/* Owner login */
+
+ownerButton.addEventListener(
+    "click",
+
+    function () {
+
+        if (
+            ownerCode.value ===
+            "BumsUp2AI"
+        ) {
+
+            ownerStatus.textContent =
+                "✅ Owner access granted!";
+
+        } else {
+
+            ownerStatus.textContent =
+                "❌ Incorrect code.";
+
+        }
+
     }
-});
 
-ownerButton.addEventListener("click", function() {
-
-    if (ownerCode.value === "BumsUp2AI") {
-        ownerStatus.textContent = "✅ Owner access granted!";
-    } else {
-        ownerStatus.textContent = "❌ Incorrect code.";
-    }
-
-});
+);
