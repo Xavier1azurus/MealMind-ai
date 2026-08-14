@@ -95,28 +95,76 @@
 
 <!-- OWNER PANEL -->
 
-<div
-    id="ownerPanel"
-    class="owner-panel"
-    hidden
->
+<div id="ownerPanel" class="owner-panel" hidden>
 
-    <div class="owner-content">
+    <div class="owner-app">
 
-        <h1>🔐 MealMind Owner Panel</h1>
+        <header class="owner-header">
 
-        <p>Saved recipes:</p>
+            <div>
+                <h1>🧠 MealMind</h1>
+                <p>Owner Dashboard</p>
+            </div>
 
-        <div id="savedRecipes"></div>
+            <span class="owner-badge">
+                OWNER
+            </span>
 
-        <button id="closeOwner">
-            Close Owner Panel
+        </header>
+
+
+        <section class="owner-section">
+
+            <h2>📊 Dashboard</h2>
+
+            <div class="owner-stats">
+
+                <div class="stat-card">
+                    <strong id="recipeCount">0</strong>
+                    <span>Recipes</span>
+                </div>
+
+                <div class="stat-card">
+                    <strong>0</strong>
+                    <span>Users</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="owner-section">
+
+            <h2>📖 Saved Recipes</h2>
+
+            <div id="savedRecipes"></div>
+
+        </section>
+
+
+        <section class="owner-section">
+
+            <h2>🧠 MoonPlug</h2>
+
+            <p>
+                AI cooking assistant
+            </p>
+
+            <button id="moonplugButton">
+                MoonPlug Settings
+            </button>
+
+        </section>
+
+
+        <button id="closeOwner" class="close-owner">
+            ← Back to MealMind
         </button>
 
     </div>
 
 </div>
-
 
 <script src="script.js"></script>
 
