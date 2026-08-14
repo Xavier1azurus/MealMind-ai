@@ -7,6 +7,9 @@
     <title>MealMind</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- OCR library -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 
 <body>
@@ -17,13 +20,28 @@
 
         <p>Scan your recipes. Plan your meals.</p>
 
+        <!-- Hidden photo selector -->
+        <input
+            type="file"
+            id="recipeImage"
+            accept="image/*"
+            capture="environment"
+            hidden
+        >
+
         <button id="scanButton">
             📸 Scan Recipe
         </button>
 
-        <section>
-            <h2>My Recipes</h2>
-            <div id="recipes"></div>
+        <p id="status"></p>
+
+        <section id="scanResult">
+            <h2>📖 Scanned Recipe</h2>
+
+            <textarea
+                id="recipeText"
+                placeholder="Your scanned recipe will appear here..."
+            ></textarea>
         </section>
 
         <section>
