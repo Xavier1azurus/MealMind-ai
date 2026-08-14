@@ -1,192 +1,85 @@
 /* =========================================
-   MEALMIND SCANNER V2
+   MEALMIND - CLEAN RECIPE SCANNER
 ========================================= */
 
 let ownerLoggedIn = false;
+let pendingImage = null;
+let pendingOwnerScan = false;
 
 
 /* =========================================
    ELEMENTS
 ========================================= */
 
-const scanButton =
-    document.getElementById("scanButton");
+const scanButton = document.getElementById("scanButton");
+const recipeImage = document.getElementById("recipeImage");
+const recipeText = document.getElementById("recipeText");
+const saveRecipeButton = document.getElementById("saveRecipeButton");
+const status = document.getElementById("status");
 
-const recipeImage =
-    document.getElementById("recipeImage");
+const photoCheck = document.getElementById("photoCheck");
+const photoWarnings = document.getElementById("photoWarnings");
+const usePhotoButton = document.getElementById("usePhotoButton");
+const retakeButton = document.getElementById("retakeButton");
 
-const recipeText =
-    document.getElementById("recipeText");
+const reviewScreen = document.getElementById("reviewScreen");
+const reviewText = document.getElementById("reviewText");
+const acceptScanButton = document.getElementById("acceptScanButton");
+const reviewRetakeButton = document.getElementById("reviewRetakeButton");
 
-const saveRecipeButton =
-    document.getElementById("saveRecipeButton");
+const downloadScreen = document.getElementById("downloadScreen");
+const closeDownload = document.getElementById("closeDownload");
 
-const status =
-    document.getElementById("status");
+const ownerLogin = document.getElementById("ownerLogin");
+const ownerCode = document.getElementById("ownerCode");
+const ownerButton = document.getElementById("ownerButton");
+const ownerStatus = document.getElementById("ownerStatus");
 
+const ownerPanel = document.getElementById("ownerPanel");
+const closeOwner = document.getElementById("closeOwner");
+const ownerRecipeImage = document.getElementById("ownerRecipeImage");
+const ownerScanButton = document.getElementById("ownerScanButton");
+const ownerScanStatus = document.getElementById("ownerScanStatus");
 
-/* PHOTO CHECK */
+const savedRecipes = document.getElementById("savedRecipes");
+const folderTitle = document.getElementById("folderTitle");
+const allRecipesButton = document.getElementById("allRecipesButton");
 
-const photoCheck =
-    document.getElementById("photoCheck");
+const countSweet = document.getElementById("countSweet");
+const countSavoury = document.getElementById("countSavoury");
+const countFried = document.getElementById("countFried");
+const countInternational = document.getElementById("countInternational");
 
-const photoWarnings =
-    document.getElementById("photoWarnings");
-
-const usePhotoButton =
-    document.getElementById("usePhotoButton");
-
-const retakeButton =
-    document.getElementById("retakeButton");
-
-
-/* REVIEW */
-
-const reviewScreen =
-    document.getElementById("reviewScreen");
-
-const reviewText =
-    document.getElementById("reviewText");
-
-const acceptScanButton =
-    document.getElementById("acceptScanButton");
-
-const reviewRetakeButton =
-    document.getElementById("reviewRetakeButton");
-
-
-/* DOWNLOAD */
-
-const downloadScreen =
-    document.getElementById("downloadScreen");
-
-const closeDownload =
-    document.getElementById("closeDownload");
-
-
-/* OWNER LOGIN */
-
-const ownerLogin =
-    document.getElementById("ownerLogin");
-
-const ownerCode =
-    document.getElementById("ownerCode");
-
-const ownerButton =
-    document.getElementById("ownerButton");
-
-const ownerStatus =
-    document.getElementById("ownerStatus");
-
-
-/* OWNER */
-
-const ownerPanel =
-    document.getElementById("ownerPanel");
-
-const closeOwner =
-    document.getElementById("closeOwner");
-
-const ownerRecipeImage =
-    document.getElementById("ownerRecipeImage");
-
-const ownerScanButton =
-    document.getElementById("ownerScanButton");
-
-const ownerScanStatus =
-    document.getElementById("ownerScanStatus");
-
-
-/* RECIPES */
-
-const savedRecipes =
-    document.getElementById("savedRecipes");
-
-const folderTitle =
-    document.getElementById("folderTitle");
-
-const allRecipesButton =
-    document.getElementById("allRecipesButton");
-
-
-/* COUNTS */
-
-const countSweet =
-    document.getElementById("countSweet");
-
-const countSavoury =
-    document.getElementById("countSavoury");
-
-const countFried =
-    document.getElementById("countFried");
-
-const countInternational =
-    document.getElementById("countInternational");
-
-
-/* DETAILS */
-
-const recipeDetails =
-    document.getElementById("recipeDetails");
-
-const closeRecipe =
-    document.getElementById("closeRecipe");
-
-const detailTitle =
-    document.getElementById("detailTitle");
-
-const detailCategory =
-    document.getElementById("detailCategory");
-
-const detailIngredients =
-    document.getElementById("detailIngredients");
-
-const detailText =
-    document.getElementById("detailText");
+const recipeDetails = document.getElementById("recipeDetails");
+const closeRecipe = document.getElementById("closeRecipe");
+const detailTitle = document.getElementById("detailTitle");
+const detailCategory = document.getElementById("detailCategory");
+const detailIngredients = document.getElementById("detailIngredients");
+const detailText = document.getElementById("detailText");
 
 
 /* =========================================
-   CURRENT SCAN
-========================================= */
-
-let pendingImage = null;
-
-let pendingOwnerScan = false;
-
-
-/* =========================================
-   PUBLIC SCAN BUTTON
+   PUBLIC SCANNER
 ========================================= */
 
 scanButton.addEventListener("click", function () {
 
-    const count = getPublicScanCount();
-
-    if (count >= 2) {
-
+    if (getPublicScanCount() >= 2) {
         downloadScreen.hidden = false;
-
         return;
     }
 
     recipeImage.value = "";
-
     recipeImage.click();
 
 });
 
 
-/* =========================================
-   PUBLIC PHOTO SELECTED
-========================================= */
-
 recipeImage.addEventListener("change", async function () {
 
     const file = recipeImage.files[0];
 
-    if (!file) {
-        return;
-    }
+    if (!file) return;
 
     pendingImage = file;
     pendingOwnerScan = false;
@@ -203,31 +96,22 @@ recipeImage.addEventListener("change", async function () {
 ownerScanButton.addEventListener("click", function () {
 
     if (!ownerLoggedIn) {
-
         ownerPanel.hidden = true;
         ownerLogin.hidden = false;
-
         return;
     }
 
     ownerRecipeImage.value = "";
-
     ownerRecipeImage.click();
 
 });
 
 
-/* =========================================
-   OWNER PHOTO
-========================================= */
-
 ownerRecipeImage.addEventListener("change", async function () {
 
     const file = ownerRecipeImage.files[0];
 
-    if (!file) {
-        return;
-    }
+    if (!file) return;
 
     pendingImage = file;
     pendingOwnerScan = true;
@@ -238,7 +122,7 @@ ownerRecipeImage.addEventListener("change", async function () {
 
 
 /* =========================================
-   PHOTO INSPECTION
+   PHOTO CHECK
 ========================================= */
 
 async function inspectPhoto(file) {
@@ -251,119 +135,64 @@ async function inspectPhoto(file) {
 
         const image = await loadImage(file);
 
-        /*
-            Basic resolution check.
-        */
-
-        if (
-            image.width < 900 ||
-            image.height < 900
-        ) {
+        if (image.width < 900 || image.height < 900) {
 
             warnings.push(
-                "The photo resolution is fairly low. A closer, clearer photo may read better."
+                "The photo resolution is low. Try moving closer to the recipe."
             );
 
         }
 
+        const ratio = image.width / image.height;
 
-        /*
-            Check aspect ratio.
-
-            Very unusual dimensions can indicate
-            the page is only partly in frame.
-        */
-
-        const ratio =
-            image.width / image.height;
-
-        if (
-            ratio > 3 ||
-            ratio < 0.33
-        ) {
+        if (ratio > 3 || ratio < 0.33) {
 
             warnings.push(
-                "The page shape looks unusual. Make sure the whole recipe page is visible."
+                "The page may not be completely in frame."
             );
 
         }
 
+        const quality = analyzeImageQuality(image);
 
-        /*
-            Analyze brightness and contrast.
-        */
-
-        const quality =
-            analyzeImageQuality(image);
-
-
-        if (
-            quality.dark
-        ) {
+        if (quality.dark) {
 
             warnings.push(
-                "The photo looks dark. Try taking it somewhere with better lighting."
+                "The photo looks dark. Try better lighting."
             );
 
         }
 
-
-        if (
-            quality.lowContrast
-        ) {
+        if (quality.lowContrast) {
 
             warnings.push(
-                "The text may not have enough contrast. Avoid shadows or glare over the recipe."
+                "The text may be difficult to separate from the background."
             );
 
         }
 
-
-        /*
-            We can't reliably detect every bent page
-            or food picture in plain browser JavaScript.
-
-            Instead, give a useful general warning
-            whenever the image quality suggests OCR
-            may have trouble.
-        */
-
-        if (
-            quality.edgeRisk
-        ) {
+        if (quality.edgeRisk) {
 
             warnings.push(
-                "Make sure the recipe is flat and photographed straight from above."
+                "For best results, keep the recipe flat and take the photo straight above it."
             );
 
         }
 
-
-        if (
-            warnings.length > 0
-        ) {
+        if (warnings.length > 0) {
 
             showPhotoWarnings(warnings);
-
             photoCheck.hidden = false;
 
-        }
-        else {
-
-            /*
-                Photo looks reasonable.
-                Start OCR directly.
-            */
+        } else {
 
             await runOCR(file);
 
         }
 
-    }
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
-
         await runOCR(file);
 
     }
@@ -379,16 +208,13 @@ function loadImage(file) {
 
     return new Promise(function (resolve, reject) {
 
-        const url =
-            URL.createObjectURL(file);
+        const url = URL.createObjectURL(file);
 
-        const image =
-            new Image();
+        const image = new Image();
 
         image.onload = function () {
 
             URL.revokeObjectURL(url);
-
             resolve(image);
 
         };
@@ -408,39 +234,26 @@ function loadImage(file) {
 
 function analyzeImageQuality(image) {
 
-    const canvas =
-        document.createElement("canvas");
+    const canvas = document.createElement("canvas");
 
     const maxSize = 500;
 
-    const scale =
-        Math.min(
-            1,
-            maxSize /
-            Math.max(
-                image.width,
-                image.height
-            )
-        );
+    const scale = Math.min(
+        1,
+        maxSize / Math.max(image.width, image.height)
+    );
 
-    canvas.width =
-        Math.max(
-            1,
-            Math.round(
-                image.width * scale
-            )
-        );
+    canvas.width = Math.max(
+        1,
+        Math.round(image.width * scale)
+    );
 
-    canvas.height =
-        Math.max(
-            1,
-            Math.round(
-                image.height * scale
-            )
-        );
+    canvas.height = Math.max(
+        1,
+        Math.round(image.height * scale)
+    );
 
-    const ctx =
-        canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
 
     ctx.drawImage(
         image,
@@ -450,33 +263,22 @@ function analyzeImageQuality(image) {
         canvas.height
     );
 
-    const data =
-        ctx.getImageData(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        ).data;
-
+    const data = ctx.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    ).data;
 
     let brightness = 0;
-
     let brightnessSquared = 0;
 
-    let pixels =
-        data.length / 4;
+    const pixels = data.length / 4;
 
-
-    for (
-        let i = 0;
-        i < data.length;
-        i += 4
-    ) {
+    for (let i = 0; i < data.length; i += 4) {
 
         const r = data[i];
-
         const g = data[i + 1];
-
         const b = data[i + 2];
 
         const gray =
@@ -485,38 +287,24 @@ function analyzeImageQuality(image) {
             0.114 * b;
 
         brightness += gray;
-
-        brightnessSquared +=
-            gray * gray;
+        brightnessSquared += gray * gray;
 
     }
 
-
-    const average =
-        brightness / pixels;
-
+    const average = brightness / pixels;
 
     const variance =
         (brightnessSquared / pixels) -
         (average * average);
 
-
     const contrast =
-        Math.sqrt(
-            Math.max(
-                0,
-                variance
-            )
-        );
-
+        Math.sqrt(Math.max(0, variance));
 
     return {
 
-        dark:
-            average < 55,
+        dark: average < 55,
 
-        lowContrast:
-            contrast < 25,
+        lowContrast: contrast < 25,
 
         edgeRisk:
             average < 75 ||
@@ -528,42 +316,33 @@ function analyzeImageQuality(image) {
 
 
 /* =========================================
-   SHOW WARNINGS
+   PHOTO WARNINGS
 ========================================= */
 
 function showPhotoWarnings(warnings) {
 
     photoWarnings.innerHTML = "";
 
-    const box =
-        document.createElement("div");
+    const box = document.createElement("div");
 
-    box.className =
-        "warning-box";
+    box.className = "warning-box";
 
-
-    const title =
-        document.createElement("strong");
+    const title = document.createElement("strong");
 
     title.textContent =
         "⚠️ This photo may be difficult to read";
 
-
     box.appendChild(title);
-
 
     warnings.forEach(function (warning) {
 
-        const p =
-            document.createElement("p");
+        const p = document.createElement("p");
 
-        p.textContent =
-            "• " + warning;
+        p.textContent = "• " + warning;
 
         box.appendChild(p);
 
     });
-
 
     photoWarnings.appendChild(box);
 
@@ -579,11 +358,7 @@ usePhotoButton.addEventListener("click", async function () {
     photoCheck.hidden = true;
 
     if (pendingImage) {
-
-        await runOCR(
-            pendingImage
-        );
-
+        await runOCR(pendingImage);
     }
 
 });
@@ -600,14 +375,11 @@ retakeButton.addEventListener("click", function () {
     if (pendingOwnerScan) {
 
         ownerRecipeImage.value = "";
-
         ownerRecipeImage.click();
 
-    }
-    else {
+    } else {
 
         recipeImage.value = "";
-
         recipeImage.click();
 
     }
@@ -626,30 +398,24 @@ async function runOCR(file) {
         ownerScanStatus.textContent =
             "🔍 Preparing recipe...";
 
-    }
-    else {
+    } else {
 
         status.textContent =
             "🔍 Preparing recipe...";
 
     }
 
-
     try {
-
-        /*
-            Preprocess the image before OCR.
-        */
 
         const processed =
             await preprocessImage(file);
-
 
         const result =
             await Tesseract.recognize(
                 processed,
                 "eng",
                 {
+
                     logger: function (info) {
 
                         if (
@@ -662,22 +428,17 @@ async function runOCR(file) {
                                     info.progress * 100
                                 );
 
-
                             const message =
                                 "🔍 Reading recipe... " +
                                 percent +
                                 "%";
 
-
-                            if (
-                                pendingOwnerScan
-                            ) {
+                            if (pendingOwnerScan) {
 
                                 ownerScanStatus.textContent =
                                     message;
 
-                            }
-                            else {
+                            } else {
 
                                 status.textContent =
                                     message;
@@ -687,23 +448,14 @@ async function runOCR(file) {
                         }
 
                     }
+
                 }
             );
 
 
-        let cleaned =
+        const cleaned =
             cleanOCRText(
                 result.data.text
-            );
-
-
-        /*
-            Improve obvious OCR formatting.
-        */
-
-        cleaned =
-            formatRecipeText(
-                cleaned
             );
 
 
@@ -717,11 +469,19 @@ async function runOCR(file) {
 
 
         /*
-            Send the text to the review screen.
+            NEW:
+            Convert the raw OCR into
+            a clean recipe layout.
         */
 
+        const formatted =
+            createCleanRecipe(
+                cleaned
+            );
+
+
         reviewText.value =
-            cleaned;
+            formatted;
 
 
         reviewScreen.hidden =
@@ -731,18 +491,16 @@ async function runOCR(file) {
         if (pendingOwnerScan) {
 
             ownerScanStatus.textContent =
-                "✏️ Review the recipe before saving.";
+                "✏️ Review your recipe.";
 
-        }
-        else {
+        } else {
 
             status.textContent =
-                "✏️ Review the recipe before saving.";
+                "✏️ Review your recipe.";
 
         }
 
-    }
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
@@ -754,8 +512,7 @@ async function runOCR(file) {
             ownerScanStatus.textContent =
                 message;
 
-        }
-        else {
+        } else {
 
             status.textContent =
                 message;
@@ -768,7 +525,7 @@ async function runOCR(file) {
 
 
 /* =========================================
-   PREPROCESS IMAGE
+   IMAGE PREPROCESSING
 ========================================= */
 
 async function preprocessImage(file) {
@@ -776,18 +533,10 @@ async function preprocessImage(file) {
     const image =
         await loadImage(file);
 
-
     const canvas =
         document.createElement("canvas");
 
-
-    /*
-        Keep enough resolution for OCR.
-    */
-
-    const maxDimension =
-        2400;
-
+    const maxDimension = 2400;
 
     const scale =
         Math.min(
@@ -799,29 +548,20 @@ async function preprocessImage(file) {
             )
         );
 
-
     canvas.width =
         Math.round(
             image.width * scale
         );
-
 
     canvas.height =
         Math.round(
             image.height * scale
         );
 
-
     const ctx =
         canvas.getContext("2d");
 
-
-    /*
-        White background.
-    */
-
-    ctx.fillStyle =
-        "#ffffff";
+    ctx.fillStyle = "#ffffff";
 
     ctx.fillRect(
         0,
@@ -830,15 +570,8 @@ async function preprocessImage(file) {
         canvas.height
     );
 
-
-    /*
-        Slightly increase contrast
-        while keeping normal colors.
-    */
-
     ctx.filter =
         "contrast(1.12) brightness(1.04)";
-
 
     ctx.drawImage(
         image,
@@ -847,11 +580,6 @@ async function preprocessImage(file) {
         canvas.width,
         canvas.height
     );
-
-
-    /*
-        Return a JPEG that OCR can read.
-    */
 
     return new Promise(function (resolve) {
 
@@ -876,15 +604,7 @@ async function preprocessImage(file) {
 
 function cleanOCRText(text) {
 
-    let cleaned =
-        text;
-
-
-    /*
-        Remove invisible control characters
-        while preserving normal letters,
-        numbers and punctuation.
-    */
+    let cleaned = text;
 
     cleaned =
         cleaned.replace(
@@ -892,21 +612,11 @@ function cleanOCRText(text) {
             ""
         );
 
-
-    /*
-        Remove obvious OCR box characters.
-    */
-
     cleaned =
         cleaned.replace(
             /[░▒▓█■□]{1,}/g,
             ""
         );
-
-
-    /*
-        Remove repeated pipes.
-    */
 
     cleaned =
         cleaned.replace(
@@ -914,21 +624,11 @@ function cleanOCRText(text) {
             " "
         );
 
-
-    /*
-        Normalize dashes.
-    */
-
     cleaned =
         cleaned.replace(
             /[–—−]/g,
             "-"
         );
-
-
-    /*
-        Normalize smart quotes.
-    */
 
     cleaned =
         cleaned.replace(
@@ -936,28 +636,11 @@ function cleanOCRText(text) {
             '"'
         );
 
-
     cleaned =
         cleaned.replace(
             /[‘’]/g,
             "'"
         );
-
-
-    /*
-        Keep fractions.
-    */
-
-    cleaned =
-        cleaned.replace(
-            /(\d)\s+(\d\/\d)/g,
-            "$1 $2"
-        );
-
-
-    /*
-        Remove excessive spaces.
-    */
 
     cleaned =
         cleaned.replace(
@@ -965,26 +648,16 @@ function cleanOCRText(text) {
             " "
         );
 
-
-    /*
-        Clean each line.
-    */
-
     cleaned =
         cleaned
             .split("\n")
-            .map(function (line) {
-
-                return line.trim();
-
-            })
-            .filter(function (line) {
-
-                return line.length > 0;
-
-            })
+            .map(
+                line => line.trim()
+            )
+            .filter(
+                line => line.length > 0
+            )
             .join("\n");
-
 
     return cleaned.trim();
 
@@ -992,206 +665,624 @@ function cleanOCRText(text) {
 
 
 /* =========================================
-   FORMAT RECIPE
+   ⭐ NEW CLEAN RECIPE FORMAT
 ========================================= */
 
-function formatRecipeText(text) {
+function createCleanRecipe(text) {
 
     const lines =
-        text.split("\n");
+        text
+            .split("\n")
+            .map(
+                line => line.trim()
+            )
+            .filter(
+                line => line.length > 0
+            );
 
 
-    const result = [];
+    if (!lines.length) {
+        return "";
+    }
 
 
-    lines.forEach(function (line) {
+    /*
+        Find sections.
+    */
 
-        let cleaned =
-            line.trim();
+    let ingredientStart = -1;
+    let instructionStart = -1;
 
 
-        if (!cleaned) {
-            return;
+    for (
+        let i = 0;
+        i < lines.length;
+        i++
+    ) {
+
+        const lower =
+            lines[i].toLowerCase();
+
+
+        if (
+            ingredientStart === -1 &&
+            (
+                lower.includes("ingredient")
+            )
+        ) {
+
+            ingredientStart = i;
+
         }
 
 
-        /*
-            Turn OCR bullet characters
-            into normal bullets.
-        */
+        if (
+            instructionStart === -1 &&
+            (
+                lower.includes("instruction") ||
+                lower.includes("direction") ||
+                lower === "method" ||
+                lower === "steps"
+            )
+        ) {
 
-        cleaned =
-            cleaned.replace(
-                /^[•●▪◦○]\s*/,
-                "- "
-            );
+            instructionStart = i;
 
+        }
 
-        /*
-            Fix common measurement OCR.
-        */
-
-        cleaned =
-            cleaned.replace(
-                /\bOZ\b/g,
-                "oz"
-            );
+    }
 
 
-        cleaned =
-            cleaned.replace(
-                /\bTSP\b/gi,
-                "tsp"
-            );
+    /*
+        First line becomes title.
+    */
 
-
-        cleaned =
-            cleaned.replace(
-                /\bTBSP\b/gi,
-                "tbsp"
-            );
-
-
-        result.push(
-            cleaned
+    let title =
+        cleanTitle(
+            lines[0]
         );
 
-    });
+
+    /*
+        If the first line looks like
+        "Ingredients", find a better title.
+    */
+
+    if (
+        title.toLowerCase().includes("ingredient")
+    ) {
+
+        title =
+            "Untitled Recipe";
+
+    }
 
 
-    return result.join("\n");
+    const ingredients = [];
+
+    const instructions = [];
+
+
+    /*
+        Extract ingredients.
+    */
+
+    if (ingredientStart !== -1) {
+
+        const end =
+            instructionStart !== -1
+                ? instructionStart
+                : lines.length;
+
+
+        for (
+            let i = ingredientStart + 1;
+            i < end;
+            i++
+        ) {
+
+            const line =
+                cleanIngredientLine(
+                    lines[i]
+                );
+
+
+            if (
+                line &&
+                !isSectionHeading(line)
+            ) {
+
+                ingredients.push(line);
+
+            }
+
+        }
+
+    }
+
+
+    /*
+        Extract instructions.
+    */
+
+    if (instructionStart !== -1) {
+
+        for (
+            let i = instructionStart + 1;
+            i < lines.length;
+            i++
+        ) {
+
+            let line =
+                lines[i].trim();
+
+
+            if (!line) continue;
+
+
+            line =
+                line.replace(
+                    /^[-•●▪◦○]\s*/,
+                    ""
+                );
+
+
+            line =
+                line.replace(
+                    /^\d+[\.\)]\s*/,
+                    ""
+                );
+
+
+            if (
+                line.length > 2
+            ) {
+
+                instructions.push(line);
+
+            }
+
+        }
+
+    }
+
+
+    /*
+        If OCR didn't detect an
+        Ingredients heading, look for
+        lines that look like ingredients.
+    */
+
+    if (
+        ingredients.length === 0
+    ) {
+
+        for (
+            let i = 1;
+            i < lines.length;
+            i++
+        ) {
+
+            if (
+                looksLikeIngredient(
+                    lines[i]
+                )
+            ) {
+
+                ingredients.push(
+                    cleanIngredientLine(
+                        lines[i]
+                    )
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /*
+        If there was no Instructions heading,
+        keep remaining text as instructions.
+    */
+
+    if (
+        instructions.length === 0
+    ) {
+
+        const start =
+            ingredientStart !== -1
+                ? ingredientStart + 1
+                : 1;
+
+
+        for (
+            let i = start;
+            i < lines.length;
+            i++
+        ) {
+
+            if (
+                looksLikeInstruction(
+                    lines[i]
+                )
+            ) {
+
+                instructions.push(
+                    lines[i]
+                        .replace(
+                            /^\d+[\.\)]\s*/,
+                            ""
+                        )
+                        .trim()
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /*
+        Build the clean recipe.
+    */
+
+    let output =
+        "🍴 " + title;
+
+
+    output +=
+        "\n\n🥕 INGREDIENTS";
+
+
+    if (
+        ingredients.length
+    ) {
+
+        ingredients.forEach(
+            function (ingredient) {
+
+                output +=
+                    "\n• " +
+                    ingredient;
+
+            }
+        );
+
+    } else {
+
+        output +=
+            "\n• Review and add ingredients";
+
+    }
+
+
+    output +=
+        "\n\n👨‍🍳 INSTRUCTIONS";
+
+
+    if (
+        instructions.length
+    ) {
+
+        instructions.forEach(
+            function (instruction, index) {
+
+                output +=
+                    "\n" +
+                    (index + 1) +
+                    ". " +
+                    instruction;
+
+            }
+        );
+
+    } else {
+
+        output +=
+            "\n1. Review and add instructions.";
+
+    }
+
+
+    return output;
 
 }
 
 
 /* =========================================
-   REVIEW ACCEPT
+   TITLE CLEANUP
 ========================================= */
 
-acceptScanButton.addEventListener("click", function () {
+function cleanTitle(title) {
 
-    const text =
-        cleanOCRText(
-            reviewText.value.trim()
-        );
+    return title
+        .replace(
+            /^[^A-Za-z0-9À-ÿ]+/,
+            ""
+        )
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim()
+        .slice(0, 100);
 
-
-    if (!text) {
-
-        return;
-
-    }
-
-
-    recipeText.value =
-        text;
-
-
-    reviewScreen.hidden =
-        true;
-
-
-    /*
-        The actual saving happens
-        when the user presses Save Recipe.
-
-        This prevents bad OCR from being
-        stored automatically.
-    */
-
-    if (pendingOwnerScan) {
-
-        saveOwnerRecipe(
-            text
-        );
-
-    }
-    else {
-
-        status.textContent =
-            "✅ Recipe ready to save.";
-
-    }
-
-});
+}
 
 
 /* =========================================
-   REVIEW RETAKE
+   INGREDIENT LINE
 ========================================= */
 
-reviewRetakeButton.addEventListener("click", function () {
+function cleanIngredientLine(line) {
 
-    reviewScreen.hidden = true;
+    return line
+        .replace(
+            /^[-•●▪◦○]\s*/,
+            ""
+        )
+        .replace(
+            /^\d+[\.\)]\s*/,
+            ""
+        )
+        .replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
 
-    if (pendingOwnerScan) {
+}
 
-        ownerRecipeImage.value = "";
 
-        ownerRecipeImage.click();
+/* =========================================
+   INGREDIENT DETECTION
+========================================= */
+
+function looksLikeIngredient(line) {
+
+    const lower =
+        line.toLowerCase();
+
+
+    /*
+        Measurements are a strong
+        ingredient signal.
+    */
+
+    const measurementPattern =
+        /\b\d+([\/.]\d+)?\s*(cups?|tbsp|tsp|teaspoons?|tablespoons?|oz|ounces?|lb|lbs|pounds?|g|kg|ml|l)\b/i;
+
+
+    if (
+        measurementPattern.test(line)
+    ) {
+
+        return true;
 
     }
-    else {
 
-        recipeImage.value = "";
 
-        recipeImage.click();
+    const ingredientWords = [
+
+        "chicken",
+        "beef",
+        "pork",
+        "turkey",
+        "flour",
+        "sugar",
+        "salt",
+        "pepper",
+        "butter",
+        "oil",
+        "milk",
+        "cream",
+        "cheese",
+        "egg",
+        "eggs",
+        "onion",
+        "garlic",
+        "tomato",
+        "potato",
+        "rice",
+        "pasta",
+        "water",
+        "vanilla",
+        "chocolate",
+        "cinnamon"
+
+    ];
+
+
+    return ingredientWords.some(
+        word =>
+            lower.includes(word)
+    );
+
+}
+
+
+/* =========================================
+   INSTRUCTION DETECTION
+========================================= */
+
+function looksLikeInstruction(line) {
+
+    const lower =
+        line.toLowerCase();
+
+
+    const actionWords = [
+
+        "mix",
+        "stir",
+        "cook",
+        "bake",
+        "boil",
+        "fry",
+        "heat",
+        "add",
+        "combine",
+        "place",
+        "pour",
+        "remove",
+        "serve",
+        "whisk",
+        "chop",
+        "slice",
+        "preheat",
+        "refrigerate",
+        "cool"
+
+    ];
+
+
+    return actionWords.some(
+        word =>
+            lower.startsWith(word + " ") ||
+            lower === word
+    );
+
+}
+
+
+/* =========================================
+   SECTION HEADING
+========================================= */
+
+function isSectionHeading(line) {
+
+    const lower =
+        line.toLowerCase().trim();
+
+
+    return (
+
+        lower.includes("ingredient") ||
+        lower.includes("instruction") ||
+        lower.includes("direction") ||
+        lower === "method" ||
+        lower === "steps"
+
+    );
+
+}
+
+
+/* =========================================
+   REVIEW
+========================================= */
+
+acceptScanButton.addEventListener(
+    "click",
+    function () {
+
+        const text =
+            reviewText.value.trim();
+
+
+        if (!text) return;
+
+
+        recipeText.value =
+            text;
+
+
+        reviewScreen.hidden =
+            true;
+
+
+        if (pendingOwnerScan) {
+
+            saveOwnerRecipe(text);
+
+        } else {
+
+            status.textContent =
+                "✅ Recipe cleaned and ready to save.";
+
+        }
 
     }
+);
 
-});
+
+reviewRetakeButton.addEventListener(
+    "click",
+    function () {
+
+        reviewScreen.hidden = true;
+
+        if (pendingOwnerScan) {
+
+            ownerRecipeImage.value = "";
+            ownerRecipeImage.click();
+
+        } else {
+
+            recipeImage.value = "";
+            recipeImage.click();
+
+        }
+
+    }
+);
 
 
 /* =========================================
    PUBLIC SAVE
 ========================================= */
 
-saveRecipeButton.addEventListener("click", function () {
+saveRecipeButton.addEventListener(
+    "click",
+    function () {
 
-    const text =
-        cleanOCRText(
-            recipeText.value.trim()
+        const text =
+            recipeText.value.trim();
+
+
+        if (!text) {
+
+            status.textContent =
+                "❌ There is no recipe to save.";
+
+            return;
+
+        }
+
+
+        const count =
+            getPublicScanCount();
+
+
+        if (count >= 2) {
+
+            downloadScreen.hidden =
+                false;
+
+            return;
+
+        }
+
+
+        saveRecipe(text);
+
+
+        setPublicScanCount(
+            count + 1
         );
 
 
-    if (!text) {
+        recipeText.value = "";
+
 
         status.textContent =
-            "❌ There is no recipe to save.";
-
-        return;
+            "✅ Recipe saved!";
 
     }
-
-
-    const count =
-        getPublicScanCount();
-
-
-    if (count >= 2) {
-
-        downloadScreen.hidden =
-            false;
-
-        return;
-
-    }
-
-
-    saveRecipe(text);
-
-
-    setPublicScanCount(
-        count + 1
-    );
-
-
-    recipeText.value = "";
-
-    status.textContent =
-        "✅ Recipe saved!";
-
-});
+);
 
 
 /* =========================================
@@ -1275,43 +1366,41 @@ function getRecipeName(text) {
         text
             .split("\n")
             .map(
-                line => line.trim()
+                line =>
+                    line.trim()
             )
             .filter(
-                line => line.length > 0
+                line =>
+                    line.length > 0
             );
 
 
     if (!lines.length) {
-
         return "Untitled Recipe";
-
     }
 
 
     let title =
-        lines[0];
+        lines[0]
+            .replace(
+                /^[^A-Za-z0-9À-ÿ]+/,
+                ""
+            );
 
+
+    /*
+        Remove our emoji if it remains.
+    */
 
     title =
         title.replace(
-            /^[^A-Za-z0-9À-ÿ]+/,
+            /^🍴\s*/,
             ""
         );
 
 
-    if (
-        title.length > 80
-    ) {
-
-        title =
-            title.slice(0, 80);
-
-    }
-
-
     return (
-        title ||
+        title.slice(0, 100) ||
         "Untitled Recipe"
     );
 
@@ -1327,12 +1416,10 @@ function detectCategory(text) {
     const lower =
         text.toLowerCase();
 
-
     const categories = [];
 
 
     if (
-
         lower.includes("cake") ||
         lower.includes("cookie") ||
         lower.includes("brownie") ||
@@ -1342,7 +1429,6 @@ function detectCategory(text) {
         lower.includes("frosting") ||
         lower.includes("candy") ||
         lower.includes("pie")
-
     ) {
 
         categories.push("Sweet");
@@ -1351,7 +1437,6 @@ function detectCategory(text) {
 
 
     if (
-
         lower.includes("chicken") ||
         lower.includes("beef") ||
         lower.includes("pork") ||
@@ -1363,7 +1448,6 @@ function detectCategory(text) {
         lower.includes("potato") ||
         lower.includes("vegetable") ||
         lower.includes("cheese")
-
     ) {
 
         categories.push("Savoury");
@@ -1372,14 +1456,12 @@ function detectCategory(text) {
 
 
     if (
-
         lower.includes("fried") ||
         lower.includes("frying") ||
         lower.includes("deep fry") ||
         lower.includes("deep-fry") ||
         lower.includes("pan fry") ||
         lower.includes("pan-fry")
-
     ) {
 
         categories.push("Fried");
@@ -1388,7 +1470,6 @@ function detectCategory(text) {
 
 
     if (
-
         lower.includes("taco") ||
         lower.includes("burrito") ||
         lower.includes("curry") ||
@@ -1400,7 +1481,6 @@ function detectCategory(text) {
         lower.includes("enchilada") ||
         lower.includes("lasagna") ||
         lower.includes("risotto")
-
     ) {
 
         categories.push("International");
@@ -1421,7 +1501,7 @@ function detectCategory(text) {
 
 
 /* =========================================
-   INGREDIENTS
+   INGREDIENTS FROM CLEAN TEXT
 ========================================= */
 
 function getIngredients(text) {
@@ -1430,98 +1510,70 @@ function getIngredients(text) {
         text
             .split("\n")
             .map(
-                line => line.trim()
+                line =>
+                    line.trim()
             )
             .filter(
-                line => line.length > 0
+                line =>
+                    line.length > 0
             );
-
-
-    let start = -1;
-
-
-    for (
-        let i = 0;
-        i < lines.length;
-        i++
-    ) {
-
-        if (
-            lines[i]
-                .toLowerCase()
-                .includes("ingredient")
-        ) {
-
-            start = i + 1;
-
-            break;
-
-        }
-
-    }
 
 
     const ingredients = [];
 
+    let inside = false;
 
-    if (start !== -1) {
 
-        for (
-            let i = start;
-            i < lines.length;
-            i++
+    lines.forEach(function (line) {
+
+        const lower =
+            line.toLowerCase();
+
+
+        if (
+            lower.includes("ingredients")
         ) {
 
-            const lower =
-                lines[i].toLowerCase();
+            inside = true;
+            return;
+
+        }
 
 
-            if (
+        if (
+            lower.includes("instructions") ||
+            lower.includes("directions") ||
+            lower.includes("method")
+        ) {
 
-                lower.includes("instruction") ||
-                lower.includes("direction") ||
-                lower.includes("method") ||
-                lower === "steps"
+            inside = false;
+            return;
 
-            ) {
-
-                break;
-
-            }
+        }
 
 
-            if (
-                lines[i].length <= 120
-            ) {
+        if (inside) {
 
-                const cleaned =
-                    cleanIngredient(
-                        lines[i]
-                    );
-
-
-                if (cleaned) {
-
-                    ingredients.push(
-                        cleaned
-                    );
-
-                }
-
-            }
+            const cleaned =
+                line
+                    .replace(
+                        /^•\s*/,
+                        ""
+                    )
+                    .trim();
 
 
-            if (
-                ingredients.length >= 30
-            ) {
+            if (cleaned) {
 
-                break;
+                ingredients.push(
+                    cleaned
+                );
 
             }
 
         }
 
-    }
+    });
 
 
     return ingredients;
@@ -1530,27 +1582,7 @@ function getIngredients(text) {
 
 
 /* =========================================
-   CLEAN INGREDIENT
-========================================= */
-
-function cleanIngredient(text) {
-
-    return text
-        .replace(
-            /^[-–—•●▪◦○]\s*/,
-            ""
-        )
-        .replace(
-            /^\d+\.\s*/,
-            ""
-        )
-        .trim();
-
-}
-
-
-/* =========================================
-   OWNER SECRET TRIGGER
+   OWNER CODE
 ========================================= */
 
 let ownerTyping = "";
@@ -1560,9 +1592,7 @@ recipeText.addEventListener(
     "keydown",
     function (event) {
 
-        if (
-            event.key === "Enter"
-        ) {
+        if (event.key === "Enter") {
 
             if (
                 ownerTyping === "1591"
@@ -1574,13 +1604,11 @@ recipeText.addEventListener(
 
                 recipeText.value = "";
 
-                ownerLogin.hidden =
-                    false;
+                ownerLogin.hidden = false;
 
                 ownerCode.value = "";
 
-                ownerStatus.textContent =
-                    "";
+                ownerStatus.textContent = "";
 
                 setTimeout(
                     () => ownerCode.focus(),
@@ -1599,14 +1627,10 @@ recipeText.addEventListener(
 
 
         if (
-            /^[0-9]$/.test(
-                event.key
-            )
+            /^[0-9]$/.test(event.key)
         ) {
 
-            ownerTyping +=
-                event.key;
-
+            ownerTyping += event.key;
 
             if (
                 ownerTyping.length > 4
@@ -1638,18 +1662,15 @@ ownerButton.addEventListener(
 
             ownerLoggedIn = true;
 
-            ownerLogin.hidden =
-                true;
+            ownerLogin.hidden = true;
 
-            ownerPanel.hidden =
-                false;
+            ownerPanel.hidden = false;
 
             updateFolderCounts();
 
             showAllRecipes();
 
-        }
-        else {
+        } else {
 
             ownerStatus.textContent =
                 "❌ Incorrect owner code.";
@@ -1672,17 +1693,13 @@ document
             "click",
             function () {
 
-                if (!ownerLoggedIn) {
-                    return;
-                }
+                if (!ownerLoggedIn) return;
 
                 const folder =
                     button.dataset.folder;
 
-
                 folderTitle.textContent =
                     "📂 " + folder;
-
 
                 const recipes =
                     getRecipes();
@@ -1722,9 +1739,7 @@ allRecipesButton.addEventListener(
 
 function showAllRecipes() {
 
-    if (!ownerLoggedIn) {
-        return;
-    }
+    if (!ownerLoggedIn) return;
 
     folderTitle.textContent =
         "📖 All Recipes";
@@ -1737,14 +1752,13 @@ function showAllRecipes() {
 
 
 /* =========================================
-   FOLDER COUNTS
+   COUNTS
 ========================================= */
 
 function updateFolderCounts() {
 
     const recipes =
         getRecipes();
-
 
     let sweet = 0;
     let savoury = 0;
@@ -1764,30 +1778,22 @@ function updateFolderCounts() {
 
         if (
             categories.includes("Sweet")
-        ) {
-            sweet++;
-        }
+        ) sweet++;
 
 
         if (
             categories.includes("Savoury")
-        ) {
-            savoury++;
-        }
+        ) savoury++;
 
 
         if (
             categories.includes("Fried")
-        ) {
-            fried++;
-        }
+        ) fried++;
 
 
         if (
             categories.includes("International")
-        ) {
-            international++;
-        }
+        ) international++;
 
     });
 
@@ -1882,7 +1888,9 @@ function displayRecipes(recipes) {
         );
 
 
-        savedRecipes.appendChild(card);
+        savedRecipes.appendChild(
+            card
+        );
 
     });
 
@@ -1931,8 +1939,7 @@ function openRecipe(recipe) {
             li
         );
 
-    }
-    else {
+    } else {
 
         ingredients.forEach(
             function (ingredient) {
@@ -1971,8 +1978,7 @@ closeRecipe.addEventListener(
     "click",
     function () {
 
-        recipeDetails.hidden =
-            true;
+        recipeDetails.hidden = true;
 
     }
 );
@@ -1988,36 +1994,32 @@ closeOwner.addEventListener(
 
         ownerLoggedIn = false;
 
-        ownerPanel.hidden =
-            true;
+        ownerPanel.hidden = true;
 
-        ownerLogin.hidden =
-            true;
+        ownerLogin.hidden = true;
 
-        ownerScanStatus.textContent =
-            "";
+        ownerScanStatus.textContent = "";
 
     }
 );
 
 
 /* =========================================
-   DOWNLOAD
+   DOWNLOAD SCREEN
 ========================================= */
 
 closeDownload.addEventListener(
     "click",
     function () {
 
-        downloadScreen.hidden =
-            true;
+        downloadScreen.hidden = true;
 
     }
 );
 
 
 /* =========================================
-   LOCAL STORAGE
+   STORAGE
 ========================================= */
 
 function getRecipes() {
@@ -2045,8 +2047,7 @@ function getRecipes() {
             ? recipes
             : [];
 
-    }
-    catch {
+    } catch {
 
         return [];
 
@@ -2056,7 +2057,7 @@ function getRecipes() {
 
 
 /* =========================================
-   PUBLIC COUNT
+   PUBLIC SCAN COUNT
 ========================================= */
 
 function getPublicScanCount() {
