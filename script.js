@@ -85,37 +85,25 @@ recipeImage.addEventListener("change", async function () {
 // IMPORTANT:
 // This listens ONLY to the Recipe Scanner box.
 
-recipeText.addEventListener("keydown", function (event) {
+recipeText.addEventListener("input", function () {
 
-    if (event.key === "Enter") {
+    const typedText = recipeText.value.trim();
 
-        const typedText =
-            recipeText.value.trim();
+    if (typedText === "1591") {
 
-        if (typedText === "1591") {
+        recipeText.value = "";
 
-            event.preventDefault();
+        ownerLogin.hidden = false;
 
-            // Clear the scanner box
-            recipeText.value = "";
+        ownerCode.value = "";
 
-            // Show owner login
-            ownerLogin.hidden = false;
+        ownerStatus.textContent = "";
 
-            // Clear old login information
-            ownerCode.value = "";
-            ownerStatus.textContent = "";
-
-            // Put cursor in owner password box
-            ownerCode.focus();
-
-        }
+        ownerCode.focus();
 
     }
 
 });
-
-
 // ================================
 // SAVE RECIPE
 // ================================
