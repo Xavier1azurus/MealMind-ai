@@ -27,8 +27,11 @@
 <body>
 
 
-<main class="app">
+<!-- =========================
+     MAIN MEALMIND APP
+========================= -->
 
+<main class="app">
 
     <h1>🧠 MealMind</h1>
 
@@ -37,7 +40,7 @@
     </p>
 
 
-    <!-- CAMERA -->
+    <!-- CAMERA INPUT -->
 
     <input
         type="file"
@@ -47,6 +50,8 @@
         hidden
     >
 
+
+    <!-- SCAN BUTTON -->
 
     <button id="scanButton">
 
@@ -58,14 +63,13 @@
     <p id="status"></p>
 
 
-    <!-- RECIPE SCANNER -->
+    <!-- RECIPE SCANNER BOX -->
 
     <section>
 
         <h2>
             📖 Recipe Scanner
         </h2>
-
 
         <textarea
             id="recipeText"
@@ -79,7 +83,6 @@
 
         </button>
 
-
     </section>
 
 
@@ -87,9 +90,70 @@
 
 
 
-<!-- ==========================
+<!-- =========================
+     DOWNLOAD SCREEN
+========================= -->
+
+<div
+    id="downloadScreen"
+    class="download-screen"
+    hidden
+>
+
+    <div class="download-box">
+
+        <h1>
+            🧠 MealMind
+        </h1>
+
+        <h2>
+            You've reached the free limit.
+        </h2>
+
+        <p>
+            Download the MealMind app to
+            keep scanning recipes.
+        </p>
+
+
+        <button
+            id="appStoreButton"
+            class="store-button"
+        >
+
+             App Store
+
+        </button>
+
+
+        <button
+            id="playStoreButton"
+            class="store-button"
+        >
+
+            ▶ Google Play
+
+        </button>
+
+
+        <button
+            id="closeDownload"
+            class="secondary-button"
+        >
+
+            ← Back
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
      OWNER LOGIN
-========================== -->
+========================= -->
 
 <div
     id="ownerLogin"
@@ -126,16 +190,15 @@
 
 
 
-<!-- ==========================
+<!-- =========================
      OWNER PANEL
-========================== -->
+========================= -->
 
 <div
     id="ownerPanel"
     class="owner-panel"
     hidden
 >
-
 
     <div class="owner-app">
 
@@ -165,6 +228,38 @@
 
 
 
+        <!-- OWNER SCANNER -->
+
+        <section class="owner-section">
+
+            <h2>
+                📸 Owner Scanner
+            </h2>
+
+
+            <input
+                type="file"
+                id="ownerRecipeImage"
+                accept="image/*"
+                capture="environment"
+                hidden
+            >
+
+
+            <button id="ownerScanButton">
+
+                📸 Scan Recipe
+
+            </button>
+
+
+            <p id="ownerScanStatus"></p>
+
+
+        </section>
+
+
+
         <!-- FOLDERS -->
 
         <section class="owner-section">
@@ -182,14 +277,11 @@
                     data-folder="Sweet"
                 >
 
-                    <span>
-                        🍰
-                    </span>
+                    <span>🍰</span>
 
                     Sweet
 
                 </button>
-
 
 
                 <button
@@ -197,14 +289,11 @@
                     data-folder="Savoury"
                 >
 
-                    <span>
-                        🍽️
-                    </span>
+                    <span>🍽️</span>
 
                     Savoury
 
                 </button>
-
 
 
                 <button
@@ -212,14 +301,11 @@
                     data-folder="Fried"
                 >
 
-                    <span>
-                        🍟
-                    </span>
+                    <span>🍟</span>
 
                     Fried
 
                 </button>
-
 
 
                 <button
@@ -227,9 +313,7 @@
                     data-folder="International"
                 >
 
-                    <span>
-                        🌎
-                    </span>
+                    <span>🌎</span>
 
                     International
 
@@ -242,7 +326,7 @@
 
 
 
-        <!-- RECIPES -->
+        <!-- SAVED RECIPES -->
 
         <section class="owner-section">
 
@@ -278,16 +362,15 @@
 
 
 
-<!-- ==========================
+<!-- =========================
      RECIPE DETAILS
-========================== -->
+========================= -->
 
 <div
     id="recipeDetails"
     class="recipe-details"
     hidden
 >
-
 
     <div class="recipe-details-box">
 
@@ -302,12 +385,10 @@
         </button>
 
 
-        <h1 id="detailTitle">
-        </h1>
+        <h1 id="detailTitle"></h1>
 
 
-        <p id="detailCategory">
-        </p>
+        <p id="detailCategory"></p>
 
 
         <h2>
@@ -315,8 +396,7 @@
         </h2>
 
 
-        <ul id="detailIngredients">
-        </ul>
+        <ul id="detailIngredients"></ul>
 
 
         <h2>
@@ -327,8 +407,7 @@
         <div
             id="detailText"
             class="detail-text"
-        >
-        </div>
+        ></div>
 
 
     </div>
