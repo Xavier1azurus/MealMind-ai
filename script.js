@@ -3,9 +3,26 @@
 ========================================= */
 
 
-/* =========================
-   MAIN ELEMENTS
-========================= */
+/*
+    IMPORTANT:
+
+    ownerLoggedIn is ONLY a JavaScript variable.
+
+    It is NOT saved in localStorage.
+
+    Therefore:
+    - Refresh = logged out
+    - Close/reopen = logged out
+    - iPad reopening the site = logged out
+*/
+
+
+let ownerLoggedIn = false;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
 
 const scanButton =
     document.getElementById("scanButton");
@@ -20,12 +37,12 @@ const status =
     document.getElementById("status");
 
 const saveRecipeButton =
-    document.getElementById("saveRecipeButton");
+    document.getElementById(
+        "saveRecipeButton"
+    );
 
 
-/* =========================
-   DOWNLOAD SCREEN
-========================= */
+/* DOWNLOAD */
 
 const downloadScreen =
     document.getElementById(
@@ -38,9 +55,7 @@ const closeDownload =
     );
 
 
-/* =========================
-   OWNER LOGIN
-========================= */
+/* OWNER LOGIN */
 
 const ownerLogin =
     document.getElementById(
@@ -63,9 +78,7 @@ const ownerStatus =
     );
 
 
-/* =========================
-   OWNER PANEL
-========================= */
+/* OWNER */
 
 const ownerPanel =
     document.getElementById(
@@ -93,9 +106,7 @@ const ownerScanStatus =
     );
 
 
-/* =========================
-   RECIPES
-========================= */
+/* RECIPES */
 
 const savedRecipes =
     document.getElementById(
@@ -107,10 +118,36 @@ const folderTitle =
         "folderTitle"
     );
 
+const allRecipesButton =
+    document.getElementById(
+        "allRecipesButton"
+    );
 
-/* =========================
-   RECIPE DETAILS
-========================= */
+
+/* COUNTS */
+
+const countSweet =
+    document.getElementById(
+        "countSweet"
+    );
+
+const countSavoury =
+    document.getElementById(
+        "countSavoury"
+    );
+
+const countFried =
+    document.getElementById(
+        "countFried"
+    );
+
+const countInternational =
+    document.getElementById(
+        "countInternational"
+    );
+
+
+/* DETAILS */
 
 const recipeDetails =
     document.getElementById(
@@ -144,22 +181,25 @@ const detailText =
 
 
 /* =========================================
-   PUBLIC SCANNER
+   PUBLIC SCANNING
 ========================================= */
 
 scanButton.addEventListener(
     "click",
-    function() {
-
-        const recipes =
-            getRecipes();
+    function () {
 
         /*
-           Main page limit:
-           after 2 recipes, show download screen.
+            Only the PUBLIC scan count matters here.
+
+            Owner recipes do NOT use up
+            the public user's two scans.
         */
 
-        if (recipes.length >= 2) {
+        const publicCount =
+            getPublicScanCount();
+
+
+        if (publicCount >= 2) {
 
             downloadScreen.hidden =
                 false;
@@ -167,6 +207,7 @@ scanButton.addEventListener(
             return;
 
         }
+
 
         recipeImage.click();
 
@@ -180,13 +221,16 @@ scanButton.addEventListener(
 
 recipeImage.addEventListener(
     "change",
-    async function() {
+    async function () {
 
         const file =
             recipeImage.files[0];
 
+
         if (!file) {
+
             return;
+
         }
 
 
@@ -194,46 +238,24 @@ recipeImage.addEventListener(
             "🔍 Reading recipe...";
 
 
-        recipeText.value = "";
-
-
         try {
 
-            const result =
-                await Tesseract.recognize(
-                    file,
-                    "eng",
-                    {
+            const text =
+                await scanImage(file);
 
-                        logger:
-                        function(info) {
 
-                            if (
-                                info.status ===
-                                "recognizing text"
-                            ) {
+            if (!text) {
 
-                                const percent =
-                                    Math.round(
-                                        info.progress *
-                                        100
-                                    );
+                status.textContent =
+                    "❌ I couldn't read that recipe.";
 
-                                status.textContent =
-                                    "🔍 Reading recipe... "
-                                    + percent
-                                    + "%";
+                return;
 
-                            }
-
-                        }
-
-                    }
-                );
+            }
 
 
             recipeText.value =
-                result.data.text;
+                cleanOCRText(text);
 
 
             status.textContent =
@@ -242,7 +264,7 @@ recipeImage.addEventListener(
         }
 
 
-        catch(error) {
+        catch (error) {
 
             console.error(error);
 
@@ -256,6 +278,135 @@ recipeImage.addEventListener(
 
 
 /* =========================================
+   BETTER OCR
+========================================= */
+
+async function scanImage(file) {
+
+    const result =
+        await Tesseract.recognize(
+
+            file,
+
+            "eng",
+
+            {
+
+                logger:
+                function (info) {
+
+                    if (
+                        info.status ===
+                        "recognizing text"
+                    ) {
+
+                        const percent =
+                            Math.round(
+                                info.progress * 100
+                            );
+
+
+                        status.textContent =
+                            "🔍 Reading recipe... "
+                            + percent
+                            + "%";
+
+                    }
+
+                }
+
+            }
+
+        );
+
+
+    return result.data.text;
+
+}
+
+
+/* =========================================
+   CLEAN OCR TEXT
+========================================= */
+
+function cleanOCRText(text) {
+
+    let cleaned =
+        text;
+
+
+    /*
+        Remove common OCR junk.
+    */
+
+    cleaned =
+        cleaned.replace(
+            /[^\x09\x0A\x0D\x20-\x7EÀ-ÿ]/g,
+            ""
+        );
+
+
+    /*
+        Replace strange repeated symbols.
+    */
+
+    cleaned =
+        cleaned.replace(
+            /[|]{2,}/g,
+            " "
+        );
+
+
+    cleaned =
+        cleaned.replace(
+            /[_]{3,}/g,
+            " "
+        );
+
+
+    cleaned =
+        cleaned.replace(
+            /[~`^]{2,}/g,
+            " "
+        );
+
+
+    /*
+        Clean excessive spaces.
+    */
+
+    cleaned =
+        cleaned.replace(
+            /[ \t]+/g,
+            " "
+        );
+
+
+    /*
+        Remove blank lines at
+        the beginning/end.
+    */
+
+    cleaned =
+        cleaned
+            .split("\n")
+            .map(
+                line =>
+                    line.trim()
+            )
+            .filter(
+                line =>
+                    line.length > 0
+            )
+            .join("\n");
+
+
+    return cleaned.trim();
+
+}
+
+
+/* =========================================
    SECRET OWNER TRIGGER
 ========================================= */
 
@@ -264,32 +415,60 @@ let ownerTyping = "";
 
 recipeText.addEventListener(
     "keydown",
-    function(event) {
+    function (event) {
+
+        /*
+            Secret code:
+
+            1591 + Enter
+        */
 
         if (
             event.key === "Enter"
         ) {
 
             if (
-                ownerTyping ===
-                "1591"
+                ownerTyping === "1591"
             ) {
 
                 event.preventDefault();
 
-                recipeText.value = "";
 
                 ownerTyping = "";
+
+
+                recipeText.value = "";
+
+
+                /*
+                    Open login.
+
+                    We do NOT set ownerLoggedIn
+                    here. The user still needs
+                    the owner password.
+                */
 
                 ownerLogin.hidden =
                     false;
 
-                ownerCode.value = "";
+
+                ownerCode.value =
+                    "";
+
 
                 ownerStatus.textContent =
                     "";
 
-                ownerCode.focus();
+
+                setTimeout(
+                    function () {
+
+                        ownerCode.focus();
+
+                    },
+                    50
+                );
+
 
                 return;
 
@@ -303,6 +482,10 @@ recipeText.addEventListener(
         }
 
 
+        /*
+            Only track numbers.
+        */
+
         if (
             /^[0-9]$/.test(
                 event.key
@@ -313,9 +496,13 @@ recipeText.addEventListener(
                 event.key;
 
 
+            /*
+                Keep only the last
+                four digits.
+            */
+
             if (
-                ownerTyping.length >
-                4
+                ownerTyping.length > 4
             ) {
 
                 ownerTyping =
@@ -335,10 +522,12 @@ recipeText.addEventListener(
 
 saveRecipeButton.addEventListener(
     "click",
-    function() {
+    function () {
 
         const text =
-            recipeText.value.trim();
+            cleanOCRText(
+                recipeText.value.trim()
+            );
 
 
         if (!text) {
@@ -351,17 +540,16 @@ saveRecipeButton.addEventListener(
         }
 
 
-        const recipes =
-            getRecipes();
+        const publicCount =
+            getPublicScanCount();
 
 
         /*
-           Public users can save
-           a maximum of 2 recipes.
+            Public limit.
         */
 
         if (
-            recipes.length >= 2
+            publicCount >= 2
         ) {
 
             downloadScreen.hidden =
@@ -375,17 +563,31 @@ saveRecipeButton.addEventListener(
         saveRecipe(text);
 
 
+        /*
+            Increase public count.
+
+            Owner recipes don't change
+            this number.
+        */
+
+        setPublicScanCount(
+            publicCount + 1
+        );
+
+
         recipeText.value = "";
+
 
         status.textContent =
             "✅ Recipe saved!";
+
 
     }
 );
 
 
 /* =========================================
-   SAVE RECIPE FUNCTION
+   SAVE RECIPE
 ========================================= */
 
 function saveRecipe(text) {
@@ -395,6 +597,13 @@ function saveRecipe(text) {
 
 
     const recipe = {
+
+        id:
+            Date.now() +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2),
 
         name:
             getRecipeName(text),
@@ -410,7 +619,7 @@ function saveRecipe(text) {
 
         date:
             new Date()
-            .toLocaleString()
+                .toLocaleString()
 
     };
 
@@ -419,9 +628,20 @@ function saveRecipe(text) {
 
 
     localStorage.setItem(
+
         "mealmindRecipes",
+
         JSON.stringify(recipes)
+
     );
+
+
+    /*
+        Update folder numbers
+        immediately.
+    */
+
+    updateFolderCounts();
 
 }
 
@@ -446,15 +666,47 @@ function getRecipeName(text) {
 
 
     if (
-        lines.length > 0
+        lines.length === 0
     ) {
 
-        return lines[0];
+        return "Untitled Recipe";
 
     }
 
 
-    return "Untitled Recipe";
+    let firstLine =
+        lines[0];
+
+
+    /*
+        Remove common OCR junk
+        from the title.
+    */
+
+    firstLine =
+        firstLine.replace(
+            /^[^A-Za-zÀ-ÿ0-9]+/,
+            ""
+        );
+
+
+    if (
+        firstLine.length > 80
+    ) {
+
+        firstLine =
+            firstLine.slice(
+                0,
+                80
+            );
+
+    }
+
+
+    return (
+        firstLine ||
+        "Untitled Recipe"
+    );
 
 }
 
@@ -472,13 +724,21 @@ function detectCategory(text) {
     const categories = [];
 
 
+    /* SWEET */
+
     if (
+
         lower.includes("cake") ||
         lower.includes("cookie") ||
         lower.includes("brownie") ||
         lower.includes("chocolate") ||
         lower.includes("dessert") ||
+        lower.includes("icing") ||
+        lower.includes("frosting") ||
+        lower.includes("candy") ||
+        lower.includes("pie") ||
         lower.includes("sugar")
+
     ) {
 
         categories.push(
@@ -488,13 +748,23 @@ function detectCategory(text) {
     }
 
 
+    /* SAVOURY */
+
     if (
+
         lower.includes("chicken") ||
         lower.includes("beef") ||
+        lower.includes("pork") ||
+        lower.includes("turkey") ||
         lower.includes("pasta") ||
         lower.includes("soup") ||
         lower.includes("salad") ||
-        lower.includes("rice")
+        lower.includes("rice") ||
+        lower.includes("potato") ||
+        lower.includes("vegetable") ||
+        lower.includes("cheese") ||
+        lower.includes("sandwich")
+
     ) {
 
         categories.push(
@@ -504,10 +774,18 @@ function detectCategory(text) {
     }
 
 
+    /* FRIED */
+
     if (
+
         lower.includes("fried") ||
-        lower.includes("fry") ||
-        lower.includes("deep-fry")
+        lower.includes("fry ") ||
+        lower.includes("frying") ||
+        lower.includes("deep-fry") ||
+        lower.includes("deep fry") ||
+        lower.includes("pan-fry") ||
+        lower.includes("pan fry")
+
     ) {
 
         categories.push(
@@ -517,13 +795,23 @@ function detectCategory(text) {
     }
 
 
+    /* INTERNATIONAL */
+
     if (
+
         lower.includes("taco") ||
+        lower.includes("burrito") ||
         lower.includes("curry") ||
         lower.includes("sushi") ||
         lower.includes("ramen") ||
         lower.includes("pizza") ||
-        lower.includes("pasta")
+        lower.includes("pad thai") ||
+        lower.includes("teriyaki") ||
+        lower.includes("enchilada") ||
+        lower.includes("lasagna") ||
+        lower.includes("risotto") ||
+        lower.includes("kimchi")
+
     ) {
 
         categories.push(
@@ -532,6 +820,11 @@ function detectCategory(text) {
 
     }
 
+
+    /*
+        If nothing was detected,
+        put it in Savoury.
+    */
 
     if (
         categories.length === 0
@@ -572,8 +865,113 @@ function getIngredients(text) {
 
 
     /*
-       Temporary ingredient detection.
-       MoonPlug will replace this later.
+        Look for an Ingredients heading.
+    */
+
+    let ingredientStart =
+        -1;
+
+
+    for (
+        let i = 0;
+        i < lines.length;
+        i++
+    ) {
+
+        const line =
+            lines[i].toLowerCase();
+
+
+        if (
+            line.includes("ingredient")
+        ) {
+
+            ingredientStart =
+                i + 1;
+
+            break;
+
+        }
+
+    }
+
+
+    /*
+        If we found an Ingredients
+        heading, use the lines after it.
+    */
+
+    if (
+        ingredientStart !== -1
+    ) {
+
+        for (
+            let i = ingredientStart;
+            i < lines.length;
+            i++
+        ) {
+
+            const line =
+                lines[i];
+
+
+            const lower =
+                line.toLowerCase();
+
+
+            /*
+                Stop when instructions
+                begin.
+            */
+
+            if (
+
+                lower.includes("instructions") ||
+                lower.includes("directions") ||
+                lower.includes("method") ||
+                lower === "steps"
+
+            ) {
+
+                break;
+
+            }
+
+
+            if (
+                line.length <= 120
+            ) {
+
+                ingredients.push(
+                    cleanIngredient(line)
+                );
+
+            }
+
+
+            if (
+                ingredients.length >= 30
+            ) {
+
+                break;
+
+            }
+
+        }
+
+
+        return ingredients.filter(
+            item =>
+                item.length > 0
+        );
+
+    }
+
+
+    /*
+        If no Ingredients heading
+        was found, make a reasonable
+        temporary guess.
     */
 
     for (
@@ -586,12 +984,34 @@ function getIngredients(text) {
             lines[i];
 
 
+        const lower =
+            line.toLowerCase();
+
+
         if (
-            line.length < 100
+
+            lower.includes("instructions") ||
+            lower.includes("directions") ||
+            lower.includes("method")
+
+        ) {
+
+            break;
+
+        }
+
+
+        /*
+            Ingredients are usually
+            relatively short lines.
+        */
+
+        if (
+            line.length <= 80
         ) {
 
             ingredients.push(
-                line
+                cleanIngredient(line)
             );
 
         }
@@ -608,7 +1028,43 @@ function getIngredients(text) {
     }
 
 
-    return ingredients;
+    return ingredients.filter(
+        item =>
+            item.length > 0
+    );
+
+}
+
+
+/* =========================================
+   CLEAN INGREDIENT
+========================================= */
+
+function cleanIngredient(text) {
+
+    return text
+
+        .replace(
+            /^[•●▪◦○oO]\s*/,
+            ""
+        )
+
+        .replace(
+            /^[-–—]\s*/,
+            ""
+        )
+
+        .replace(
+            /^\d+\.\s*/,
+            ""
+        )
+
+        .replace(
+            /^[^A-Za-z0-9¼½¾⅓⅔⅛⅜⅝⅞]+/,
+            ""
+        )
+
+        .trim();
 
 }
 
@@ -619,18 +1075,41 @@ function getIngredients(text) {
 
 ownerButton.addEventListener(
     "click",
-    function() {
+    function () {
+
+        const code =
+            ownerCode.value.trim();
+
 
         if (
-            ownerCode.value ===
-            "BumsUp2AI"
+            code === "BumsUp2AI"
         ) {
+
+            /*
+                THIS is the only place
+                ownerLoggedIn becomes true.
+            */
+
+            ownerLoggedIn = true;
+
 
             ownerLogin.hidden =
                 true;
 
+
             ownerPanel.hidden =
                 false;
+
+
+            ownerCode.value = "";
+
+
+            ownerStatus.textContent =
+                "";
+
+
+            updateFolderCounts();
+
 
             showAllRecipes();
 
@@ -653,7 +1132,29 @@ ownerButton.addEventListener(
 
 ownerScanButton.addEventListener(
     "click",
-    function() {
+    function () {
+
+        /*
+            Extra protection.
+
+            If somehow the panel is opened
+            without logging in, don't scan.
+        */
+
+        if (
+            !ownerLoggedIn
+        ) {
+
+            ownerPanel.hidden =
+                true;
+
+            ownerLogin.hidden =
+                false;
+
+            return;
+
+        }
+
 
         ownerRecipeImage.click();
 
@@ -667,13 +1168,16 @@ ownerScanButton.addEventListener(
 
 ownerRecipeImage.addEventListener(
     "change",
-    async function() {
+    async function () {
 
         const file =
             ownerRecipeImage.files[0];
 
+
         if (!file) {
+
             return;
+
         }
 
 
@@ -685,12 +1189,15 @@ ownerRecipeImage.addEventListener(
 
             const result =
                 await Tesseract.recognize(
+
                     file,
+
                     "eng",
+
                     {
 
                         logger:
-                        function(info) {
+                        function (info) {
 
                             if (
                                 info.status ===
@@ -703,6 +1210,7 @@ ownerRecipeImage.addEventListener(
                                         100
                                     );
 
+
                                 ownerScanStatus.textContent =
                                     "🔍 Reading recipe... "
                                     + percent
@@ -713,14 +1221,17 @@ ownerRecipeImage.addEventListener(
                         }
 
                     }
+
                 );
 
 
-            const text =
-                result.data.text.trim();
+            const cleaned =
+                cleanOCRText(
+                    result.data.text
+                );
 
 
-            if (!text) {
+            if (!cleaned) {
 
                 ownerScanStatus.textContent =
                     "❌ Couldn't read the recipe.";
@@ -731,24 +1242,36 @@ ownerRecipeImage.addEventListener(
 
 
             /*
-               OWNER RECIPES ARE UNLIMITED.
+                Owner recipes are unlimited.
             */
 
-            saveRecipe(text);
+            saveRecipe(cleaned);
 
 
             ownerScanStatus.textContent =
-                "✅ Recipe saved to Owner Panel!";
+                "✅ Recipe saved!";
+
+
+            updateFolderCounts();
 
 
             showAllRecipes();
 
+
+            /*
+                Allow the same image to
+                be selected again later.
+            */
+
+            ownerRecipeImage.value = "";
+
         }
 
 
-        catch(error) {
+        catch (error) {
 
             console.error(error);
+
 
             ownerScanStatus.textContent =
                 "❌ Scanner error.";
@@ -765,6 +1288,15 @@ ownerRecipeImage.addEventListener(
 
 function showAllRecipes() {
 
+    if (
+        !ownerLoggedIn
+    ) {
+
+        return;
+
+    }
+
+
     folderTitle.textContent =
         "📖 All Recipes";
 
@@ -777,17 +1309,26 @@ function showAllRecipes() {
 
 
 /* =========================================
-   FOLDERS
+   FOLDER BUTTONS
 ========================================= */
 
 document
     .querySelectorAll(".folder")
     .forEach(
-        function(button) {
+        function (button) {
 
             button.addEventListener(
                 "click",
-                function() {
+                function () {
+
+                    if (
+                        !ownerLoggedIn
+                    ) {
+
+                        return;
+
+                    }
+
 
                     const folder =
                         button.dataset.folder;
@@ -797,15 +1338,23 @@ document
                         "📂 " + folder;
 
 
+                    const recipes =
+                        getRecipes();
+
+
                     const filtered =
-                        getRecipes()
-                            .filter(
-                                recipe =>
+                        recipes.filter(
+                            function (recipe) {
+
+                                return Array.isArray(
                                     recipe.category
-                                        .includes(
-                                            folder
-                                        )
-                            );
+                                ) &&
+                                recipe.category.includes(
+                                    folder
+                                );
+
+                            }
+                        );
 
 
                     displayRecipes(
@@ -817,6 +1366,115 @@ document
 
         }
     );
+
+
+/* =========================================
+   ALL RECIPES
+========================================= */
+
+allRecipesButton.addEventListener(
+    "click",
+    function () {
+
+        showAllRecipes();
+
+    }
+);
+
+
+/* =========================================
+   UPDATE FOLDER COUNTS
+========================================= */
+
+function updateFolderCounts() {
+
+    const recipes =
+        getRecipes();
+
+
+    let sweet = 0;
+
+    let savoury = 0;
+
+    let fried = 0;
+
+    let international = 0;
+
+
+    recipes.forEach(
+        function (recipe) {
+
+            const categories =
+                Array.isArray(
+                    recipe.category
+                )
+                    ? recipe.category
+                    : [];
+
+
+            if (
+                categories.includes(
+                    "Sweet"
+                )
+            ) {
+
+                sweet++;
+
+            }
+
+
+            if (
+                categories.includes(
+                    "Savoury"
+                )
+            ) {
+
+                savoury++;
+
+            }
+
+
+            if (
+                categories.includes(
+                    "Fried"
+                )
+            ) {
+
+                fried++;
+
+            }
+
+
+            if (
+                categories.includes(
+                    "International"
+                )
+            ) {
+
+                international++;
+
+            }
+
+        }
+    );
+
+
+    countSweet.textContent =
+        sweet;
+
+
+    countSavoury.textContent =
+        savoury;
+
+
+    countFried.textContent =
+        fried;
+
+
+    countInternational.textContent =
+        international;
+
+}
 
 
 /* =========================================
@@ -835,8 +1493,24 @@ function displayRecipes(
         recipes.length === 0
     ) {
 
-        savedRecipes.innerHTML =
-            "<p>No recipes here yet.</p>";
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+
+        empty.className =
+            "empty-recipes";
+
+
+        empty.textContent =
+            "No recipes here yet.";
+
+
+        savedRecipes.appendChild(
+            empty
+        );
+
 
         return;
 
@@ -844,7 +1518,7 @@ function displayRecipes(
 
 
     recipes.forEach(
-        function(recipe) {
+        function (recipe) {
 
             const card =
                 document.createElement(
@@ -863,7 +1537,8 @@ function displayRecipes(
 
 
             title.textContent =
-                recipe.name;
+                recipe.name ||
+                "Untitled Recipe";
 
 
             const category =
@@ -877,9 +1552,13 @@ function displayRecipes(
 
 
             category.textContent =
-                recipe.category.join(
-                    " • "
-                );
+                Array.isArray(
+                    recipe.category
+                )
+                    ? recipe.category.join(
+                        " • "
+                    )
+                    : "Savoury";
 
 
             card.appendChild(
@@ -894,7 +1573,7 @@ function displayRecipes(
 
             card.addEventListener(
                 "click",
-                function() {
+                function () {
 
                     openRecipe(
                         recipe
@@ -921,21 +1600,34 @@ function displayRecipes(
 function openRecipe(recipe) {
 
     detailTitle.textContent =
-        recipe.name;
+        recipe.name ||
+        "Untitled Recipe";
 
 
     detailCategory.textContent =
-        recipe.category.join(
-            " • "
-        );
+        Array.isArray(
+            recipe.category
+        )
+            ? recipe.category.join(
+                " • "
+            )
+            : "";
 
 
     detailIngredients.innerHTML =
         "";
 
 
+    const ingredients =
+        Array.isArray(
+            recipe.ingredients
+        )
+            ? recipe.ingredients
+            : [];
+
+
     if (
-        recipe.ingredients.length === 0
+        ingredients.length === 0
     ) {
 
         const li =
@@ -943,8 +1635,10 @@ function openRecipe(recipe) {
                 "li"
             );
 
+
         li.textContent =
             "Ingredients haven't been separated yet.";
+
 
         detailIngredients.appendChild(
             li
@@ -954,8 +1648,8 @@ function openRecipe(recipe) {
 
     else {
 
-        recipe.ingredients.forEach(
-            function(ingredient) {
+        ingredients.forEach(
+            function (ingredient) {
 
                 const li =
                     document.createElement(
@@ -967,8 +1661,9 @@ function openRecipe(recipe) {
                     ingredient;
 
 
-                detailIngredients
-                    .appendChild(li);
+                detailIngredients.appendChild(
+                    li
+                );
 
             }
         );
@@ -977,7 +1672,7 @@ function openRecipe(recipe) {
 
 
     detailText.textContent =
-        recipe.text;
+        recipe.text || "";
 
 
     recipeDetails.hidden =
@@ -992,7 +1687,7 @@ function openRecipe(recipe) {
 
 closeRecipe.addEventListener(
     "click",
-    function() {
+    function () {
 
         recipeDetails.hidden =
             true;
@@ -1002,27 +1697,59 @@ closeRecipe.addEventListener(
 
 
 /* =========================================
-   CLOSE OWNER
+   LOG OUT
 ========================================= */
 
 closeOwner.addEventListener(
     "click",
-    function() {
+    function () {
+
+        /*
+            Completely remove owner access.
+        */
+
+        ownerLoggedIn = false;
+
 
         ownerPanel.hidden =
             true;
+
+
+        ownerLogin.hidden =
+            true;
+
+
+        ownerScanStatus.textContent =
+            "";
+
+
+        showMainPage();
 
     }
 );
 
 
 /* =========================================
-   CLOSE DOWNLOAD
+   SHOW MAIN PAGE
+========================================= */
+
+function showMainPage() {
+
+    window.scrollTo(
+        0,
+        0
+    );
+
+}
+
+
+/* =========================================
+   DOWNLOAD SCREEN
 ========================================= */
 
 closeDownload.addEventListener(
     "click",
-    function() {
+    function () {
 
         downloadScreen.hidden =
             true;
@@ -1037,12 +1764,127 @@ closeDownload.addEventListener(
 
 function getRecipes() {
 
-    return JSON.parse(
+    try {
 
+        const saved =
+            localStorage.getItem(
+                "mealmindRecipes"
+            );
+
+
+        if (!saved) {
+
+            return [];
+
+        }
+
+
+        const recipes =
+            JSON.parse(saved);
+
+
+        return Array.isArray(
+            recipes
+        )
+            ? recipes
+            : [];
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        return [];
+
+    }
+
+}
+
+
+/* =========================================
+   PUBLIC SCAN COUNT
+========================================= */
+
+function getPublicScanCount() {
+
+    const value =
         localStorage.getItem(
-            "mealmindRecipes"
-        ) || "[]"
+            "mealmindPublicScanCount"
+        );
 
+
+    const number =
+        Number(value);
+
+
+    if (
+        Number.isNaN(number)
+    ) {
+
+        return 0;
+
+    }
+
+
+    return number;
+
+}
+
+
+function setPublicScanCount(
+    number
+) {
+
+    localStorage.setItem(
+        "mealmindPublicScanCount",
+        String(number)
     );
 
 }
+
+
+/* =========================================
+   STARTUP
+========================================= */
+
+/*
+    VERY IMPORTANT:
+
+    We intentionally DO NOT restore
+    ownerLoggedIn from localStorage.
+
+    Every page load starts as:
+
+        ownerLoggedIn = false
+
+    So the owner must enter the codes
+    again.
+*/
+
+
+ownerLoggedIn = false;
+
+
+ownerPanel.hidden =
+    true;
+
+
+ownerLogin.hidden =
+    true;
+
+
+recipeDetails.hidden =
+    true;
+
+
+downloadScreen.hidden =
+    true;
+
+
+/*
+    We can still update folder
+    counts internally.
+*/
+
+updateFolderCounts();
