@@ -439,3 +439,10 @@ select:focus {
   }
 
 }
+.creator-credit {
+  text-align: center;
+  margin: 30px 0 15px;
+  font-size: 13px;
+  opacity: 0.6;
+  letter-spacing: 0.4px;
+}
