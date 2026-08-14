@@ -16,37 +16,6 @@ body {
 }
 
 
-.app {
-
-    max-width: 700px;
-
-    margin: auto;
-
-    padding: 40px 20px;
-
-    text-align: center;
-
-}
-
-
-h1 {
-
-    font-size: 42px;
-
-    margin-bottom: 10px;
-
-}
-
-
-p {
-
-    color: #65736b;
-
-    font-size: 18px;
-
-}
-
-
 button {
 
     border: none;
@@ -75,7 +44,42 @@ button:hover {
 }
 
 
-section {
+/* =========================
+   MAIN APP
+========================= */
+
+.app {
+
+    max-width: 700px;
+
+    margin: auto;
+
+    padding: 40px 20px;
+
+    text-align: center;
+
+}
+
+
+.app h1 {
+
+    font-size: 42px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.app p {
+
+    color: #65736b;
+
+    font-size: 18px;
+
+}
+
+
+.app section {
 
     background: white;
 
@@ -125,6 +129,78 @@ textarea {
 
 
 /* =========================
+   HIDDEN ELEMENTS
+========================= */
+
+[hidden] {
+
+    display: none !important;
+
+}
+
+
+/* =========================
+   DOWNLOAD SCREEN
+========================= */
+
+.download-screen {
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(0,0,0,0.45);
+
+    z-index: 4000;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+.download-box {
+
+    width: min(90%, 400px);
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 22px;
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 40px
+        rgba(0,0,0,0.25);
+
+}
+
+
+.store-button {
+
+    width: 100%;
+
+}
+
+
+.secondary-button {
+
+    background: #e8ece8;
+
+    color: #1f2a24;
+
+    width: 100%;
+
+}
+
+
+/* =========================
    OWNER LOGIN
 ========================= */
 
@@ -137,7 +213,7 @@ textarea {
     background:
         rgba(0,0,0,0.35);
 
-    z-index: 1000;
+    z-index: 5000;
 
     display: flex;
 
@@ -175,8 +251,7 @@ textarea {
 
     margin-bottom: 10px;
 
-    border:
-        1px solid #ccc;
+    border: 1px solid #ccc;
 
     border-radius: 10px;
 
@@ -197,7 +272,7 @@ textarea {
 
     background: #f5f7f2;
 
-    z-index: 2000;
+    z-index: 3000;
 
     overflow-y: auto;
 
@@ -219,8 +294,7 @@ textarea {
 
     display: flex;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
 
     align-items: center;
 
@@ -237,6 +311,8 @@ textarea {
 .owner-header p {
 
     margin-top: 5px;
+
+    color: #65736b;
 
 }
 
@@ -267,6 +343,10 @@ textarea {
     padding: 20px;
 
     margin-top: 20px;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0,0,0,0.05);
 
 }
 
@@ -318,7 +398,7 @@ textarea {
 
 
 /* =========================
-   SAVED RECIPES
+   RECIPE CARDS
 ========================= */
 
 .saved-recipes {
@@ -341,6 +421,8 @@ textarea {
     border-radius: 14px;
 
     cursor: pointer;
+
+    transition: 0.15s;
 
 }
 
@@ -380,7 +462,7 @@ textarea {
 
     background: #f5f7f2;
 
-    z-index: 3000;
+    z-index: 6000;
 
     overflow-y: auto;
 
@@ -427,21 +509,23 @@ textarea {
 }
 
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 600px) {
+
+    .app h1 {
+
+        font-size: 34px;
+
+    }
+
 
     .folders {
 
         grid-template-columns:
             repeat(2, 1fr);
-
-    }
-
-
-    h1 {
-
-        font-size: 34px;
 
     }
 
