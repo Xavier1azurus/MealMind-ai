@@ -1,6 +1,7 @@
 /* =========================================================
-   MEALMIND - COMPLETE SCRIPT
-   Better recipe recognition - NO API REQUIRED
+   MEALMIND
+   Scanner + Owner Panel + Auto Sorting + Notes
+   NO API REQUIRED
    ========================================================= */
 
 const OWNER_PASSWORD = "BumsUp2AI";
@@ -10,9 +11,7 @@ const RECIPES_KEY = "mealmind_recipes";
 const FOLDERS_KEY = "mealmind_folders";
 const CUISINES_KEY = "mealmind_cuisines";
 
-let recipes = JSON.parse(
-  localStorage.getItem(RECIPES_KEY) || "[]"
-);
+let recipes = JSON.parse(localStorage.getItem(RECIPES_KEY) || "[]");
 
 let folders = JSON.parse(
   localStorage.getItem(FOLDERS_KEY) ||
@@ -87,6 +86,18 @@ const recipeCuisine = document.getElementById("recipeCuisine");
 const recipeFolder = document.getElementById("recipeFolder");
 const ingredients = document.getElementById("ingredients");
 const instructions = document.getElementById("instructions");
+
+/*
+   NEW NOTES ELEMENT.
+
+   If your HTML has:
+   <textarea id="recipeNotes"></textarea>
+
+   this will automatically connect to it.
+*/
+const recipeNotes =
+  document.getElementById("recipeNotes");
+
 const editorError = document.getElementById("editorError");
 const saveEditor = document.getElementById("saveEditor");
 const cancelEditor = document.getElementById("cancelEditor");
@@ -97,6 +108,12 @@ const viewTitle = document.getElementById("viewTitle");
 const viewCategory = document.getElementById("viewCategory");
 const viewIngredients = document.getElementById("viewIngredients");
 const viewInstructions = document.getElementById("viewInstructions");
+
+/*
+   Optional notes display.
+*/
+const viewNotes =
+  document.getElementById("viewNotes");
 
 const manager = document.getElementById("manager");
 const managerTitle = document.getElementById("managerTitle");
@@ -113,6 +130,7 @@ const managerCancel = document.getElementById("managerCancel");
    ========================================================= */
 
 function saveData() {
+
   localStorage.setItem(
     RECIPES_KEY,
     JSON.stringify(recipes)
@@ -131,82 +149,144 @@ function saveData() {
 
 
 /* =========================================================
-   IMAGE SCANNER
+   SCANNER
    ========================================================= */
 
-scanBtn.onclick = () => {
-  recipeImage.value = "";
-  recipeImage.click();
-};
+if (scanBtn) {
+
+  scanBtn.onclick = () => {
+
+    if (recipeImage) {
+      recipeImage.value = "";
+      recipeImage.click();
+    }
+
+  };
+
+}
 
 
-recipeImage.onchange = () => {
+if (recipeImage) {
 
-  if (!recipeImage.files.length) return;
+  recipeImage.onchange = () => {
 
-  pendingImage = recipeImage.files[0];
-  ownerScanning = false;
+    if (!recipeImage.files.length) return;
 
-  photoCheck.classList.remove("hidden");
-};
+    pendingImage = recipeImage.files[0];
+    ownerScanning = false;
 
+    if (photoCheck) {
+      photoCheck.classList.remove("hidden");
+    }
 
-ownerScan.onclick = () => {
+  };
 
-  ownerImage.value = "";
-  ownerImage.click();
-
-};
-
-
-ownerImage.onchange = () => {
-
-  if (!ownerImage.files.length) return;
-
-  pendingImage = ownerImage.files[0];
-  ownerScanning = true;
-
-  photoCheck.classList.remove("hidden");
-};
+}
 
 
-retakePhoto.onclick = () => {
+if (ownerScan) {
 
-  photoCheck.classList.add("hidden");
+  ownerScan.onclick = () => {
 
-  if (ownerScanning) {
-    ownerImage.click();
-  } else {
-    recipeImage.click();
-  }
+    if (ownerImage) {
+      ownerImage.value = "";
+      ownerImage.click();
+    }
 
-};
+  };
 
-
-usePhoto.onclick = async () => {
-
-  photoCheck.classList.add("hidden");
-
-  await startBetterScan();
-
-};
+}
 
 
-reviewRetake.onclick = () => {
+if (ownerImage) {
 
-  reviewBox.classList.add("hidden");
+  ownerImage.onchange = () => {
 
-  if (ownerScanning) {
-    ownerImage.click();
-  } else {
-    recipeImage.click();
-  }
+    if (!ownerImage.files.length) return;
 
-};
+    pendingImage = ownerImage.files[0];
+    ownerScanning = true;
+
+    if (photoCheck) {
+      photoCheck.classList.remove("hidden");
+    }
+
+  };
+
+}
+
+
+if (retakePhoto) {
+
+  retakePhoto.onclick = () => {
+
+    if (photoCheck) {
+      photoCheck.classList.add("hidden");
+    }
+
+    if (ownerScanning) {
+
+      if (ownerImage) {
+        ownerImage.click();
+      }
+
+    } else {
+
+      if (recipeImage) {
+        recipeImage.click();
+      }
+
+    }
+
+  };
+
+}
+
+
+if (usePhoto) {
+
+  usePhoto.onclick = async () => {
+
+    if (photoCheck) {
+      photoCheck.classList.add("hidden");
+    }
+
+    await startBetterScan();
+
+  };
+
+}
+
+
+if (reviewRetake) {
+
+  reviewRetake.onclick = () => {
+
+    if (reviewBox) {
+      reviewBox.classList.add("hidden");
+    }
+
+    if (ownerScanning) {
+
+      if (ownerImage) {
+        ownerImage.click();
+      }
+
+    } else {
+
+      if (recipeImage) {
+        recipeImage.click();
+      }
+
+    }
+
+  };
+
+}
 
 
 /* =========================================================
-   BETTER SCANNER
+   BETTER IMAGE SCANNER
    ========================================================= */
 
 async function startBetterScan() {
@@ -219,44 +299,19 @@ async function startBetterScan() {
 
   try {
 
-    /*
-      STEP 1:
-      Load the image.
-    */
-
     const image =
       await loadImage(pendingImage);
 
-
-    /*
-      STEP 2:
-      Resize very large images.
-      This prevents OCR from having to process
-      unnecessarily huge pictures.
-    */
-
     const resizedCanvas =
       resizeForOCR(image);
-
-
-    /*
-      STEP 3:
-      Create a cleaned black/white version.
-    */
 
     const processedCanvas =
       improveRecipeImage(
         resizedCanvas
       );
 
-
-    /*
-      STEP 4:
-      OCR the processed image.
-    */
-
     setScanStatus(
-      "🔎 Reading the recipe..."
+      "🔎 Reading your recipe..."
     );
 
     const result =
@@ -286,56 +341,48 @@ async function startBetterScan() {
         }
       );
 
-
-    /*
-      STEP 5:
-      Clean the OCR result.
-    */
-
     const cleaned =
       cleanOCRText(
         result.data.text
       );
 
-
     if (!cleaned) {
 
       setScanStatus(
-        "❌ I couldn't find readable text. Try a clearer photo."
+        "❌ I couldn't read the recipe. Try a clearer photo."
       );
 
       return;
 
     }
 
-
     /*
-      STEP 6:
-      Turn the text into a cleaner recipe layout.
+       IMPORTANT:
+       We now DON'T automatically create
+       a title from the first OCR line.
+
+       The title stays EMPTY.
     */
 
     const formatted =
-      formatRecipe(
+      formatRecipeWithoutTitle(
         cleaned
       );
 
+    if (reviewText) {
+      reviewText.value =
+        formatted;
+    }
 
-    /*
-      STEP 7:
-      Show the user the result before saving.
-    */
-
-    reviewText.value =
-      formatted;
-
-    reviewBox.classList.remove(
-      "hidden"
-    );
+    if (reviewBox) {
+      reviewBox.classList.remove(
+        "hidden"
+      );
+    }
 
     setScanStatus(
       "✅ Recipe recognized!"
     );
-
 
   } catch (error) {
 
@@ -345,7 +392,7 @@ async function startBetterScan() {
     );
 
     setScanStatus(
-      "❌ Something went wrong. Try another photo."
+      "❌ Scanner error. Try another photo."
     );
 
   }
@@ -354,7 +401,7 @@ async function startBetterScan() {
 
 
 /* =========================================================
-   LOAD IMAGE
+   IMAGE LOADING
    ========================================================= */
 
 function loadImage(file) {
@@ -365,21 +412,22 @@ function loadImage(file) {
       const reader =
         new FileReader();
 
-      reader.onload = event => {
+      reader.onload =
+        event => {
 
-        const image =
-          new Image();
+          const image =
+            new Image();
 
-        image.onload = () =>
-          resolve(image);
+          image.onload =
+            () => resolve(image);
 
-        image.onerror =
-          reject;
+          image.onerror =
+            reject;
 
-        image.src =
-          event.target.result;
+          image.src =
+            event.target.result;
 
-      };
+        };
 
       reader.onerror =
         reject;
@@ -393,7 +441,7 @@ function loadImage(file) {
 
 
 /* =========================================================
-   RESIZE IMAGE
+   IMAGE RESIZE
    ========================================================= */
 
 function resizeForOCR(image) {
@@ -407,14 +455,12 @@ function resizeForOCR(image) {
   let height =
     image.naturalHeight;
 
-
   const scale =
     Math.min(
       1,
       MAX_WIDTH / width,
       MAX_HEIGHT / height
     );
-
 
   width =
     Math.round(
@@ -425,7 +471,6 @@ function resizeForOCR(image) {
     Math.round(
       height * scale
     );
-
 
   const canvas =
     document.createElement(
@@ -438,7 +483,6 @@ function resizeForOCR(image) {
   canvas.height =
     height;
 
-
   const ctx =
     canvas.getContext(
       "2d",
@@ -446,7 +490,6 @@ function resizeForOCR(image) {
         willReadFrequently: true
       }
     );
-
 
   ctx.drawImage(
     image,
@@ -456,14 +499,13 @@ function resizeForOCR(image) {
     height
   );
 
-
   return canvas;
 
 }
 
 
 /* =========================================================
-   IMAGE PROCESSING
+   IMAGE ENHANCEMENT
    ========================================================= */
 
 function improveRecipeImage(canvas) {
@@ -476,7 +518,6 @@ function improveRecipeImage(canvas) {
       }
     );
 
-
   const imageData =
     ctx.getImageData(
       0,
@@ -485,14 +526,8 @@ function improveRecipeImage(canvas) {
       canvas.height
     );
 
-
   const data =
     imageData.data;
-
-
-  /*
-    Convert to grayscale and improve contrast.
-  */
 
   for (
     let i = 0;
@@ -504,36 +539,16 @@ function improveRecipeImage(canvas) {
     const g = data[i + 1];
     const b = data[i + 2];
 
-
-    /*
-      Human-readable luminance.
-    */
-
     let gray =
       0.299 * r +
       0.587 * g +
       0.114 * b;
 
-
-    /*
-      Contrast enhancement.
-    */
-
     gray =
       ((gray - 128) * 1.45) +
       128;
 
-
-    /*
-      Slight brightness correction.
-    */
-
     gray += 5;
-
-
-    /*
-      Keep values valid.
-    */
 
     gray =
       Math.max(
@@ -543,7 +558,6 @@ function improveRecipeImage(canvas) {
           gray
         )
       );
-
 
     data[i] =
       gray;
@@ -556,18 +570,11 @@ function improveRecipeImage(canvas) {
 
   }
 
-
   ctx.putImageData(
     imageData,
     0,
     0
   );
-
-
-  /*
-    Create a second canvas for
-    cleaner thresholding.
-  */
 
   const output =
     document.createElement(
@@ -580,7 +587,6 @@ function improveRecipeImage(canvas) {
   output.height =
     canvas.height;
 
-
   const outCtx =
     output.getContext(
       "2d",
@@ -589,13 +595,11 @@ function improveRecipeImage(canvas) {
       }
     );
 
-
   outCtx.drawImage(
     canvas,
     0,
     0
   );
-
 
   const outData =
     outCtx.getImageData(
@@ -605,15 +609,8 @@ function improveRecipeImage(canvas) {
       output.height
     );
 
-
   const pixels =
     outData.data;
-
-
-  /*
-    Turn very light gray into white
-    and dark text into black.
-  */
 
   for (
     let i = 0;
@@ -623,7 +620,6 @@ function improveRecipeImage(canvas) {
 
     const value =
       pixels[i];
-
 
     if (value > 205) {
 
@@ -638,10 +634,6 @@ function improveRecipeImage(canvas) {
       pixels[i + 2] = 0;
 
     } else {
-
-      /*
-        Keep middle shades readable.
-      */
 
       const adjusted =
         value < 155
@@ -661,13 +653,11 @@ function improveRecipeImage(canvas) {
 
   }
 
-
   outCtx.putImageData(
     outData,
     0,
     0
   );
-
 
   return output;
 
@@ -682,15 +672,10 @@ function cleanOCRText(text) {
 
   if (!text) return "";
 
-
   let result =
-    text
-      .normalize("NFKC");
-
-
-  /*
-    Remove control characters.
-  */
+    text.normalize(
+      "NFKC"
+    );
 
   result =
     result.replace(
@@ -698,59 +683,43 @@ function cleanOCRText(text) {
       ""
     );
 
-
-  /*
-    Remove common OCR garbage.
-  */
-
   result =
     result.replace(
       /[░▒▓█■□◆◇]+/g,
       ""
     );
 
-
-  /*
-    Fix common punctuation.
-  */
-
   result =
     result
-      .replace(/[“”]/g, '"')
-      .replace(/[‘’]/g, "'")
-      .replace(/[–—−]/g, "-");
-
-
-  /*
-    Clean whitespace.
-  */
+      .replace(
+        /[“”]/g,
+        '"'
+      )
+      .replace(
+        /[‘’]/g,
+        "'"
+      )
+      .replace(
+        /[–—−]/g,
+        "-"
+      );
 
   const lines =
     result
       .split("\n")
-      .map(line => {
-
-        return line
-          .replace(
-            /\s+/g,
-            " "
-          )
-          .trim();
-
-      })
-      .filter(
+      .map(
         line =>
-          line.length > 0
-      );
+          line
+            .replace(
+              /\s+/g,
+              " "
+            )
+            .trim()
+      )
+      .filter(Boolean);
 
-
-  /*
-    Remove lines that are almost
-    entirely OCR symbols.
-  */
-
-  const useful =
-    lines.filter(line => {
+  return lines
+    .filter(line => {
 
       const letters =
         (
@@ -761,19 +730,20 @@ function cleanOCRText(text) {
 
       return letters >= 2;
 
-    });
-
-
-  return useful.join("\n");
+    })
+    .join("\n");
 
 }
 
 
 /* =========================================================
-   RECIPE FORMATTER
+   FORMAT SCANNED RECIPE
+   TITLE IS INTENTIONALLY EMPTY
    ========================================================= */
 
-function formatRecipe(text) {
+function formatRecipeWithoutTitle(
+  text
+) {
 
   const lines =
     text
@@ -784,28 +754,14 @@ function formatRecipe(text) {
       )
       .filter(Boolean);
 
-
-  if (!lines.length)
-    return "";
-
-
-  let title =
-    findBestTitle(lines);
-
-
-  let ingredientStart =
-    -1;
-
-  let instructionStart =
-    -1;
-
+  let ingredientStart = -1;
+  let instructionStart = -1;
 
   lines.forEach(
     (line, index) => {
 
       const lower =
         line.toLowerCase();
-
 
       if (
         ingredientStart === -1 &&
@@ -818,7 +774,6 @@ function formatRecipe(text) {
           index;
 
       }
-
 
       if (
         instructionStart === -1 &&
@@ -835,16 +790,11 @@ function formatRecipe(text) {
     }
   );
 
-
-  const ingredientList =
-    [];
-
-  const instructionList =
-    [];
-
+  const ingredientList = [];
+  const instructionList = [];
 
   /*
-    Ingredients.
+     INGREDIENTS
   */
 
   if (
@@ -856,7 +806,6 @@ function formatRecipe(text) {
         ? instructionStart
         : lines.length;
 
-
     for (
       let i =
         ingredientStart + 1;
@@ -864,15 +813,14 @@ function formatRecipe(text) {
       i++
     ) {
 
-      const cleaned =
+      const item =
         cleanIngredientLine(
           lines[i]
         );
 
-
-      if (cleaned)
+      if (item)
         ingredientList.push(
-          cleaned
+          item
         );
 
     }
@@ -880,33 +828,35 @@ function formatRecipe(text) {
   } else {
 
     /*
-      If OCR didn't detect the heading,
-      try to recognize ingredient-like lines.
+       If there is no Ingredients heading,
+       detect ingredient-looking lines.
     */
 
-    for (
-      const line of lines.slice(1)
-    ) {
+    lines.forEach(
+      line => {
 
-      if (
-        looksLikeIngredient(line)
-      ) {
-
-        ingredientList.push(
-          cleanIngredientLine(
+        if (
+          looksLikeIngredient(
             line
           )
-        );
+        ) {
+
+          ingredientList.push(
+            cleanIngredientLine(
+              line
+            )
+          );
+
+        }
 
       }
-
-    }
+    );
 
   }
 
 
   /*
-    Instructions.
+     INSTRUCTIONS
   */
 
   if (
@@ -920,15 +870,14 @@ function formatRecipe(text) {
       i++
     ) {
 
-      const cleaned =
+      const item =
         cleanInstructionLine(
           lines[i]
         );
 
-
-      if (cleaned)
+      if (item)
         instructionList.push(
-          cleaned
+          item
         );
 
     }
@@ -937,25 +886,22 @@ function formatRecipe(text) {
 
 
   /*
-    If no explicit instruction heading
-    was found, use remaining lines.
+     If instructions weren't explicitly
+     labelled, find lines that aren't
+     ingredient lines.
   */
 
   if (
-    !instructionList.length &&
-    instructionStart === -1
+    instructionList.length === 0
   ) {
 
-    let startIndex =
-      Math.max(
-        1,
-        ingredientStart + 1
-      );
-
+    let start =
+      instructionStart !== -1
+        ? instructionStart + 1
+        : 0;
 
     for (
-      let i =
-        startIndex;
+      let i = start;
       i < lines.length;
       i++
     ) {
@@ -963,23 +909,40 @@ function formatRecipe(text) {
       const line =
         lines[i];
 
+      if (
+        isIngredientHeading(
+          line.toLowerCase()
+        )
+      )
+        continue;
 
       if (
-        !ingredientList.includes(
-          cleanIngredientLine(line)
+        isInstructionHeading(
+          line.toLowerCase()
         )
+      )
+        continue;
+
+      if (
+        looksLikeIngredient(
+          line
+        )
+      )
+        continue;
+
+      const item =
+        cleanInstructionLine(
+          line
+        );
+
+      if (
+        item &&
+        item.length > 5
       ) {
 
-        const cleaned =
-          cleanInstructionLine(
-            line
-          );
-
-
-        if (cleaned)
-          instructionList.push(
-            cleaned
-          );
+        instructionList.push(
+          item
+        );
 
       }
 
@@ -988,51 +951,63 @@ function formatRecipe(text) {
   }
 
 
-  /*
-    Remove duplicate ingredients.
-  */
-
   const uniqueIngredients =
-    [...new Set(
-      ingredientList
-    )];
-
+    [
+      ...new Set(
+        ingredientList
+      )
+    ];
 
   const uniqueInstructions =
-    [...new Set(
-      instructionList
-    )];
+    [
+      ...new Set(
+        instructionList
+      )
+    ];
 
+
+  /*
+     NO TITLE.
+  */
 
   return [
 
-    "🍴 " + title,
+    "TITLE:",
 
     "",
 
-    "🥕 INGREDIENTS",
+    "INGREDIENTS:",
 
-    ...(uniqueIngredients.length
-      ? uniqueIngredients.map(
-          item =>
-            "• " + item
-        )
-      : [
-          "• Add ingredients here"
-        ]),
+    ...(
+      uniqueIngredients.length
+        ? uniqueIngredients.map(
+            x => "• " + x
+          )
+        : [
+            "•"
+          ]
+    ),
 
     "",
 
-    "👨‍🍳 INSTRUCTIONS",
+    "INSTRUCTIONS:",
 
-    ...(uniqueInstructions.length
-      ? uniqueInstructions.map(
-          (item, index) =>
-            `${index + 1}. ${item}`
-        )
-      : [
-          "1. Add instructions here"
-        ])
+    ...(
+      uniqueInstructions.length
+        ? uniqueInstructions.map(
+            (x, i) =>
+              `${i + 1}. ${x}`
+          )
+        : [
+            "1."
+          ]
+    ),
+
+    "",
+
+    "NOTES:",
+
+    ""
 
   ].join("\n");
 
@@ -1040,107 +1015,10 @@ function formatRecipe(text) {
 
 
 /* =========================================================
-   TITLE DETECTION
+   DETECTION
    ========================================================= */
 
-function findBestTitle(lines) {
-
-  /*
-    Look at the first few lines and
-    avoid choosing obvious headings.
-  */
-
-  for (
-    let i = 0;
-    i < Math.min(
-      lines.length,
-      5
-    );
-    i++
-  ) {
-
-    const line =
-      lines[i]
-        .trim();
-
-
-    const lower =
-      line.toLowerCase();
-
-
-    if (!line)
-      continue;
-
-
-    if (
-      isIngredientHeading(
-        lower
-      )
-    )
-      continue;
-
-
-    if (
-      isInstructionHeading(
-        lower
-      )
-    )
-      continue;
-
-
-    /*
-      Ignore lines that are only numbers.
-    */
-
-    if (
-      /^[\d\s.,:/-]+$/.test(
-        line
-      )
-    )
-      continue;
-
-
-    return cleanTitle(line);
-
-  }
-
-
-  return "Scanned Recipe";
-
-}
-
-
-function cleanTitle(title) {
-
-  return title
-
-    .replace(
-      /^[•●■□▪]+/,
-      ""
-    )
-
-    .replace(
-      /^recipe\s*[:\-]?\s*/i,
-      ""
-    )
-
-    .replace(
-      /\s+/g,
-      " "
-    )
-
-    .trim();
-
-}
-
-
-/* =========================================================
-   HEADING DETECTION
-   ========================================================= */
-
-function isIngredientHeading(
-  text
-) {
+function isIngredientHeading(text) {
 
   return (
     text === "ingredients" ||
@@ -1153,9 +1031,7 @@ function isIngredientHeading(
 }
 
 
-function isInstructionHeading(
-  text
-) {
+function isInstructionHeading(text) {
 
   return (
     text === "instructions" ||
@@ -1171,75 +1047,62 @@ function isInstructionHeading(
 }
 
 
-/* =========================================================
-   INGREDIENT CLEANING
-   ========================================================= */
-
-function cleanIngredientLine(
-  line
-) {
+function cleanIngredientLine(line) {
 
   return line
-
     .replace(
       /^[•●▪■□*-]+\s*/,
       ""
     )
-
     .replace(
       /^\d+[.)]\s*/,
       ""
     )
-
-    .replace(
-      /^\[[ xX]\]\s*/,
-      ""
-    )
-
     .replace(
       /\s+/g,
       " "
     )
-
     .trim();
 
 }
 
 
-function looksLikeIngredient(
-  line
-) {
+function cleanInstructionLine(line) {
 
-  const lower =
-    line.toLowerCase();
+  return line
+    .replace(
+      /^\d+[.)]\s*/,
+      ""
+    )
+    .replace(
+      /^[•●▪■□*-]+\s*/,
+      ""
+    )
+    .replace(
+      /\s+/g,
+      " "
+    )
+    .trim();
+
+}
 
 
-  /*
-    Common measurements.
-  */
+function looksLikeIngredient(line) {
 
   const measurement =
     /\b(cup|cups|tbsp|tsp|tablespoon|tablespoons|teaspoon|teaspoons|gram|grams|kg|g|ml|l|oz|ounce|ounces|lb|lbs|pound|pounds|pinch|clove|cloves)\b/i;
 
-
-  /*
-    Ingredient-like lines often
-    contain a quantity.
-  */
-
   const number =
     /\b\d+([\/.]\d+)?\b/;
 
-
-  const commonFood =
+  const food =
     /\b(flour|sugar|salt|pepper|butter|oil|milk|egg|eggs|chicken|beef|pork|rice|pasta|cheese|onion|garlic|tomato|water|cream|vanilla)\b/i;
-
 
   return (
     measurement.test(line) ||
     (
       number.test(line) &&
-      commonFood.test(lower)
+      food.test(line)
     )
   );
 
@@ -1247,163 +1110,118 @@ function looksLikeIngredient(
 
 
 /* =========================================================
-   INSTRUCTION CLEANING
+   MAIN RECIPE SAVE
    ========================================================= */
 
-function cleanInstructionLine(
-  line
-) {
+if (saveMainRecipe) {
 
-  return line
+  saveMainRecipe.onclick = () => {
 
-    .replace(
-      /^\d+[.)]\s*/,
-      ""
-    )
+    const text =
+      recipeText.value.trim();
 
-    .replace(
-      /^[•●▪■□*-]+\s*/,
-      ""
-    )
+    if (!text) {
 
-    .replace(
-      /\s+/g,
-      " "
-    )
+      setScanStatus(
+        "❌ Scan a recipe first."
+      );
 
-    .trim();
+      return;
+
+    }
+
+    const parsed =
+      parseScannedRecipe(
+        text
+      );
+
+    /*
+       User asked for title to be empty.
+       So title will stay empty until
+       they type one themselves.
+    */
+
+    const folder =
+      autoSortFolder(
+        "",
+        parsed.ingredients,
+        parsed.instructions
+      );
+
+    recipes.push({
+
+      id:
+        Date.now(),
+
+      title:
+        "",
+
+      cuisine:
+        "General",
+
+      folder,
+
+      ingredients:
+        parsed.ingredients,
+
+      instructions:
+        parsed.instructions,
+
+      notes:
+        ""
+
+    });
+
+    saveData();
+
+    recipeText.value = "";
+
+    setScanStatus(
+      `✅ Saved to ${folder}!`
+    );
+
+    renderEverything();
+
+  };
 
 }
 
 
 /* =========================================================
-   SCAN STATUS
+   PARSE SCANNED TEXT
    ========================================================= */
 
-function setScanStatus(
-  message
-) {
-
-  if (scanStatus)
-    scanStatus.textContent =
-      message;
-
-}
-
-
-/* =========================================================
-   MAIN SAVE
-   ========================================================= */
-
-saveMainRecipe.onclick = () => {
-
-  const text =
-    recipeText.value.trim();
-
-
-  if (!text) {
-
-    setScanStatus(
-      "❌ Scan a recipe first."
-    );
-
-    return;
-
-  }
-
-
-  const parsed =
-    parseRecipe(text);
-
-
-  if (!parsed.title) {
-
-    setScanStatus(
-      "❌ A recipe title is required."
-    );
-
-    return;
-
-  }
-
-
-  recipes.push({
-
-    id: Date.now(),
-
-    title:
-      parsed.title,
-
-    cuisine:
-      "General",
-
-    folder:
-      folders[0] ||
-      "Unsorted",
-
-    ingredients:
-      parsed.ingredients,
-
-    instructions:
-      parsed.instructions
-
-  });
-
-
-  saveData();
-
-  recipeText.value = "";
-
-  setScanStatus(
-    "✅ Recipe saved!"
-  );
-
-};
-
-
-/* =========================================================
-   PARSE RECIPE
-   ========================================================= */
-
-function parseRecipe(text) {
+function parseScannedRecipe(text) {
 
   const lines =
     text
       .split("\n")
       .map(
-        x => x.trim()
+        x =>
+          x
+            .replace(
+              /^TITLE:\s*/i,
+              ""
+            )
+            .trim()
       )
       .filter(Boolean);
 
-
-  let title =
-    lines[0]
-      ?.replace(
-        /^🍴\s*/,
-        ""
-      )
-      .trim() || "";
-
-
-  const ingredients = [];
-  const instructions = [];
-
+  const ingredientsList = [];
+  const instructionsList = [];
 
   let section = "";
 
-
   for (
-    const line of lines.slice(1)
+    const line of lines
   ) {
 
     const lower =
       line.toLowerCase();
 
-
     if (
-      isIngredientHeading(
-        lower
-      )
+      lower === "ingredients:" ||
+      lower === "ingredients"
     ) {
 
       section =
@@ -1413,11 +1231,9 @@ function parseRecipe(text) {
 
     }
 
-
     if (
-      isInstructionHeading(
-        lower
-      )
+      lower === "instructions:" ||
+      lower === "instructions"
     ) {
 
       section =
@@ -1427,54 +1243,325 @@ function parseRecipe(text) {
 
     }
 
+    if (
+      lower === "notes:" ||
+      lower === "notes"
+    ) {
+
+      section =
+        "notes";
+
+      continue;
+
+    }
 
     if (
       section ===
       "ingredients"
     ) {
 
-      const value =
+      const item =
         cleanIngredientLine(
           line
         );
 
-
-      if (value)
-        ingredients.push(
-          value
+      if (item)
+        ingredientsList.push(
+          item
         );
 
     }
-
 
     if (
       section ===
       "instructions"
     ) {
 
-      const value =
+      const item =
         cleanInstructionLine(
           line
         );
 
-
-      if (value)
-        instructions.push(
-          value
+      if (item)
+        instructionsList.push(
+          item
         );
 
     }
 
   }
 
-
   return {
 
-    title,
+    title: "",
 
-    ingredients,
+    ingredients:
+      [
+        ...new Set(
+          ingredientsList
+        )
+      ],
 
-    instructions
+    instructions:
+      [
+        ...new Set(
+          instructionsList
+        )
+      ]
+
+  };
+
+}
+
+
+/* =========================================================
+   AUTO SORT
+   ========================================================= */
+
+function autoSortFolder(
+  title,
+  ingredientList,
+  instructionList
+) {
+
+  const text = (
+    title +
+    " " +
+    ingredientList.join(" ") +
+    " " +
+    instructionList.join(" ")
+  ).toLowerCase();
+
+
+  /*
+     SWEET
+  */
+
+  const sweetWords = [
+    "cake",
+    "cookie",
+    "cookies",
+    "brownie",
+    "brownies",
+    "chocolate",
+    "vanilla",
+    "cupcake",
+    "cupcakes",
+    "muffin",
+    "muffins",
+    "dessert",
+    "icing",
+    "frosting",
+    "sugar",
+    "caramel",
+    "candy",
+    "pie",
+    "pudding"
+  ];
+
+
+  /*
+     FRIED
+  */
+
+  const friedWords = [
+    "fried",
+    "fry",
+    "frying",
+    "deep fry",
+    "deep-fried",
+    "crispy",
+    "fritter",
+    "tempura"
+  ];
+
+
+  /*
+     SAVOURY
+  */
+
+  const savouryWords = [
+    "chicken",
+    "beef",
+    "pork",
+    "steak",
+    "burger",
+    "sausage",
+    "bacon",
+    "fish",
+    "salmon",
+    "shrimp",
+    "prawn",
+    "potato",
+    "rice",
+    "pasta",
+    "soup",
+    "sandwich",
+    "cheese",
+    "garlic",
+    "onion",
+    "tomato"
+  ];
+
+
+  /*
+     INTERNATIONAL
+  */
+
+  const internationalWords = [
+    "taco",
+    "tacos",
+    "curry",
+    "sushi",
+    "ramen",
+    "pizza",
+    "pad thai",
+    "lasagna",
+    "lasagne",
+    "burrito",
+    "enchilada",
+    "teriyaki",
+    "quesadilla"
+  ];
+
+
+  /*
+     Check existing folders first.
+  */
+
+  if (
+    containsAny(
+      text,
+      sweetWords
+    ) &&
+    folders.includes(
+      "Sweet"
+    )
+  ) {
+
+    return "Sweet";
+
+  }
+
+
+  if (
+    containsAny(
+      text,
+      friedWords
+    ) &&
+    folders.includes(
+      "Fried"
+    )
+  ) {
+
+    return "Fried";
+
+  }
+
+
+  if (
+    containsAny(
+      text,
+      internationalWords
+    ) &&
+    folders.includes(
+      "International"
+    )
+  ) {
+
+    return "International";
+
+  }
+
+
+  if (
+    containsAny(
+      text,
+      savouryWords
+    ) &&
+    folders.includes(
+      "Savoury"
+    )
+  ) {
+
+    return "Savoury";
+
+  }
+
+
+  /*
+     If no category is detected,
+     use the first folder.
+  */
+
+  return (
+    folders[0] ||
+    "Unsorted"
+  );
+
+}
+
+
+function containsAny(
+  text,
+  words
+) {
+
+  return words.some(
+    word =>
+      text.includes(
+        word
+      )
+  );
+
+}
+
+
+/* =========================================================
+   REVIEW ACCEPT
+   ========================================================= */
+
+if (acceptRecipe) {
+
+  acceptRecipe.onclick = () => {
+
+    const text =
+      reviewText.value.trim();
+
+    if (!text)
+      return;
+
+    if (reviewBox) {
+      reviewBox.classList.add(
+        "hidden"
+      );
+    }
+
+    /*
+       Owner gets the full editor.
+    */
+
+    if (ownerScanning) {
+
+      openEditorFromScan(
+        text
+      );
+
+      return;
+
+    }
+
+    /*
+       Normal user gets cleaned
+       recipe text.
+    */
+
+    recipeText.value =
+      text;
+
+    setScanStatus(
+      "✅ Recipe cleaned. Add a title before saving."
+    );
 
   };
 
@@ -1485,148 +1572,131 @@ function parseRecipe(text) {
    OWNER CODE
    ========================================================= */
 
-recipeText.addEventListener(
-  "keydown",
-  event => {
+if (recipeText) {
 
-    if (
-      event.key >= "0" &&
-      event.key <= "9"
-    ) {
+  recipeText.addEventListener(
+    "keydown",
+    event => {
 
-      codeBuffer +=
-        event.key;
+      if (
+        event.key >= "0" &&
+        event.key <= "9"
+      ) {
 
-      codeBuffer =
-        codeBuffer.slice(
-          -OWNER_CODE.length
-        );
+        codeBuffer +=
+          event.key;
+
+        codeBuffer =
+          codeBuffer.slice(
+            -OWNER_CODE.length
+          );
+
+      }
+
+      if (
+        event.key === "Enter" &&
+        codeBuffer === OWNER_CODE
+      ) {
+
+        event.preventDefault();
+
+        codeBuffer = "";
+
+        if (ownerLogin) {
+
+          ownerLogin.classList.remove(
+            "hidden"
+          );
+
+        }
+
+        if (ownerPassword) {
+          ownerPassword.value = "";
+          ownerPassword.focus();
+        }
+
+        if (ownerError) {
+          ownerError.textContent = "";
+        }
+
+      }
 
     }
+  );
 
-
-    if (
-      event.key === "Enter" &&
-      codeBuffer === OWNER_CODE
-    ) {
-
-      event.preventDefault();
-
-      codeBuffer = "";
-
-      ownerLogin.classList.remove(
-        "hidden"
-      );
-
-      ownerPassword.value = "";
-
-      ownerError.textContent = "";
-
-      ownerPassword.focus();
-
-    }
-
-  }
-);
+}
 
 
 /* =========================================================
    OWNER LOGIN
    ========================================================= */
 
-ownerLoginBtn.onclick = () => {
+if (ownerLoginBtn) {
 
-  if (
-    ownerPassword.value ===
-    OWNER_PASSWORD
-  ) {
-
-    ownerLogin.classList.add(
-      "hidden"
-    );
-
-    ownerPanel.classList.remove(
-      "hidden"
-    );
-
-    renderEverything();
-
-  } else {
-
-    ownerError.textContent =
-      "❌ Incorrect owner password.";
-
-  }
-
-};
-
-
-ownerPassword.addEventListener(
-  "keydown",
-  event => {
+  ownerLoginBtn.onclick = () => {
 
     if (
-      event.key === "Enter"
+      ownerPassword.value ===
+      OWNER_PASSWORD
     ) {
 
-      ownerLoginBtn.click();
+      ownerLogin.classList.add(
+        "hidden"
+      );
+
+      ownerPanel.classList.remove(
+        "hidden"
+      );
+
+      renderEverything();
+
+    } else {
+
+      ownerError.textContent =
+        "❌ Incorrect owner password.";
 
     }
 
-  }
-);
+  };
+
+}
 
 
-exitOwner.onclick = () => {
+if (ownerPassword) {
 
-  ownerPanel.classList.add(
-    "hidden"
+  ownerPassword.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        ownerLoginBtn.click();
+
+      }
+
+    }
   );
 
-};
+}
+
+
+if (exitOwner) {
+
+  exitOwner.onclick = () => {
+
+    ownerPanel.classList.add(
+      "hidden"
+    );
+
+  };
+
+}
 
 
 /* =========================================================
-   OWNER SCAN ACCEPT
-   ========================================================= */
-
-acceptRecipe.onclick = () => {
-
-  const text =
-    reviewText.value.trim();
-
-
-  if (!text)
-    return;
-
-
-  reviewBox.classList.add(
-    "hidden"
-  );
-
-
-  if (ownerScanning) {
-
-    openEditorFromScan(
-      text
-    );
-
-  } else {
-
-    recipeText.value =
-      text;
-
-    setScanStatus(
-      "✅ Recipe cleaned. Review it and press Save Recipe."
-    );
-
-  }
-
-};
-
-
-/* =========================================================
-   OWNER EDITOR
+   OWNER EDITOR FROM SCAN
    ========================================================= */
 
 function openEditorFromScan(
@@ -1634,26 +1704,37 @@ function openEditorFromScan(
 ) {
 
   const parsed =
-    parseRecipe(text);
-
+    parseScannedRecipe(
+      text
+    );
 
   openEditor({
 
-    title:
-      parsed.title,
+    id: null,
+
+    /*
+       TITLE IS EMPTY.
+    */
+    title: "",
 
     cuisine:
       "General",
 
     folder:
-      folders[0] ||
-      "Unsorted",
+      autoSortFolder(
+        "",
+        parsed.ingredients,
+        parsed.instructions
+      ),
 
     ingredients:
       parsed.ingredients,
 
     instructions:
-      parsed.instructions
+      parsed.instructions,
+
+    notes:
+      ""
 
   });
 
@@ -1661,7 +1742,7 @@ function openEditorFromScan(
 
 
 /* =========================================================
-   OWNER RENDER
+   RENDER EVERYTHING
    ========================================================= */
 
 function renderEverything() {
@@ -1681,8 +1762,10 @@ function renderEverything() {
 
 function renderFolders() {
 
-  foldersElement.innerHTML = "";
+  if (!foldersElement)
+    return;
 
+  foldersElement.innerHTML = "";
 
   folders.forEach(
     folder => {
@@ -1694,16 +1777,13 @@ function renderFolders() {
             folder
         ).length;
 
-
       const button =
         document.createElement(
           "button"
         );
 
-
       button.className =
         "folder";
-
 
       button.innerHTML = `
         <strong>
@@ -1718,19 +1798,21 @@ function renderFolders() {
         </small>
       `;
 
-
       button.onclick = () => {
 
         selectedFolder =
           folder;
 
-        currentFolder.textContent =
-          "📁 " + folder;
+        if (currentFolder) {
+
+          currentFolder.textContent =
+            "📁 " + folder;
+
+        }
 
         renderRecipes();
 
       };
-
 
       foldersElement.appendChild(
         button
@@ -1748,12 +1830,13 @@ function renderFolders() {
 
 function renderRecipes() {
 
-  recipesElement.innerHTML = "";
+  if (!recipesElement)
+    return;
 
+  recipesElement.innerHTML = "";
 
   let list =
     recipes;
-
 
   if (selectedFolder) {
 
@@ -1765,7 +1848,6 @@ function renderRecipes() {
       );
 
   }
-
 
   if (!list.length) {
 
@@ -1779,7 +1861,6 @@ function renderRecipes() {
 
   }
 
-
   list.forEach(
     recipe => {
 
@@ -1788,77 +1869,68 @@ function renderRecipes() {
           "div"
         );
 
-
       card.className =
         "recipe";
-
 
       card.innerHTML = `
         <h4>
           ${escapeHTML(
-            recipe.title
+            recipe.title ||
+            "Untitled Recipe"
           )}
         </h4>
 
         <p>
           ${escapeHTML(
-            recipe.cuisine
+            recipe.cuisine ||
+            "General"
           )}
           •
           ${escapeHTML(
-            recipe.folder
+            recipe.folder ||
+            "Unsorted"
           )}
         </p>
       `;
-
 
       const view =
         document.createElement(
           "button"
         );
 
-
       view.textContent =
         "View";
 
-
       view.onclick = () =>
         showRecipe(recipe);
-
 
       const edit =
         document.createElement(
           "button"
         );
 
-
       edit.textContent =
         "Edit";
 
-
       edit.onclick = () =>
         openEditor(recipe);
-
 
       const del =
         document.createElement(
           "button"
         );
 
-
       del.textContent =
         "Delete";
 
-
       del.className =
         "delete";
-
 
       del.onclick = () => {
 
         if (
           confirm(
-            `Delete "${recipe.title}"?`
+            `Delete "${recipe.title || "Untitled Recipe"}"?`
           )
         ) {
 
@@ -1869,7 +1941,6 @@ function renderRecipes() {
                 recipe.id
             );
 
-
           saveData();
 
           renderEverything();
@@ -1878,10 +1949,17 @@ function renderRecipes() {
 
       };
 
+      card.appendChild(
+        view
+      );
 
-      card.appendChild(view);
-      card.appendChild(edit);
-      card.appendChild(del);
+      card.appendChild(
+        edit
+      );
+
+      card.appendChild(
+        del
+      );
 
       recipesElement.appendChild(
         card
@@ -1893,134 +1971,181 @@ function renderRecipes() {
 }
 
 
-allRecipes.onclick = () => {
+if (allRecipes) {
 
-  selectedFolder = null;
+  allRecipes.onclick = () => {
 
-  currentFolder.textContent =
-    "📖 All Recipes";
+    selectedFolder = null;
 
-  renderRecipes();
+    if (currentFolder) {
 
-};
+      currentFolder.textContent =
+        "📖 All Recipes";
+
+    }
+
+    renderRecipes();
+
+  };
+
+}
 
 
 /* =========================================================
-   RECIPE VIEW
+   VIEW RECIPE
    ========================================================= */
 
 function showRecipe(recipe) {
 
-  viewTitle.textContent =
-    recipe.title;
+  if (viewTitle) {
 
+    viewTitle.textContent =
+      recipe.title ||
+      "Untitled Recipe";
 
-  viewCategory.textContent =
-    `${recipe.cuisine} • ${recipe.folder}`;
+  }
 
+  if (viewCategory) {
 
-  viewIngredients.innerHTML =
-    "";
+    viewCategory.textContent =
+      `${recipe.cuisine || "General"} • ${recipe.folder || "Unsorted"}`;
 
+  }
 
-  recipe.ingredients.forEach(
-    ingredient => {
+  if (viewIngredients) {
 
-      const li =
-        document.createElement(
-          "li"
+    viewIngredients.innerHTML = "";
+
+    (
+      recipe.ingredients ||
+      []
+    ).forEach(
+      ingredient => {
+
+        const li =
+          document.createElement(
+            "li"
+          );
+
+        li.textContent =
+          ingredient;
+
+        viewIngredients.appendChild(
+          li
         );
 
+      }
+    );
 
-      li.textContent =
-        ingredient;
+  }
 
+  if (viewInstructions) {
 
-      viewIngredients.appendChild(
-        li
-      );
-
-    }
-  );
-
-
-  viewInstructions.textContent =
-    recipe.instructions
+    viewInstructions.textContent =
+      (
+        recipe.instructions ||
+        []
+      )
       .map(
         (item, index) =>
           `${index + 1}. ${item}`
       )
       .join("\n");
 
+  }
 
-  recipeView.classList.remove(
-    "hidden"
-  );
+  /*
+     Notes.
+  */
+
+  if (viewNotes) {
+
+    viewNotes.textContent =
+      recipe.notes ||
+      "No notes.";
+
+  }
+
+  if (recipeView) {
+
+    recipeView.classList.remove(
+      "hidden"
+    );
+
+  }
 
 }
 
 
-closeRecipe.onclick = () => {
+if (closeRecipe) {
 
-  recipeView.classList.add(
-    "hidden"
-  );
+  closeRecipe.onclick = () => {
 
-};
+    recipeView.classList.add(
+      "hidden"
+    );
+
+  };
+
+}
 
 
 /* =========================================================
-   EDITOR
+   ADD / EDIT RECIPE
    ========================================================= */
 
-addRecipe.onclick = () => {
+if (addRecipe) {
 
-  openEditor();
+  addRecipe.onclick = () => {
 
-};
+    openEditor();
+
+  };
+
+}
 
 
-editRecipe.onclick = () => {
+if (editRecipe) {
 
-  if (!recipes.length) {
+  editRecipe.onclick = () => {
 
-    alert(
-      "There are no recipes yet."
+    if (!recipes.length) {
+
+      alert(
+        "There are no recipes yet."
+      );
+
+      return;
+
+    }
+
+    const number =
+      prompt(
+        recipes
+          .map(
+            (recipe, index) =>
+              `${index + 1}. ${recipe.title || "Untitled Recipe"}`
+          )
+          .join("\n") +
+        "\n\nEnter recipe number:"
+      );
+
+    const index =
+      Number(number) - 1;
+
+    if (
+      !Number.isInteger(index) ||
+      !recipes[index]
+    )
+      return;
+
+    openEditor(
+      recipes[index]
     );
 
-    return;
+  };
 
-  }
-
-
-  const number =
-    prompt(
-      recipes
-        .map(
-          (recipe, index) =>
-            `${index + 1}. ${recipe.title}`
-        )
-        .join("\n") +
-      "\n\nEnter recipe number:"
-    );
-
-
-  const index =
-    Number(number) - 1;
-
-
-  if (
-    !Number.isInteger(index) ||
-    !recipes[index]
-  )
-    return;
-
-
-  openEditor(
-    recipes[index]
-  );
-
-};
+}
 
 
 function openEditor(
@@ -2030,318 +2155,439 @@ function openEditor(
   editingRecipeId =
     recipe?.id || null;
 
+  if (editorTitle) {
 
-  editorTitle.textContent =
-    recipe
-      ? "✏️ Edit Recipe"
-      : "➕ Add Recipe";
+    editorTitle.textContent =
+      recipe
+        ? "✏️ Edit Recipe"
+        : "➕ Add Recipe";
 
+  }
 
-  recipeTitle.value =
-    recipe?.title || "";
+  /*
+     TITLE CAN BE EMPTY.
+  */
 
+  if (recipeTitle) {
 
-  ingredients.value =
-    recipe?.ingredients?.join(
-      "\n"
-    ) || "";
+    recipeTitle.value =
+      recipe?.title || "";
 
+  }
 
-  instructions.value =
-    recipe?.instructions?.join(
-      "\n"
-    ) || "";
+  if (ingredients) {
 
+    ingredients.value =
+      recipe?.ingredients?.join(
+        "\n"
+      ) || "";
+
+  }
+
+  if (instructions) {
+
+    instructions.value =
+      recipe?.instructions?.join(
+        "\n"
+      ) || "";
+
+  }
+
+  /*
+     NOTES.
+  */
+
+  if (recipeNotes) {
+
+    recipeNotes.value =
+      recipe?.notes || "";
+
+  }
 
   fillEditorSelects(
     recipe
   );
 
+  if (editorError) {
 
-  editorError.textContent =
-    "";
+    editorError.textContent =
+      "";
 
+  }
 
-  editor.classList.remove(
-    "hidden"
-  );
+  if (editor) {
+
+    editor.classList.remove(
+      "hidden"
+    );
+
+  }
 
 }
 
+
+/* =========================================================
+   EDITOR DROPDOWNS
+   ========================================================= */
 
 function fillEditorSelects(
   recipe = null
 ) {
 
-  recipeCuisine.innerHTML =
-    "";
+  if (recipeCuisine) {
 
+    recipeCuisine.innerHTML =
+      "";
 
-  cuisines.forEach(
-    cuisine => {
+    cuisines.forEach(
+      cuisine => {
 
-      const option =
-        document.createElement(
-          "option"
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          cuisine;
+
+        option.textContent =
+          cuisine;
+
+        recipeCuisine.appendChild(
+          option
         );
 
+      }
+    );
 
-      option.value =
-        cuisine;
+  }
 
+  if (recipeFolder) {
 
-      option.textContent =
-        cuisine;
+    recipeFolder.innerHTML =
+      "";
 
+    folders.forEach(
+      folder => {
 
-      recipeCuisine.appendChild(
-        option
-      );
+        const option =
+          document.createElement(
+            "option"
+          );
 
-    }
-  );
+        option.value =
+          folder;
 
+        option.textContent =
+          folder;
 
-  recipeFolder.innerHTML =
-    "";
-
-
-  folders.forEach(
-    folder => {
-
-      const option =
-        document.createElement(
-          "option"
+        recipeFolder.appendChild(
+          option
         );
 
+      }
+    );
 
-      option.value =
-        folder;
-
-
-      option.textContent =
-        folder;
-
-
-      recipeFolder.appendChild(
-        option
-      );
-
-    }
-  );
-
+  }
 
   if (recipe) {
 
-    recipeCuisine.value =
-      recipe.cuisine;
+    if (recipeCuisine)
+      recipeCuisine.value =
+        recipe.cuisine ||
+        "General";
 
-    recipeFolder.value =
-      recipe.folder;
+    if (recipeFolder)
+      recipeFolder.value =
+        recipe.folder ||
+        folders[0];
 
   }
 
 }
 
 
-saveEditor.onclick = () => {
+/* =========================================================
+   SAVE EDITOR
+   ========================================================= */
 
-  const title =
-    recipeTitle.value.trim();
+if (saveEditor) {
 
+  saveEditor.onclick = () => {
 
-  if (!title) {
+    /*
+       Title is optional now.
+    */
 
-    editorError.textContent =
-      "⚠️ Recipe title is required.";
+    const title =
+      recipeTitle
+        ? recipeTitle.value.trim()
+        : "";
 
-    return;
+    const ingredientList =
+      ingredients
+        ? ingredients.value
+            .split("\n")
+            .map(
+              x => x.trim()
+            )
+            .filter(Boolean)
+        : [];
 
-  }
+    const instructionList =
+      instructions
+        ? instructions.value
+            .split("\n")
+            .map(
+              x => x.trim()
+            )
+            .filter(Boolean)
+        : [];
 
+    const notes =
+      recipeNotes
+        ? recipeNotes.value.trim()
+        : "";
 
-  const recipe = {
+    /*
+       AUTO SORT.
+       If the user hasn't manually changed
+       the folder from the default, sort it.
+    */
 
-    id:
-      editingRecipeId ||
-      Date.now(),
+    let folder =
+      recipeFolder
+        ? recipeFolder.value
+        : folders[0];
 
-    title,
+    const autoFolder =
+      autoSortFolder(
+        title,
+        ingredientList,
+        instructionList
+      );
 
-    cuisine:
-      recipeCuisine.value,
+    /*
+       For new recipes, automatically sort.
+    */
 
-    folder:
-      recipeFolder.value,
+    if (!editingRecipeId) {
 
-    ingredients:
-      ingredients.value
-        .split("\n")
-        .map(
-          x => x.trim()
-        )
-        .filter(Boolean),
+      folder =
+        autoFolder;
 
-    instructions:
-      instructions.value
-        .split("\n")
-        .map(
-          x => x.trim()
-        )
-        .filter(Boolean)
+    }
+
+    const recipe = {
+
+      id:
+        editingRecipeId ||
+        Date.now(),
+
+      title,
+
+      cuisine:
+        recipeCuisine
+          ? recipeCuisine.value
+          : "General",
+
+      folder,
+
+      ingredients:
+        ingredientList,
+
+      instructions:
+        instructionList,
+
+      notes
+
+    };
+
+    const index =
+      recipes.findIndex(
+        r =>
+          r.id ===
+          editingRecipeId
+      );
+
+    if (index === -1) {
+
+      recipes.push(
+        recipe
+      );
+
+    } else {
+
+      recipes[index] =
+        recipe;
+
+    }
+
+    saveData();
+
+    if (editor) {
+
+      editor.classList.add(
+        "hidden"
+      );
+
+    }
+
+    renderEverything();
 
   };
 
+}
 
-  const index =
-    recipes.findIndex(
-      r =>
-        r.id ===
-        editingRecipeId
+
+if (cancelEditor) {
+
+  cancelEditor.onclick = () => {
+
+    editor.classList.add(
+      "hidden"
     );
 
+  };
 
-  if (index === -1) {
-
-    recipes.push(
-      recipe
-    );
-
-  } else {
-
-    recipes[index] =
-      recipe;
-
-  }
-
-
-  saveData();
-
-  editor.classList.add(
-    "hidden"
-  );
-
-  renderEverything();
-
-};
-
-
-cancelEditor.onclick = () => {
-
-  editor.classList.add(
-    "hidden"
-  );
-
-};
+}
 
 
 /* =========================================================
    DELETE RECIPE
    ========================================================= */
 
-deleteRecipe.onclick = () => {
+if (deleteRecipe) {
 
-  if (!recipes.length) {
+  deleteRecipe.onclick = () => {
 
-    alert(
-      "There are no recipes."
-    );
+    if (!recipes.length) {
 
-    return;
+      alert(
+        "There are no recipes."
+      );
 
-  }
+      return;
 
+    }
 
-  const list =
-    recipes
-      .map(
-        (recipe, index) =>
-          `${index + 1}. ${recipe.title}`
-      )
-      .join("\n");
+    const list =
+      recipes
+        .map(
+          (recipe, index) =>
+            `${index + 1}. ${recipe.title || "Untitled Recipe"}`
+        )
+        .join("\n");
 
+    const answer =
+      prompt(
+        list +
+        "\n\nEnter recipe number to delete:"
+      );
 
-  const answer =
-    prompt(
-      list +
-      "\n\nEnter recipe number to delete:"
-    );
+    const index =
+      Number(answer) - 1;
 
-
-  const index =
-    Number(answer) - 1;
-
-
-  if (
-    !Number.isInteger(index) ||
-    !recipes[index]
-  )
-    return;
-
-
-  if (
-    confirm(
-      `Delete "${recipes[index].title}"?`
+    if (
+      !Number.isInteger(index) ||
+      !recipes[index]
     )
-  ) {
+      return;
 
-    recipes.splice(
-      index,
-      1
-    );
+    if (
+      confirm(
+        `Delete "${recipes[index].title || "Untitled Recipe"}"?`
+      )
+    ) {
 
+      recipes.splice(
+        index,
+        1
+      );
 
-    saveData();
+      saveData();
 
-    renderEverything();
+      renderEverything();
 
-  }
+    }
 
-};
+  };
+
+}
 
 
 /* =========================================================
-   FOLDER / CUISINE MANAGERS
+   FOLDER / CUISINE MANAGEMENT
    ========================================================= */
 
-addFolder.onclick = () =>
-  openManager("addFolder");
+if (addFolder) {
+
+  addFolder.onclick = () =>
+    openManager(
+      "addFolder"
+    );
+
+}
+
+if (deleteFolder) {
+
+  deleteFolder.onclick = () =>
+    openManager(
+      "deleteFolder"
+    );
+
+}
+
+if (addCuisine) {
+
+  addCuisine.onclick = () =>
+    openManager(
+      "addCuisine"
+    );
+
+}
+
+if (deleteCuisine) {
+
+  deleteCuisine.onclick = () =>
+    openManager(
+      "deleteCuisine"
+    );
+
+}
 
 
-deleteFolder.onclick = () =>
-  openManager("deleteFolder");
-
-
-addCuisine.onclick = () =>
-  openManager("addCuisine");
-
-
-deleteCuisine.onclick = () =>
-  openManager("deleteCuisine");
-
-
-function openManager(mode) {
+function openManager(
+  mode
+) {
 
   managerMode =
     mode;
 
-  managerError.textContent =
-    "";
+  if (managerError)
+    managerError.textContent = "";
 
-  managerInput.value =
-    "";
+  if (managerInput) {
 
-  managerInput.classList.add(
-    "hidden"
-  );
+    managerInput.value = "";
 
-  managerSelect.classList.add(
-    "hidden"
-  );
+    managerInput.classList.add(
+      "hidden"
+    );
 
+  }
+
+  if (managerSelect) {
+
+    managerSelect.classList.add(
+      "hidden"
+    );
+
+  }
 
   if (
-    mode === "addFolder"
+    mode ===
+    "addFolder"
   ) {
 
     managerTitle.textContent =
@@ -2359,16 +2605,16 @@ function openManager(mode) {
 
   }
 
-
   if (
-    mode === "deleteFolder"
+    mode ===
+    "deleteFolder"
   ) {
 
     managerTitle.textContent =
       "🗑️ Delete Folder";
 
     managerDescription.textContent =
-      "Recipes will not be deleted.";
+      "Recipes will be moved to another folder.";
 
     populateManagerSelect(
       folders
@@ -2376,9 +2622,9 @@ function openManager(mode) {
 
   }
 
-
   if (
-    mode === "addCuisine"
+    mode ===
+    "addCuisine"
   ) {
 
     managerTitle.textContent =
@@ -2396,26 +2642,26 @@ function openManager(mode) {
 
   }
 
-
   if (
-    mode === "deleteCuisine"
+    mode ===
+    "deleteCuisine"
   ) {
 
     managerTitle.textContent =
       "🗑️ Delete Cuisine";
 
     managerDescription.textContent =
-      "Affected recipes will become General.";
+      "Recipes will become General.";
 
     populateManagerSelect(
       cuisines.filter(
         cuisine =>
-          cuisine !== "General"
+          cuisine !==
+          "General"
       )
     );
 
   }
-
 
   manager.classList.remove(
     "hidden"
@@ -2428,9 +2674,11 @@ function populateManagerSelect(
   list
 ) {
 
+  if (!managerSelect)
+    return;
+
   managerSelect.innerHTML =
     "";
-
 
   list.forEach(
     item => {
@@ -2440,14 +2688,11 @@ function populateManagerSelect(
           "option"
         );
 
-
       option.value =
         item;
 
-
       option.textContent =
         item;
-
 
       managerSelect.appendChild(
         option
@@ -2456,7 +2701,6 @@ function populateManagerSelect(
     }
   );
 
-
   managerSelect.classList.remove(
     "hidden"
   );
@@ -2464,231 +2708,261 @@ function populateManagerSelect(
 }
 
 
-managerConfirm.onclick = () => {
+if (managerConfirm) {
 
-  const value =
-    managerInput.value.trim();
+  managerConfirm.onclick = () => {
 
-
-  if (
-    managerMode ===
-    "addFolder"
-  ) {
-
-    if (!value)
-      return showManagerError(
-        "Enter a folder name."
-      );
-
+    const value =
+      managerInput
+        ? managerInput.value.trim()
+        : "";
 
     if (
-      folders.includes(value)
-    )
-      return showManagerError(
-        "That folder already exists."
-      );
+      managerMode ===
+      "addFolder"
+    ) {
 
+      if (!value)
+        return showManagerError(
+          "Enter a folder name."
+        );
 
-    folders.push(
-      value
-    );
-
-  }
-
-
-  if (
-    managerMode ===
-    "addCuisine"
-  ) {
-
-    if (!value)
-      return showManagerError(
-        "Enter a cuisine name."
-      );
-
-
-    if (
-      cuisines.includes(value)
-    )
-      return showManagerError(
-        "That cuisine already exists."
-      );
-
-
-    cuisines.push(
-      value
-    );
-
-  }
-
-
-  if (
-    managerMode ===
-    "deleteFolder"
-  ) {
-
-    const folder =
-      managerSelect.value;
-
-
-    if (!folder)
-      return;
-
-
-    if (
-      !confirm(
-        `Delete the "${folder}" folder?`
+      if (
+        folders.includes(
+          value
+        )
       )
-    )
-      return;
+        return showManagerError(
+          "That folder already exists."
+        );
 
-
-    folders =
-      folders.filter(
-        item =>
-          item !== folder
+      folders.push(
+        value
       );
 
+    }
 
-    recipes =
-      recipes.map(
-        recipe => {
+    if (
+      managerMode ===
+      "addCuisine"
+    ) {
 
-          if (
-            recipe.folder ===
+      if (!value)
+        return showManagerError(
+          "Enter a cuisine name."
+        );
+
+      if (
+        cuisines.includes(
+          value
+        )
+      )
+        return showManagerError(
+          "That cuisine already exists."
+        );
+
+      cuisines.push(
+        value
+      );
+
+    }
+
+    if (
+      managerMode ===
+      "deleteFolder"
+    ) {
+
+      const folder =
+        managerSelect.value;
+
+      if (!folder)
+        return;
+
+      if (
+        folders.length <= 1
+      ) {
+
+        return showManagerError(
+          "You need at least one folder."
+        );
+
+      }
+
+      if (
+        !confirm(
+          `Delete the "${folder}" folder?`
+        )
+      )
+        return;
+
+      folders =
+        folders.filter(
+          item =>
+            item !==
             folder
-          ) {
+        );
 
-            return {
-              ...recipe,
-              folder:
-                folders[0] ||
-                "Unsorted"
-            };
+      const replacement =
+        folders[0];
+
+      recipes =
+        recipes.map(
+          recipe => {
+
+            if (
+              recipe.folder ===
+              folder
+            ) {
+
+              return {
+                ...recipe,
+                folder:
+                  replacement
+              };
+
+            }
+
+            return recipe;
 
           }
+        );
 
-
-          return recipe;
-
-        }
-      );
-
-  }
-
-
-  if (
-    managerMode ===
-    "deleteCuisine"
-  ) {
-
-    const cuisine =
-      managerSelect.value;
-
-
-    if (!cuisine)
-      return;
-
+    }
 
     if (
-      !confirm(
-        `Delete the "${cuisine}" cuisine?`
+      managerMode ===
+      "deleteCuisine"
+    ) {
+
+      const cuisine =
+        managerSelect.value;
+
+      if (!cuisine)
+        return;
+
+      if (
+        !confirm(
+          `Delete the "${cuisine}" cuisine?`
+        )
       )
-    )
-      return;
+        return;
 
-
-    cuisines =
-      cuisines.filter(
-        item =>
-          item !== cuisine
-      );
-
-
-    recipes =
-      recipes.map(
-        recipe => {
-
-          if (
-            recipe.cuisine ===
+      cuisines =
+        cuisines.filter(
+          item =>
+            item !==
             cuisine
-          ) {
+        );
 
-            return {
-              ...recipe,
-              cuisine:
-                "General"
-            };
+      recipes =
+        recipes.map(
+          recipe => {
+
+            if (
+              recipe.cuisine ===
+              cuisine
+            ) {
+
+              return {
+                ...recipe,
+                cuisine:
+                  "General"
+              };
+
+            }
+
+            return recipe;
 
           }
+        );
 
+    }
 
-          return recipe;
+    saveData();
 
-        }
-      );
+    manager.classList.add(
+      "hidden"
+    );
 
-  }
+    renderEverything();
 
+  };
 
-  saveData();
-
-  manager.classList.add(
-    "hidden"
-  );
-
-  renderEverything();
-
-};
+}
 
 
 function showManagerError(
   message
 ) {
 
-  managerError.textContent =
-    "⚠️ " + message;
+  if (managerError) {
+
+    managerError.textContent =
+      "⚠️ " + message;
+
+  }
 
 }
 
 
-managerCancel.onclick = () => {
+if (managerCancel) {
 
-  manager.classList.add(
-    "hidden"
-  );
+  managerCancel.onclick = () => {
 
-};
+    manager.classList.add(
+      "hidden"
+    );
+
+  };
+
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function setScanStatus(
+  message
+) {
+
+  if (scanStatus) {
+
+    scanStatus.textContent =
+      message;
+
+  }
+
+}
 
 
 /* =========================================================
    HTML SAFETY
    ========================================================= */
 
-function escapeHTML(value) {
+function escapeHTML(
+  value
+) {
 
-  return String(value)
-
+  return String(
+    value
+  )
     .replace(
       /&/g,
       "&amp;"
     )
-
     .replace(
       /</g,
       "&lt;"
     )
-
     .replace(
       />/g,
       "&gt;"
     )
-
     .replace(
       /"/g,
       "&quot;"
     )
-
     .replace(
       /'/g,
       "&#039;"
@@ -2702,3 +2976,4 @@ function escapeHTML(value) {
    ========================================================= */
 
 renderEverything();
+
