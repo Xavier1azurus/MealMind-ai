@@ -2,18 +2,15 @@
     box-sizing: border-box;
 }
 
-
 :root {
-    --bg: #0d0f12;
+    --bg: #0c0e11;
     --card: #171a20;
-    --card2: #1d2128;
+    --card2: #20242b;
     --text: #f5f5f5;
-    --muted: #9da4ae;
+    --muted: #9ca3ad;
     --border: #2c3139;
-    --accent: #ffffff;
-    --danger: #ff5b5b;
+    --danger: #ff6868;
 }
-
 
 body {
     margin: 0;
@@ -26,7 +23,6 @@ body {
         sans-serif;
 }
 
-
 button,
 input,
 textarea,
@@ -34,80 +30,84 @@ select {
     font: inherit;
 }
 
-
 button {
     cursor: pointer;
 }
-
 
 .hidden {
     display: none !important;
 }
 
-
-/* =================================================
-   APP
-   ================================================= */
-
 .app {
     width: 100%;
     max-width: 900px;
     margin: auto;
-    min-height: 100vh;
     padding: 20px;
+    min-height: 100vh;
 }
 
 
-/* =================================================
-   SETUP / LOCK
-   ================================================= */
+/* HOME */
 
 .screen {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
 }
 
-
-.setup-card,
-.lock-card {
+.home-card,
+.form-card {
     width: 100%;
     max-width: 460px;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 28px;
     padding: 35px;
-    box-shadow: 0 25px 70px rgba(0,0,0,.35);
 }
-
 
 .logo {
-    font-size: 52px;
-    margin-bottom: 10px;
+    font-size: 55px;
 }
 
-
-h1,
-h2,
-h3,
-p {
-    margin-top: 0;
+.home-card h1 {
+    font-size: 40px;
+    margin: 5px 0;
 }
 
-
-.subtitle,
-.setup-card p,
-.lock-card p {
+.home-card p,
+.muted {
     color: var(--muted);
 }
 
-
-.setup-step {
-    margin-top: 25px;
+.primary,
+.secondary {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    margin-top: 12px;
+    font-weight: 700;
 }
 
+.primary {
+    border: none;
+    background: white;
+    color: #111;
+}
+
+.secondary {
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: white;
+}
+
+.back-button {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 0;
+    margin-bottom: 25px;
+}
 
 label {
     display: block;
@@ -115,220 +115,181 @@ label {
     font-weight: 600;
 }
 
-
 input,
 textarea,
 select {
     width: 100%;
     background: #0f1115;
-    color: var(--text);
+    color: white;
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 14px;
     outline: none;
 }
 
-
 textarea {
     resize: vertical;
-    line-height: 1.55;
 }
 
-
-input:focus,
-textarea:focus,
-select:focus {
-    border-color: #777;
+.password-box {
+    display: flex;
+    gap: 8px;
 }
 
+.password-box input {
+    flex: 1;
+}
 
-.primary {
-    width: 100%;
-    border: 0;
+.password-box button {
+    width: 48px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: white;
     border-radius: 14px;
-    background: var(--accent);
-    color: #101114;
-    padding: 15px 18px;
-    font-weight: 700;
-    margin-top: 20px;
 }
 
-
-.primary:active {
-    transform: scale(.98);
+.privacy-options {
+    display: flex;
+    gap: 10px;
 }
 
+.privacy-option {
+    flex: 1;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--card2);
+    color: white;
+}
+
+.privacy-option.selected {
+    border-color: white;
+}
 
 .error {
     color: #ff7777;
-    min-height: 20px;
     margin-top: 10px;
-    font-size: 14px;
 }
 
 
-/* =================================================
-   TOP BAR
-   ================================================= */
+/* TOP */
 
 .topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 0 25px;
+    margin-bottom: 20px;
 }
 
+.brand {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--muted);
+}
 
 .topbar h1 {
-    margin: 0;
+    margin: 4px 0;
 }
 
-
-.small-brand {
+#privacyBadge {
     color: var(--muted);
-    font-size: 11px;
-    letter-spacing: 3px;
-    margin-bottom: 4px;
+    font-size: 13px;
 }
-
 
 .icon-button,
 .close-button {
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--text);
     width: 44px;
     height: 44px;
     border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: white;
 }
 
 
-.close-button {
-    width: 40px;
-    height: 40px;
-}
+/* SEARCH */
 
-
-/* =================================================
-   SEARCH
-   ================================================= */
-
-.search-section {
+.search {
     margin-bottom: 18px;
 }
 
 
-/* =================================================
-   SCANNER
-   ================================================= */
+/* SCANNER */
 
 .scan-card {
-    background:
-        linear-gradient(
-            145deg,
-            #1b1f26,
-            #14171c
-        );
+    background: linear-gradient(
+        145deg,
+        #1b1f26,
+        #14171c
+    );
 
     border: 1px solid var(--border);
     border-radius: 24px;
-    padding: 24px;
+    padding: 25px;
     margin-bottom: 30px;
 }
 
-
-.scan-card h2 {
-    margin-bottom: 8px;
+.scan-icon {
+    font-size: 35px;
 }
-
 
 .scan-card p {
     color: var(--muted);
     line-height: 1.5;
 }
 
-
 .scan-status {
     color: var(--muted);
-    margin-top: 12px;
     text-align: center;
-    min-height: 20px;
+    margin-top: 12px;
 }
 
 
-/* =================================================
-   SECTIONS
-   ================================================= */
+/* SECTIONS */
 
 section {
     margin-bottom: 30px;
 }
 
-
-.section-header {
+.section-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
 }
 
-
-.section-header p {
+.section-title p {
     color: var(--muted);
-    margin-bottom: 0;
 }
 
 
-/* =================================================
-   FOLDERS
-   ================================================= */
+/* FOLDERS */
 
 .folder-grid {
     display: grid;
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
 
-
 .folder-card {
-    border: 1px solid var(--border);
+    text-align: left;
     background: var(--card);
-    color: var(--text);
+    color: white;
+    border: 1px solid var(--border);
     border-radius: 18px;
     padding: 18px;
-    text-align: left;
-    min-height: 105px;
 }
-
-
-.folder-card:active {
-    transform: scale(.98);
-}
-
 
 .folder-icon {
-    font-size: 25px;
+    font-size: 26px;
 }
-
-
-.folder-name {
-    font-weight: 700;
-    margin-top: 8px;
-}
-
 
 .folder-count {
     color: var(--muted);
     font-size: 13px;
-    margin-top: 4px;
 }
 
 
-/* =================================================
-   MANAGEMENT
-   ================================================= */
+/* MANAGEMENT */
 
 .management {
     background: var(--card);
@@ -337,46 +298,32 @@ section {
     padding: 20px;
 }
 
-
 .management-grid {
     display: grid;
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
 }
 
-
-.management-button {
-    min-height: 72px;
-    background: var(--card2);
+.management-grid button {
+    min-height: 75px;
     border: 1px solid var(--border);
-    color: var(--text);
+    background: var(--card2);
+    color: white;
     border-radius: 16px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+}
+
+.management-grid button.danger {
+    color: var(--danger);
 }
 
 
-.management-button.danger {
-    color: #ff7777;
-}
+/* RECIPES */
 
-
-/* =================================================
-   RECIPES
-   ================================================= */
-
-.recipe-list {
+#recipes {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
-
 
 .recipe-card {
     background: var(--card);
@@ -385,55 +332,44 @@ section {
     padding: 18px;
 }
 
-
 .recipe-card h3 {
-    margin-bottom: 7px;
+    margin-bottom: 6px;
 }
-
 
 .recipe-meta {
     color: var(--muted);
     font-size: 13px;
 }
 
-
 .recipe-open {
-    margin-top: 15px;
     width: 100%;
-    border: 1px solid var(--border);
-    background: var(--card2);
-    color: var(--text);
-    border-radius: 12px;
+    margin-top: 14px;
     padding: 12px;
+    background: var(--card2);
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
 }
-
-
-/* =================================================
-   SMALL BUTTON
-   ================================================= */
 
 .small-button {
     border: 1px solid var(--border);
     background: var(--card);
-    color: var(--text);
-    border-radius: 12px;
+    color: white;
     padding: 9px 13px;
+    border-radius: 12px;
 }
 
 
-/* =================================================
-   MODALS
-   ================================================= */
+/* MODALS */
 
 .modal {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.82);
     z-index: 100;
-    overflow-y: auto;
+    background: rgba(0,0,0,.85);
     padding: 20px;
+    overflow-y: auto;
 }
-
 
 .modal-card {
     width: 100%;
@@ -445,174 +381,119 @@ section {
     padding: 25px;
 }
 
-
-.modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
+.close-button {
+    float: right;
 }
 
 
-/* =================================================
-   RECIPE FORMAT
-   ================================================= */
+/* PAGE COUNT */
+
+.page-options {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.page-options button {
+    padding: 18px 5px;
+    background: var(--card2);
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font-size: 20px;
+}
+
+
+/* RECIPE */
 
 .recipe-page {
     width: 100%;
     max-width: 700px;
     min-height: 80vh;
-    margin: 30px auto;
+    margin: 20px auto;
     background: #f7f5ef;
     color: #171717;
     border-radius: 22px;
     padding: 35px;
-    position: relative;
 }
-
 
 .recipe-heading {
     text-align: center;
-    padding: 20px 30px 35px;
-    border-bottom: 1px solid #d7d3c9;
+    border-bottom: 1px solid #d5d1c8;
+    padding-bottom: 25px;
+    margin-bottom: 25px;
 }
-
 
 .recipe-heading h1 {
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: clamp(
-        28px,
-        7vw,
-        46px
-    );
-
-    margin: 10px 0 0;
+    font-family: Georgia, serif;
+    font-size: 40px;
 }
 
-
-.recipe-cuisine {
+.recipe-heading div {
+    color: #777;
     text-transform: uppercase;
     letter-spacing: 3px;
     font-size: 11px;
-    color: #777;
 }
 
-
-.recipe-section {
-    padding: 25px 0;
-}
-
-
-.recipe-section h2 {
+.recipe-page h2 {
     font-family: Georgia, serif;
-    border-bottom: 1px solid #d7d3c9;
+    border-bottom: 1px solid #d5d1c8;
     padding-bottom: 10px;
 }
 
-
-.recipe-section ul,
-.recipe-section ol {
-    line-height: 1.9;
-    padding-left: 25px;
-}
-
-
-.recipe-section li {
+.recipe-page li {
+    line-height: 1.8;
     margin-bottom: 7px;
 }
 
-
-.notes {
-    white-space: pre-wrap;
-    line-height: 1.7;
-}
-
-
 .page-navigation {
-    border-top: 1px solid #d7d3c9;
-    padding-top: 18px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #d5d1c8;
+    padding-top: 20px;
+    margin-top: 30px;
 }
-
-
-.recipe-page .small-button {
-    color: #171717;
-    background: #eeeae0;
-    border-color: #d0cbc0;
-}
-
-
-/* =================================================
-   FOOTER
-   ================================================= */
 
 footer {
     text-align: center;
     color: var(--muted);
-    padding: 40px 0 20px;
-}
-
-
-footer small {
-    opacity: .6;
-}
-
-
-/* =================================================
-   MOBILE
-   ================================================= */
-
-@media (max-width: 600px) {
-
-    .app {
-        padding: 15px;
-    }
-
-
-    .setup-card,
-    .lock-card {
-        padding: 25px;
-        border-radius: 22px;
-    }
-
-
-    .folder-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-
-    .management-grid {
-        grid-template-columns:
-            1fr 1fr;
-    }
-
-
-    .recipe-page {
-        margin: 5px auto;
-        border-radius: 18px;
-        padding: 25px;
-    }
-
+    padding: 40px 0;
 }
 
 
 @media (min-width: 700px) {
 
     .folder-grid {
-        grid-template-columns:
-            repeat(4, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 
-
     .management-grid {
-        grid-template-columns:
-            repeat(5, 1fr);
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .app {
+        padding: 15px;
+    }
+
+    .home-card,
+    .form-card {
+        padding: 25px;
+    }
+
+    .recipe-page {
+        padding: 25px;
+        margin: 5px auto;
+    }
+
+    .recipe-heading h1 {
+        font-size: 30px;
     }
 
 }
