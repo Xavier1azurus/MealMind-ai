@@ -28,19 +28,19 @@
 
 
 <!-- =========================
-     MAIN MEALMIND APP
+     MAIN MEALMIND
 ========================= -->
 
 <main class="app">
 
     <h1>🧠 MealMind</h1>
 
-    <p>
+    <p class="subtitle">
         Scan your recipes. Plan your meals.
     </p>
 
 
-    <!-- CAMERA INPUT -->
+    <!-- CAMERA -->
 
     <input
         type="file"
@@ -51,40 +51,47 @@
     >
 
 
-    <!-- SCAN BUTTON -->
-
-    <button id="scanButton">
-
+    <button
+        id="scanButton"
+        class="main-button"
+    >
         📸 Scan Recipe
-
     </button>
 
 
     <p id="status"></p>
 
 
-    <!-- RECIPE SCANNER BOX -->
+    <!-- RECIPE SCANNER -->
 
-    <section>
+    <section class="main-card">
 
         <h2>
             📖 Recipe Scanner
         </h2>
 
+        <p class="small-text">
+            Scan a recipe or type one here.
+        </p>
+
+
         <textarea
             id="recipeText"
-            placeholder="Scan a recipe or type recipe text here..."
+            placeholder="Recipe text appears here..."
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
         ></textarea>
 
 
-        <button id="saveRecipeButton">
-
+        <button
+            id="saveRecipeButton"
+            class="main-button"
+        >
             💾 Save Recipe
-
         </button>
 
     </section>
-
 
 </main>
 
@@ -96,23 +103,26 @@
 
 <div
     id="downloadScreen"
-    class="download-screen"
+    class="overlay"
     hidden
 >
 
-    <div class="download-box">
+    <div class="popup">
+
+        <div class="big-icon">
+            🧠
+        </div>
 
         <h1>
-            🧠 MealMind
+            Keep cooking!
         </h1>
 
-        <h2>
-            You've reached the free limit.
-        </h2>
+        <p>
+            You've used the 2 free recipe scans.
+        </p>
 
         <p>
-            Download the MealMind app to
-            keep scanning recipes.
+            Get the MealMind app to keep scanning.
         </p>
 
 
@@ -120,9 +130,7 @@
             id="appStoreButton"
             class="store-button"
         >
-
              App Store
-
         </button>
 
 
@@ -130,19 +138,15 @@
             id="playStoreButton"
             class="store-button"
         >
-
             ▶ Google Play
-
         </button>
 
 
         <button
             id="closeDownload"
-            class="secondary-button"
+            class="back-button"
         >
-
             ← Back
-
         </button>
 
     </div>
@@ -157,32 +161,42 @@
 
 <div
     id="ownerLogin"
-    class="owner-login"
+    class="overlay"
     hidden
 >
 
-    <div class="login-box">
+    <div class="popup">
+
+        <div class="big-icon">
+            🔐
+        </div>
 
         <h2>
-            🔐 Owner Login
+            Owner Login
         </h2>
 
 
         <input
-            type="password"
             id="ownerCode"
+            class="owner-input"
+            type="password"
             placeholder="Owner code"
+            autocomplete="off"
         >
 
 
-        <button id="ownerButton">
-
+        <button
+            id="ownerButton"
+            class="main-button"
+        >
             Login
-
         </button>
 
 
-        <p id="ownerStatus"></p>
+        <p
+            id="ownerStatus"
+            class="error-text"
+        ></p>
 
     </div>
 
@@ -203,6 +217,8 @@
     <div class="owner-app">
 
 
+        <!-- HEADER -->
+
         <header class="owner-header">
 
             <div>
@@ -219,9 +235,7 @@
 
 
             <span class="owner-badge">
-
                 OWNER
-
             </span>
 
         </header>
@@ -230,11 +244,15 @@
 
         <!-- OWNER SCANNER -->
 
-        <section class="owner-section">
+        <section class="owner-card">
 
             <h2>
                 📸 Owner Scanner
             </h2>
+
+            <p class="small-text">
+                Unlimited owner scanning.
+            </p>
 
 
             <input
@@ -246,15 +264,15 @@
             >
 
 
-            <button id="ownerScanButton">
-
+            <button
+                id="ownerScanButton"
+                class="main-button"
+            >
                 📸 Scan Recipe
-
             </button>
 
 
             <p id="ownerScanStatus"></p>
-
 
         </section>
 
@@ -262,7 +280,7 @@
 
         <!-- FOLDERS -->
 
-        <section class="owner-section">
+        <section class="owner-card">
 
             <h2>
                 📂 Recipe Folders
@@ -277,11 +295,23 @@
                     data-folder="Sweet"
                 >
 
-                    <span>🍰</span>
+                    <span class="folder-icon">
+                        🍰
+                    </span>
 
-                    Sweet
+                    <span>
+                        Sweet
+                    </span>
+
+                    <strong
+                        id="countSweet"
+                        class="folder-count"
+                    >
+                        0
+                    </strong>
 
                 </button>
+
 
 
                 <button
@@ -289,11 +319,23 @@
                     data-folder="Savoury"
                 >
 
-                    <span>🍽️</span>
+                    <span class="folder-icon">
+                        🍽️
+                    </span>
 
-                    Savoury
+                    <span>
+                        Savoury
+                    </span>
+
+                    <strong
+                        id="countSavoury"
+                        class="folder-count"
+                    >
+                        0
+                    </strong>
 
                 </button>
+
 
 
                 <button
@@ -301,11 +343,23 @@
                     data-folder="Fried"
                 >
 
-                    <span>🍟</span>
+                    <span class="folder-icon">
+                        🍟
+                    </span>
 
-                    Fried
+                    <span>
+                        Fried
+                    </span>
+
+                    <strong
+                        id="countFried"
+                        class="folder-count"
+                    >
+                        0
+                    </strong>
 
                 </button>
+
 
 
                 <button
@@ -313,14 +367,32 @@
                     data-folder="International"
                 >
 
-                    <span>🌎</span>
+                    <span class="folder-icon">
+                        🌎
+                    </span>
 
-                    International
+                    <span>
+                        International
+                    </span>
+
+                    <strong
+                        id="countInternational"
+                        class="folder-count"
+                    >
+                        0
+                    </strong>
 
                 </button>
 
-
             </div>
+
+
+            <button
+                id="allRecipesButton"
+                class="all-recipes-button"
+            >
+                📖 Show All Recipes
+            </button>
 
         </section>
 
@@ -328,12 +400,10 @@
 
         <!-- SAVED RECIPES -->
 
-        <section class="owner-section">
+        <section class="owner-card">
 
             <h2 id="folderTitle">
-
                 📖 All Recipes
-
             </h2>
 
 
@@ -346,13 +416,13 @@
 
 
 
+        <!-- LOG OUT -->
+
         <button
             id="closeOwner"
-            class="close-owner"
+            class="logout-button"
         >
-
-            ← Back to MealMind
-
+            🔒 Log Out
         </button>
 
 
@@ -377,18 +447,21 @@
 
         <button
             id="closeRecipe"
-            class="close-recipe"
+            class="back-button"
         >
-
             ← Back
-
         </button>
 
 
-        <h1 id="detailTitle"></h1>
+        <h1 id="detailTitle">
+        </h1>
 
 
-        <p id="detailCategory"></p>
+        <p
+            id="detailCategory"
+            class="recipe-category"
+        >
+        </p>
 
 
         <h2>
@@ -396,7 +469,8 @@
         </h2>
 
 
-        <ul id="detailIngredients"></ul>
+        <ul id="detailIngredients">
+        </ul>
 
 
         <h2>
@@ -417,7 +491,6 @@
 
 
 <script src="script.js"></script>
-
 
 </body>
 
