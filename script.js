@@ -1,177 +1,128 @@
-const scanButton =
-    document.getElementById("scanButton");
+const scanButton = document.getElementById("scanButton");
+const recipeImage = document.getElementById("recipeImage");
+const recipeText = document.getElementById("recipeText");
+const status = document.getElementById("status");
 
-const recipeImage =
-    document.getElementById("recipeImage");
+const ownerLogin = document.getElementById("ownerLogin");
+const ownerCode = document.getElementById("ownerCode");
+const ownerButton = document.getElementById("ownerButton");
+const ownerStatus = document.getElementById("ownerStatus");
 
-const recipeText =
-    document.getElementById("recipeText");
-
-const status =
-    document.getElementById("status");
-
-const saveRecipeButton =
-    document.getElementById("saveRecipeButton");
-
-
-/* =========================
-   OWNER ELEMENTS
-========================= */
-
-const ownerLogin =
-    document.getElementById("ownerLogin");
-
-const ownerCode =
-    document.getElementById("ownerCode");
-
-const ownerButton =
-    document.getElementById("ownerButton");
-
-const ownerStatus =
-    document.getElementById("ownerStatus");
-
-const ownerPanel =
-    document.getElementById("ownerPanel");
-
-const savedRecipes =
-    document.getElementById("savedRecipes");
-
-const closeOwner =
-    document.getElementById("closeOwner");
+const ownerPanel = document.getElementById("ownerPanel");
+const savedRecipes = document.getElementById("savedRecipes");
+const closeOwner = document.getElementById("closeOwner");
 
 
-/* =========================
-   CAMERA / SCANNER
-========================= */
+// ================================
+// SCAN RECIPE BUTTON
+// ================================
 
 scanButton.addEventListener("click", function () {
 
-    /*
-       Normal users pressing this button
-       get the camera/photo picker.
-    */
-
+    // This ONLY opens the camera/photo picker.
     recipeImage.click();
 
 });
 
 
-recipeImage.addEventListener(
-    "change",
-    async function () {
+// ================================
+// READ PHOTO
+// ================================
 
-        const file =
-            recipeImage.files[0];
+recipeImage.addEventListener("change", async function () {
 
-        if (!file) {
-            return;
-        }
+    const file = recipeImage.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    status.textContent = "🔍 Reading your recipe...";
+    recipeText.value = "";
+
+    try {
+
+        const result = await Tesseract.recognize(
+            file,
+            "eng",
+            {
+                logger: function (info) {
+
+                    if (info.status === "recognizing text") {
+
+                        const percent =
+                            Math.round(info.progress * 100);
+
+                        status.textContent =
+                            "🔍 Reading recipe... " +
+                            percent +
+                            "%";
+                    }
+                }
+            }
+        );
+
+        recipeText.value = result.data.text;
+
+        status.textContent = "✅ Recipe scanned!";
+
+    } catch (error) {
+
+        console.error(error);
 
         status.textContent =
-            "🔍 Reading your recipe...";
-
-        recipeText.value = "";
-
-        try {
-
-            const result =
-                await Tesseract.recognize(
-                    file,
-                    "eng",
-                    {
-                        logger: function(info) {
-
-                            if (
-                                info.status ===
-                                "recognizing text"
-                            ) {
-
-                                const percent =
-                                    Math.round(
-                                        info.progress * 100
-                                    );
-
-                                status.textContent =
-                                    "🔍 Reading recipe... " +
-                                    percent +
-                                    "%";
-                            }
-
-                        }
-                    }
-                );
-
-
-            recipeText.value =
-                result.data.text;
-
-            status.textContent =
-                "✅ Recipe scanned!";
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            status.textContent =
-                "❌ Scanner error.";
-
-        }
+            "❌ Something went wrong while scanning.";
 
     }
-);
+
+});
 
 
-/* =========================
-   HIDDEN OWNER TRIGGER
-========================= */
+// ================================
+// SECRET OWNER TRIGGER
+// ================================
 
-/*
-   User types 1591 into the
-   recipe scanner box and
-   presses ENTER.
-*/
+// IMPORTANT:
+// This listens ONLY to the Recipe Scanner box.
 
-recipeText.addEventListener(
-    "keydown",
-    function(event) {
+recipeText.addEventListener("keydown", function (event) {
 
-        if (event.key !== "Enter") {
-            return;
-        }
+    if (event.key === "Enter") {
 
-
-        const code =
+        const typedText =
             recipeText.value.trim();
 
-
-        if (code === "1591") {
+        if (typedText === "1591") {
 
             event.preventDefault();
 
+            // Clear the scanner box
             recipeText.value = "";
 
+            // Show owner login
             ownerLogin.hidden = false;
 
+            // Clear old login information
             ownerCode.value = "";
-
             ownerStatus.textContent = "";
 
+            // Put cursor in owner password box
             ownerCode.focus();
 
         }
 
     }
-);
+
+});
 
 
-/* =========================
-   SAVE RECIPE
-========================= */
+// ================================
+// SAVE RECIPE
+// ================================
 
-saveRecipeButton.addEventListener(
-    "click",
-    function() {
+document
+    .getElementById("saveRecipeButton")
+    .addEventListener("click", function () {
 
         const recipe =
             recipeText.value.trim();
@@ -184,145 +135,114 @@ saveRecipeButton.addEventListener(
             return;
         }
 
-
         const recipes =
             JSON.parse(
-                localStorage.getItem(
-                    "mealmindRecipes"
-                ) || "[]"
+                localStorage.getItem("mealmindRecipes") || "[]"
             );
-
 
         recipes.push({
             text: recipe,
-
-            date:
-                new Date().toLocaleString()
+            date: new Date().toLocaleString()
         });
-
 
         localStorage.setItem(
             "mealmindRecipes",
             JSON.stringify(recipes)
         );
 
-
         status.textContent =
             "✅ Recipe saved!";
 
-    }
-);
+    });
 
 
-/* =========================
-   OWNER LOGIN
-========================= */
+// ================================
+// OWNER LOGIN
+// ================================
 
-ownerButton.addEventListener(
-    "click",
-    function() {
+ownerButton.addEventListener("click", function () {
 
-        if (
-            ownerCode.value ===
-            "BumsUp2AI"
-        ) {
+    if (ownerCode.value === "BumsUp2AI") {
 
-            ownerLogin.hidden = true;
+        ownerLogin.hidden = true;
 
-            ownerPanel.hidden = false;
+        ownerPanel.hidden = false;
 
-            loadSavedRecipes();
+        loadSavedRecipes();
 
-        } else {
+    } else {
 
-            ownerStatus.textContent =
-                "❌ Incorrect owner code.";
-
-        }
+        ownerStatus.textContent =
+            "❌ Incorrect owner code.";
 
     }
-);
+
+});
 
 
-/* =========================
-   LOAD SAVED RECIPES
-========================= */
+// ================================
+// SHOW SAVED RECIPES
+// ================================
 
 function loadSavedRecipes() {
 
     const recipes =
         JSON.parse(
-            localStorage.getItem(
-                "mealmindRecipes"
-            ) || "[]"
+            localStorage.getItem("mealmindRecipes") || "[]"
         );
 
-
     savedRecipes.innerHTML = "";
-
 
     if (recipes.length === 0) {
 
         savedRecipes.innerHTML =
-            "<p>No recipes have been saved yet.</p>";
+            "<p>No recipes saved yet.</p>";
 
         return;
-
     }
 
+    recipes.forEach(function (recipe, index) {
 
-    recipes.forEach(
-        function(recipe, index) {
+        const box =
+            document.createElement("div");
 
-            const recipeBox =
-                document.createElement("div");
+        box.className = "saved-recipe";
 
-            recipeBox.className =
-                "saved-recipe";
+        const title =
+            document.createElement("h3");
 
+        title.textContent =
+            "Recipe " + (index + 1);
 
-            recipeBox.innerHTML = `
-                <h3>Recipe ${index + 1}</h3>
-                <p>${escapeHTML(recipe.text)}</p>
-                <small>Saved: ${recipe.date}</small>
-            `;
+        const text =
+            document.createElement("p");
 
+        text.textContent =
+            recipe.text;
 
-            savedRecipes.appendChild(
-                recipeBox
-            );
+        const date =
+            document.createElement("small");
 
-        }
-    );
+        date.textContent =
+            "Saved: " + recipe.date;
+
+        box.appendChild(title);
+        box.appendChild(text);
+        box.appendChild(date);
+
+        savedRecipes.appendChild(box);
+
+    });
 
 }
 
 
-/* =========================
-   SECURITY HELPER
-========================= */
+// ================================
+// CLOSE OWNER PANEL
+// ================================
 
-function escapeHTML(text) {
+closeOwner.addEventListener("click", function () {
 
-    const div =
-        document.createElement("div");
+    ownerPanel.hidden = true;
 
-    div.textContent = text;
-
-    return div.innerHTML;
-
-}
-
-
-/* =========================
-   CLOSE OWNER PANEL
-========================= */
-
-closeOwner.addEventListener(
-    "click",
-    function() {
-
-        ownerPanel.hidden = true;
-
-    }
-);
+});
