@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,64 +9,17 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- OCR library -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 
 <body>
-<div id="ownerLogin" class="owner-login" hidden>
-    <h2>🔐 Owner Login</h2>
 
-    <input
-        type="password"
-        id="ownerCode"
-        placeholder="Owner code"
-    >
-
-    <button id="ownerButton">Login</button>
-
-    <p id="ownerStatus"></p>
-</div>
     <main class="app">
-<div class="owner-login">
-    <input
-        type="text"
-        id="ownerCode"
-        placeholder="Enter owner code"
-    >
 
-    <button id="ownerButton">
-        Owner Login
-    </button>
-
-    <p id="ownerStatus"></p>
-</div>
-
-<div id="ownerPanel" class="owner-panel" hidden>
-
-    <h2>🔐 MealMind Owner Dashboard</h2>
-
-    <div class="owner-card">
-        <h3>📊 App Status</h3>
-        <p>MealMind is running.</p>
-    </div>
-
-    <div class="owner-card">
-        <h3>📸 Recipe Scanner</h3>
-        <p>OCR scanner: Active</p>
-    </div>
-
-    <div class="owner-card">
-        <h3>🧠 AI</h3>
-        <p>MoonPlug integration: Coming later</p>
-    </div>
-
-</div>
         <h1>🧠 MealMind</h1>
 
         <p>Scan your recipes. Plan your meals.</p>
 
-        <!-- Hidden photo selector -->
         <input
             type="file"
             id="recipeImage"
@@ -81,22 +35,50 @@
         <p id="status"></p>
 
         <section id="scanResult">
+
             <h2>📖 Scanned Recipe</h2>
 
             <textarea
                 id="recipeText"
                 placeholder="Your scanned recipe will appear here..."
             ></textarea>
+
         </section>
 
         <section>
+
             <h2>🛒 Grocery List</h2>
+
             <ul id="groceryList"></ul>
+
         </section>
 
     </main>
 
+
+    <!-- Hidden owner login -->
+
+    <div id="ownerLogin" class="owner-login" hidden>
+
+        <h2>🔐 Owner Login</h2>
+
+        <input
+            type="password"
+            id="ownerCode"
+            placeholder="Owner code"
+        >
+
+        <button id="ownerButton">
+            Login
+        </button>
+
+        <p id="ownerStatus"></p>
+
+    </div>
+
+
     <script src="script.js"></script>
 
 </body>
+
 </html>
