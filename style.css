@@ -83,10 +83,34 @@ button {
 .primary,
 .secondary {
     width: 100%;
-    padding: 15px;
-    border-radius: 14px;
-    margin-top: 12px;
+    min-height: 58px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    margin-top: 18px;
     font-weight: 700;
+    font-size: 16px;
+    display: block;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.primary:active,
+.secondary:active {
+    transform: scale(0.97);
+    opacity: 0.8;
+}
+
+.primary {
+    border: none;
+    background: white;
+    color: #111;
+}
+
+.secondary {
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: white;
+}
 }
 
 .primary {
