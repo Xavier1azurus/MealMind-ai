@@ -70,3 +70,38 @@ ownerButton.addEventListener("click", function () {
     }
 
 });
+const ownerLogin = document.getElementById("ownerLogin");
+const ownerCode = document.getElementById("ownerCode");
+const ownerButton = document.getElementById("ownerButton");
+const ownerStatus = document.getElementById("ownerStatus");
+
+let escPressed = false;
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+        escPressed = true;
+    }
+
+    if (event.code === "Space" && escPressed) {
+        ownerLogin.hidden = false;
+        ownerCode.focus();
+    }
+});
+
+document.addEventListener("keyup", function(event) {
+
+    if (event.key === "Escape") {
+        escPressed = false;
+    }
+});
+
+ownerButton.addEventListener("click", function() {
+
+    if (ownerCode.value === "BumsUp2AI") {
+        ownerStatus.textContent = "✅ Owner access granted!";
+    } else {
+        ownerStatus.textContent = "❌ Incorrect code.";
+    }
+
+});
