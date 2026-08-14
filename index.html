@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>MealMind</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- OCR scanner -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 
 <body>
@@ -18,87 +19,71 @@
 
     <!-- HOME -->
     <section id="homeScreen" class="screen">
-        <div class="home-card">
 
-            <div class="logo">🍽️</div>
+        <div class="logo">🍽️</div>
 
-            <h1>MealMind</h1>
+        <h1>MealMind</h1>
+        <p class="subtitle">Your digital cookbook</p>
 
-            <p class="subtitle">
-                Your personal digital cookbook
-            </p>
+        <div class="home-buttons">
 
-            <div class="home-buttons">
+            <button data-action="make-cookbook">
+                📖 Make a Cookbook
+            </button>
 
-                <button
-                    class="primary-button"
-                    data-action="make-cookbook"
-                >
-                    📖 Make a Cookbook
-                </button>
+            <button data-action="join-cookbook">
+                🔐 Join a Cookbook
+            </button>
 
-                <button
-                    class="secondary-button"
-                    data-action="join-cookbook"
-                >
-                    🔐 Join a Cookbook
-                </button>
-
-                <button
-                    class="secondary-button"
-                    data-action="public-books"
-                >
-                    🌎 Public Cookbooks
-                </button>
-
-            </div>
-
-            <p class="creator">
-                Made by Narayan Xavier Gill
-            </p>
+            <button data-action="public-books">
+                🌎 Public Cookbooks
+            </button>
 
         </div>
+
+        <p class="creator">
+            Made by Narayan Xavier Gill
+        </p>
+
     </section>
 
 
-    <!-- MAKE COOKBOOK -->
+    <!-- CREATE COOKBOOK -->
     <section id="makeScreen" class="screen hidden">
 
-        <div class="page-card">
+        <div class="card">
 
-            <button
-                class="back-button"
-                data-action="home"
-            >
-                ← Back
-            </button>
+            <button class="back" data-action="home">← Back</button>
 
-            <h2>Create your cookbook</h2>
-
-            <p class="muted">
-                Choose a name and create a private code.
-            </p>
-
-            <label>Cookbook name</label>
+            <h1>Create Cookbook</h1>
 
             <input
                 id="cookbookName"
                 type="text"
-                placeholder="My Cookbook"
-                autocomplete="off"
+                placeholder="Cookbook name"
             >
-
-            <label>Cookbook code</label>
 
             <input
                 id="cookbookPassword"
                 type="password"
-                placeholder="At least 4 characters"
-                autocomplete="new-password"
+                placeholder="Create a code"
             >
 
+            <label class="check-row">
+                <input
+                    id="showCreatePassword"
+                    type="checkbox"
+                >
+                Show code
+            </label>
+
+            <select id="cookbookPrivacy">
+                <option value="private">🔒 Private</option>
+                <option value="public">🌎 Public</option>
+            </select>
+
             <button
-                class="primary-button large-button"
+                class="primary"
                 data-action="create-cookbook"
             >
                 Create Cookbook
@@ -112,37 +97,34 @@
     <!-- JOIN -->
     <section id="joinScreen" class="screen hidden">
 
-        <div class="page-card">
+        <div class="card">
 
-            <button
-                class="back-button"
-                data-action="home"
-            >
-                ← Back
-            </button>
+            <button class="back" data-action="home">← Back</button>
 
-            <h2>Join a cookbook</h2>
-
-            <label>Cookbook name</label>
+            <h1>Join Cookbook</h1>
 
             <input
                 id="joinName"
                 type="text"
                 placeholder="Cookbook name"
-                autocomplete="off"
             >
-
-            <label>Cookbook code</label>
 
             <input
                 id="joinPassword"
                 type="password"
                 placeholder="Cookbook code"
-                autocomplete="off"
             >
 
+            <label class="check-row">
+                <input
+                    id="showJoinPassword"
+                    type="checkbox"
+                >
+                Show code
+            </label>
+
             <button
-                class="primary-button large-button"
+                class="primary"
                 data-action="join"
             >
                 Join Cookbook
@@ -156,16 +138,11 @@
     <!-- PUBLIC -->
     <section id="publicScreen" class="screen hidden">
 
-        <div class="page-card">
+        <div class="card">
 
-            <button
-                class="back-button"
-                data-action="home"
-            >
-                ← Back
-            </button>
+            <button class="back" data-action="home">← Back</button>
 
-            <h2>Public Cookbooks</h2>
+            <h1>Public Cookbooks</h1>
 
             <div id="publicBooksList"></div>
 
@@ -177,110 +154,83 @@
     <!-- MAIN COOKBOOK -->
     <section id="mainScreen" class="screen hidden">
 
-        <header class="main-header">
+        <header class="topbar">
 
-            <button
-                class="icon-button"
-                data-action="exit-book"
-            >
-                ←
-            </button>
+            <button data-action="home">←</button>
 
-            <div class="book-title-area">
-                <h1 id="mainBookName">
-                    Cookbook
-                </h1>
+            <h2 id="mainBookName">Cookbook</h2>
 
-                <span>
-                    MealMind
-                </span>
-            </div>
+            <button data-action="exit-book">✕</button>
 
         </header>
 
 
-        <main class="main-content">
+        <main class="book-content">
 
-            <!-- SEARCH -->
-            <div class="search-box">
+            <button
+                class="scan-button"
+                data-action="scan"
+            >
+                📷 Scan Recipe
+            </button>
 
-                <span>🔎</span>
-
-                <input
-                    id="searchInput"
-                    type="search"
-                    placeholder="Search recipes..."
-                >
-
-            </div>
+            <input
+                id="cameraInput"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                hidden
+            >
 
 
-            <!-- ACTIONS -->
-            <div class="main-actions">
+            <input
+                id="searchInput"
+                class="search"
+                type="search"
+                placeholder="🔎 Search recipes..."
+            >
+
+
+            <div class="section-title-row">
+
+                <h2>Folders</h2>
 
                 <button
-                    class="primary-button"
-                    data-action="scan"
-                >
-                    📷 Scan Recipe
-                </button>
-
-                <button
-                    class="secondary-button"
+                    class="small-button"
                     data-action="add-folder"
                 >
-                    📁 Create Folder
+                    + Folder
                 </button>
 
             </div>
 
-
-            <!-- FOLDERS -->
-            <section>
-
-                <div class="section-heading">
-                    <h2>Folders</h2>
-                </div>
-
-                <div
-                    id="folders"
-                    class="folders-grid"
-                ></div>
-
-            </section>
+            <div id="folders"></div>
 
 
-            <!-- RECIPES -->
-            <section>
+            <div class="section-title-row">
 
-                <div class="section-heading">
+                <h2>Recipes</h2>
 
-                    <h2 id="recipeSectionTitle">
-                        Recipes
-                    </h2>
+                <button
+                    class="small-button"
+                    data-action="clear-folder"
+                >
+                    All
+                </button>
 
-                </div>
+            </div>
 
-                <div
-                    id="recipes"
-                    class="recipes-list"
-                ></div>
-
-            </section>
+            <div id="recipes"></div>
 
         </main>
 
     </section>
 
 
-    <!-- HIDDEN CAMERA INPUT -->
-    <input
-        id="cameraInput"
-        type="file"
-        accept="image/*"
-        capture="environment"
-        hidden
-    >
+    <!-- RECIPE VIEWER IS CREATED BY JAVASCRIPT -->
+
+
+    <!-- EDITOR IS CREATED BY JAVASCRIPT -->
 
 </div>
 
