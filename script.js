@@ -1037,49 +1037,201 @@ function closePageCountModal() {
 }
 
 
+
 function selectPageCount(count) {
 
-    selectedPageCount =
-        Number(count);
+    selectedPageCount = Number(count);
 
+    if (selectedPageCount < 1 || selectedPageCount > 5) {
+        selectedPageCount = 0;
+        return;
+    }
+
+    currentScanFiles = [];
 
     closePageCountModal();
 
-
-    showScreen(
-        "scannerScreen"
-    );
-
+    showScreen("scannerScreen");
 
     const status =
-        document.getElementById(
-            "selectedPages"
-        );
-
+        document.getElementById("selectedPages");
 
     if (status) {
-
         status.textContent =
             selectedPageCount === 1
                 ? "Choose 1 recipe page."
                 : `Choose ${selectedPageCount} recipe pages.`;
-
     }
 
+    const input =
+        document.getElementById("scannerInput");
+
+    if (input) {
+        input.value = "";
+
+        /*
+         * IMPORTANT:
+         * Allow the user to select multiple
+         * images when scanning 2–5 pages.
+         */
+        input.removeAttribute("capture");
+        input.setAttribute("multiple", "");
+    }
+}
+
+
+
+async function startScan() {
 
     const input =
-        document.getElementById(
-            "scannerInput"
+        document.getElementById("scannerInput");
+
+    if (!input) {
+        alert("Scanner input was not found.");
+        return;
+    }
+
+    /*
+     * Make sure the user selected
+     * 1–5 pages first.
+     */
+    if (
+        !selectedPageCount ||
+        selectedPageCount < 1
+    ) {
+        alert(
+            "Please choose how many pages you want to scan first."
+        );
+        return;
+    }
+
+    /*
+     * Get the selected images.
+     */
+    const files =
+        Array.from(input.files || []);
+
+    /*
+     * Make sure the number of images
+     * matches the number chosen.
+     */
+    if (
+        files.length !==
+        selectedPageCount
+    ) {
+
+        alert(
+            selectedPageCount === 1
+                ? "Please select exactly 1 image."
+                : `Please select exactly ${selectedPageCount} images.`
+        );
+
+        return;
+    }
+
+    /*
+     * Store the selected pages.
+     */
+    currentScanFiles =
+        files;
+
+
+    showScannerStatus(
+        "Reading recipe pages..."
+    );
+
+
+    try {
+
+        const results = [];
+
+
+        /*
+         * Read every selected page.
+         */
+        for (
+            let i = 0;
+            i < files.length;
+            i++
+        ) {
+
+            updateScannerProgress(
+                `Reading page ${i + 1} of ${files.length}...`
+            );
+
+
+            const text =
+                await runOCR(
+                    files[i]
+                );
+
+
+            results.push(
+                text
+            );
+
+        }
+
+
+        /*
+         * Combine all scanned pages.
+         */
+        const combinedText =
+            results.join("\n");
+
+
+        updateScannerProgress(
+            "Organizing recipe..."
         );
 
 
-    if (input) {
+        /*
+         * Turn the OCR text into:
+         * title
+         * ingredients
+         * instructions
+         */
+        const recipe =
+            parseRecipe(
+                combinedText
+            );
 
-        input.value = "";
+
+        hideScannerStatus();
+
+
+        /*
+         * IMPORTANT:
+         *
+         * The recipe goes to the
+         * Edit & Save Recipe screen.
+         *
+         * It is NOT saved yet.
+         */
+        openRecipeEditor(
+            recipe
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "MealMind scan error:",
+            error
+        );
+
+
+        hideScannerStatus();
+
+
+        alert(
+            "MealMind couldn't read the recipe. Please try again."
+        );
 
     }
 
 }
+```
 
 
 function createPageCountModal() {
