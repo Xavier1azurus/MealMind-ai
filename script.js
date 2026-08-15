@@ -1241,44 +1241,76 @@ function setupScanner() {
 
 async function startScan() {
 
-    const input = document.getElementById("scannerInput");
+    const input =
+        document.getElementById("scannerInput");
 
     if (!input) {
-        alert("Scanner input was not found.");
+        alert("The photo selector was not found.");
         return;
     }
 
-    if (!selectedPageCount || selectedPageCount < 1) {
-        alert("Please choose how many pages you want to scan first.");
+    const files =
+        input.files
+            ? Array.from(input.files)
+            : [];
+
+    console.log(
+        "Selected files:",
+        files.length
+    );
+
+    console.log(
+        "Selected page count:",
+        selectedPageCount
+    );
+
+
+    if (files.length === 0) {
+
+        alert(
+            "Please select a photo to scan."
+        );
+
         return;
     }
 
-    const files = Array.from(input.files || []);
 
-    if (files.length !== selectedPageCount) {
+    if (
+        selectedPageCount > 0 &&
+        files.length !== selectedPageCount
+    ) {
 
-        if (selectedPageCount === 1) {
-            alert("Please select exactly 1 image.");
-        } else {
-            alert(
-                "Please select exactly " +
-                selectedPageCount +
-                " images."
-            );
-        }
+        alert(
+            "You selected " +
+            files.length +
+            " image(s), but chose " +
+            selectedPageCount +
+            " page(s)."
+        );
 
         return;
     }
 
-    currentScanFiles = files;
 
-    showScannerStatus("Reading recipe pages...");
+    currentScanFiles =
+        files;
+
+
+    showScannerStatus(
+        "Reading recipe pages..."
+    );
+
 
     try {
 
         const results = [];
 
-        for (let i = 0; i < files.length; i++) {
+
+        for (
+            let i = 0;
+            i < files.length;
+            i++
+        ) {
 
             updateScannerProgress(
                 "Reading page " +
@@ -1288,38 +1320,60 @@ async function startScan() {
                 "..."
             );
 
-            const text = await runOCR(files[i]);
 
-            results.push(text);
+            const text =
+                await runOCR(
+                    files[i]
+                );
+
+
+            results.push(
+                text
+            );
+
         }
+
 
         const combinedText =
             results.join("\n");
+
 
         updateScannerProgress(
             "Organizing recipe..."
         );
 
+
         const recipe =
-            parseRecipe(combinedText);
+            parseRecipe(
+                combinedText
+            );
+
 
         hideScannerStatus();
 
-        openRecipeEditor(recipe);
+
+        openRecipeEditor(
+            recipe
+        );
+
 
     } catch (error) {
 
         console.error(
-            "MealMind scan error:",
+            "Scan error:",
             error
         );
 
+
         hideScannerStatus();
 
+
         alert(
-            "MealMind couldn't read the recipe. Please try again."
+            "MealMind couldn't read the recipe."
         );
+
     }
+
 }
 
 /* =========================================================
