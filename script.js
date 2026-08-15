@@ -2926,7 +2926,51 @@ function removeDuplicateLines(lines) {
 document.addEventListener("change", event => {
 
     if (
-        event.target.id !==
+        event.target.id !== "scannerInput"
+    ) {
+        return;
+    }
+
+    const files =
+        Array.from(
+            event.target.files || []
+        );
+
+    if (!files.length) {
+        currentScanFiles = [];
+
+        const selectedPages =
+            document.getElementById(
+                "selectedPages"
+            );
+
+        if (selectedPages) {
+            selectedPages.textContent =
+                "No pages selected.";
+        }
+
+        return;
+    }
+
+    currentScanFiles =
+        files.slice(0, 5);
+
+    const pageCountText =
+        currentScanFiles.length === 1
+            ? "1 page"
+            : `${currentScanFiles.length} pages`;
+
+    const selectedPages =
+        document.getElementById(
+            "selectedPages"
+        );
+
+    if (selectedPages) {
+        selectedPages.textContent =
+            pageCountText;
+    }
+
+});
         "scannerInput"
     ) {
         return;
