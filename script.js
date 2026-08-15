@@ -1382,26 +1382,26 @@ async function startScan() {
 
 async function runOCR(file) {
 
-    if (
-        typeof Tesseract ===
-        "undefined"
-    ) {
-
-        throw new Error(
-            "Tesseract is not loaded."
-        );
-
+    if (!file) {
+        throw new Error("No image was selected.");
     }
 
+    if (
+        typeof Tesseract === "undefined"
+    ) {
+        throw new Error(
+            "Tesseract OCR is not loaded."
+        );
+    }
 
-    const result =
-        await Tesseract.recognize(
-            file,
-            "eng",
-            {
+    try {
 
-                logger:
-                    function(message) {
+        const result =
+            await Tesseract.recognize(
+                file,
+                "eng",
+                {
+                    logger: function(message) {
 
                         if (
                             message.status ===
@@ -1416,24 +1416,51 @@ async function runOCR(file) {
                                     ) * 100
                                 );
 
-
                             updateScannerProgress(
-                                `Reading page... ${percent}%`
+                                "Reading recipe... " +
+                                percent +
+                                "%"
                             );
-
                         }
 
                     }
+                }
+            );
 
-            }
+        if (
+            !result ||
+            !result.data
+        ) {
+            throw new Error(
+                "OCR returned no result."
+            );
+        }
+
+        const text =
+            result.data.text || "";
+
+        if (
+            text.trim().length === 0
+        ) {
+            throw new Error(
+                "No text was detected."
+            );
+        }
+
+        return text;
+
+    } catch (error) {
+
+        console.error(
+            "OCR error:",
+            error
         );
 
+        throw error;
 
-    return result.data.text || "";
+    }
 
 }
-
-
 /* =========================================================
    OCR TEXT CLEANING
 ========================================================= */
