@@ -177,7 +177,12 @@ document.addEventListener("click", event => {
 
 
         case "scan":
-            startScanner();
+            const scannerInput =
+    document.getElementById("scannerInput");
+
+if (scannerInput) {
+    scannerInput.click();
+}
             break;
 
 
