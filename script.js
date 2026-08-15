@@ -1241,148 +1241,71 @@ function setupScanner() {
 
 async function startScan() {
 
-    const input =
-        document.getElementById("scannerInput");
+    const input = document.getElementById("scannerInput");
 
     if (!input) {
         alert("Scanner input was not found.");
         return;
     }
 
+    if (!selectedPageCount || selectedPageCount < 1) {
+        alert("Please choose how many pages you want to scan first.");
+        return;
+    }
 
-    /*
-     * If selectedPageCount was lost,
-     * try to recover it from the page
-     * selection buttons.
-     */
+    const files = Array.from(input.files || []);
 
-    if (
-        !selectedPageCount ||
-        selectedPageCount < 1
-    ) {
+    if (files.length !== selectedPageCount) {
 
-        const selectedButton =
-            document.querySelector(
-                "[data-page-count].selected"
+        if (selectedPageCount === 1) {
+            alert("Please select exactly 1 image.");
+        } else {
+            alert(
+                "Please select exactly " +
+                selectedPageCount +
+                " images."
             );
-
-
-        if (selectedButton) {
-
-            selectedPageCount =
-                Number(
-                    selectedButton.dataset.pageCount
-                );
-
         }
 
-    }
-
-
-    /*
-     * Still nothing selected?
-     */
-
-    if (
-        !selectedPageCount ||
-        selectedPageCount < 1
-    ) {
-
-        alert(
-            "Please choose how many pages you want to scan first."
-        );
-
         return;
-
     }
 
+    currentScanFiles = files;
 
-    const files =
-        Array.from(
-            input.files || []
-        );
-
-
-    /*
-     * Check the number of images.
-     */
-
-    if (
-        files.length !==
-        selectedPageCount
-    ) {
-
-        alert(
-            selectedPageCount === 1
-                ? "Please select exactly 1 image."
-                : `Please select exactly ${selectedPageCount} images.`
-        );
-
-        return;
-
-    }
-
-
-    currentScanFiles =
-        files;
-
-
-    showScannerStatus(
-        "Reading recipe pages..."
-    );
-
+    showScannerStatus("Reading recipe pages...");
 
     try {
 
         const results = [];
 
-
-        for (
-            let i = 0;
-            i < files.length;
-            i++
-        ) {
+        for (let i = 0; i < files.length; i++) {
 
             updateScannerProgress(
-                `Reading page ${i + 1} of ${files.length}...`
+                "Reading page " +
+                (i + 1) +
+                " of " +
+                files.length +
+                "..."
             );
 
+            const text = await runOCR(files[i]);
 
-            const text =
-                await runOCR(
-                    files[i]
-                );
-
-
-            results.push(
-                text
-            );
-
+            results.push(text);
         }
-
 
         const combinedText =
             results.join("\n");
-
 
         updateScannerProgress(
             "Organizing recipe..."
         );
 
-
         const recipe =
-            parseRecipe(
-                combinedText
-            );
-
+            parseRecipe(combinedText);
 
         hideScannerStatus();
 
-
-        openRecipeEditor(
-            recipe
-        );
-
+        openRecipeEditor(recipe);
 
     } catch (error) {
 
@@ -1391,18 +1314,13 @@ async function startScan() {
             error
         );
 
-
         hideScannerStatus();
-
 
         alert(
             "MealMind couldn't read the recipe. Please try again."
         );
-
     }
-
 }
-```
 
 /* =========================================================
    OCR
