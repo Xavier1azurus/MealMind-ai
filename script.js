@@ -1238,6 +1238,7 @@ function setupScanner() {
    START SCAN
 ========================================================= */
 
+
 async function startScan() {
 
     const input =
@@ -1248,18 +1249,63 @@ async function startScan() {
         return;
     }
 
+
+    /*
+     * If selectedPageCount was lost,
+     * try to recover it from the page
+     * selection buttons.
+     */
+
     if (
         !selectedPageCount ||
         selectedPageCount < 1
     ) {
+
+        const selectedButton =
+            document.querySelector(
+                "[data-page-count].selected"
+            );
+
+
+        if (selectedButton) {
+
+            selectedPageCount =
+                Number(
+                    selectedButton.dataset.pageCount
+                );
+
+        }
+
+    }
+
+
+    /*
+     * Still nothing selected?
+     */
+
+    if (
+        !selectedPageCount ||
+        selectedPageCount < 1
+    ) {
+
         alert(
             "Please choose how many pages you want to scan first."
         );
+
         return;
+
     }
 
+
     const files =
-        Array.from(input.files || []);
+        Array.from(
+            input.files || []
+        );
+
+
+    /*
+     * Check the number of images.
+     */
 
     if (
         files.length !==
@@ -1273,17 +1319,23 @@ async function startScan() {
         );
 
         return;
+
     }
 
-    currentScanFiles = files;
+
+    currentScanFiles =
+        files;
+
 
     showScannerStatus(
         "Reading recipe pages..."
     );
 
+
     try {
 
         const results = [];
+
 
         for (
             let i = 0;
@@ -1295,25 +1347,42 @@ async function startScan() {
                 `Reading page ${i + 1} of ${files.length}...`
             );
 
-            const text =
-                await runOCR(files[i]);
 
-            results.push(text);
+            const text =
+                await runOCR(
+                    files[i]
+                );
+
+
+            results.push(
+                text
+            );
+
         }
+
 
         const combinedText =
             results.join("\n");
+
 
         updateScannerProgress(
             "Organizing recipe..."
         );
 
+
         const recipe =
-            parseRecipe(combinedText);
+            parseRecipe(
+                combinedText
+            );
+
 
         hideScannerStatus();
 
-        openRecipeEditor(recipe);
+
+        openRecipeEditor(
+            recipe
+        );
+
 
     } catch (error) {
 
@@ -1322,14 +1391,18 @@ async function startScan() {
             error
         );
 
+
         hideScannerStatus();
+
 
         alert(
             "MealMind couldn't read the recipe. Please try again."
         );
-    }
-}
 
+    }
+
+}
+```
 
 /* =========================================================
    OCR
