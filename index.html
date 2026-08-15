@@ -1,356 +1,233 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#101820">
-    <title>MealMind</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #101820;
-            color: white;
-        }
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0,
+    maximum-scale=1.0, user-scalable=no"
+>
 
-        button {
-            font: inherit;
-            cursor: pointer;
-        }
+<title>MealMind</title>
 
-        .screen {
-            display: none;
-            min-height: 100vh;
-            padding: 30px;
-        }
+<link
+    rel="stylesheet"
+    href="style.css"
+>
 
-        .screen.active {
-            display: block;
-        }
 
-        /* HOME */
+<!-- =====================================================
+     PAGE COUNT POPUP
+===================================================== -->
 
-        .home {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
+<style>
 
-        .home-content {
-            width: 100%;
-            max-width: 600px;
-        }
+    #pageCountModal {
+        position: fixed;
+        inset: 0;
 
-        .logo {
-            font-size: 52px;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
+        display: none;
 
-        .subtitle {
-            color: #aeb7c2;
-            margin-bottom: 45px;
-        }
+        align-items: center;
+        justify-content: center;
 
-        .home-buttons {
-            display: grid;
-            gap: 15px;
-        }
+        padding: 20px;
 
-        .main-button {
-            border: none;
-            border-radius: 16px;
-            padding: 18px;
-            background: #ffffff;
-            color: #101820;
-            font-weight: 700;
-            font-size: 17px;
-        }
+        background: rgba(0, 0, 0, 0.65);
 
-        .secondary-button {
-            border: 1px solid #34404d;
-            border-radius: 16px;
-            padding: 18px;
-            background: #1a2530;
-            color: white;
-            font-weight: 700;
-            font-size: 17px;
-        }
+        z-index: 9999;
+    }
 
-        .main-button:hover,
-        .secondary-button:hover {
-            transform: translateY(-2px);
-        }
 
-        /* COOKBOOK */
+    #pageCountModal.show {
+        display: flex;
+    }
 
-        .cookbook-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 35px;
-        }
 
-        .back-button {
-            border: 1px solid #34404d;
-            background: #1a2530;
-            color: white;
-            border-radius: 12px;
-            padding: 10px 16px;
-        }
+    .page-count-box {
+        width: 100%;
+        max-width: 420px;
 
-        .cookbook-title {
-            font-size: 36px;
-            margin: 0;
-        }
+        padding: 30px;
 
-        .cookbook-card {
-            max-width: 900px;
-            margin: auto;
-            background: #18232d;
-            border: 1px solid #2b3945;
-            border-radius: 22px;
-            padding: 35px;
-        }
+        background: #ffffff;
 
-        .cookbook-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
+        color: #111111;
 
-        .cookbook-actions {
-            display: grid;
-            gap: 14px;
-            margin-top: 30px;
-        }
+        border-radius: 24px;
 
-        /* SCAN */
+        text-align: center;
 
-        .scan-screen {
-            text-align: center;
-        }
+        box-shadow:
+            0 20px 60px rgba(0, 0, 0, 0.3);
+    }
 
-        .scan-title {
-            font-size: 38px;
-            margin-bottom: 10px;
-        }
 
-        .scan-description {
-            color: #aeb7c2;
-            margin-bottom: 35px;
-        }
+    .page-count-box h2 {
+        margin: 0 0 10px;
 
-        .scan-button {
-            border: none;
-            border-radius: 16px;
-            padding: 18px 35px;
-            background: white;
-            color: #101820;
-            font-weight: 700;
-            font-size: 17px;
-        }
+        font-size: 25px;
+    }
 
-        /* PAGE MODAL */
 
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.72);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            z-index: 100;
-        }
+    .page-count-box p {
+        margin: 0 0 25px;
 
-        .modal.active {
-            display: flex;
-        }
+        color: #666666;
+    }
 
-        .modal-card {
-            width: 100%;
-            max-width: 500px;
-            background: #18232d;
-            border: 1px solid #34404d;
-            border-radius: 24px;
-            padding: 30px;
-            text-align: center;
-        }
 
-        .modal-card h2 {
-            margin-top: 0;
-            font-size: 28px;
-        }
+    .page-count-options {
+        display: grid;
 
-        .modal-card p {
-            color: #aeb7c2;
-            margin-bottom: 25px;
-        }
+        grid-template-columns:
+            repeat(5, 1fr);
 
-        .page-options {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-        }
+        gap: 10px;
+    }
 
-        .page-option {
-            aspect-ratio: 1;
-            border: 1px solid #3a4754;
-            border-radius: 14px;
-            background: #202d38;
-            color: white;
-            font-size: 22px;
-            font-weight: 700;
-        }
 
-        .page-option:hover {
-            background: white;
-            color: #101820;
-        }
+    .page-count-option {
+        border: none;
 
-        .cancel-button {
-            margin-top: 20px;
-            border: none;
-            background: transparent;
-            color: #9da8b3;
-        }
+        border-radius: 14px;
 
-        /* FILE PICKER */
+        padding: 17px 5px;
 
-        .file-area {
-            max-width: 700px;
-            margin: 35px auto;
-            text-align: center;
-        }
+        background: #f0f0f0;
 
-        .file-area input {
-            display: none;
-        }
+        color: #111111;
 
-        .file-button {
-            display: inline-block;
-            padding: 16px 24px;
-            background: white;
-            color: #101820;
-            border-radius: 14px;
-            font-weight: 700;
-        }
+        font-size: 20px;
 
-        .file-status {
-            color: #aeb7c2;
-            margin-top: 18px;
-        }
+        font-weight: 700;
 
-        /* RESULT */
+        cursor: pointer;
 
-        .recipe-result {
-            max-width: 900px;
-            margin: 40px auto;
-        }
+        transition: 0.15s;
+    }
 
-        .recipe-title {
-            font-size: 36px;
-        }
 
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin: 25px 0;
-        }
+    .page-count-option:hover {
+        background: #111111;
 
-        .tab {
-            border: 1px solid #34404d;
-            background: #18232d;
-            color: white;
-            padding: 12px 18px;
-            border-radius: 12px;
-        }
+        color: white;
 
-        .tab.active {
-            background: white;
-            color: #101820;
-        }
+        transform: translateY(-2px);
+    }
 
-        .recipe-panel {
-            background: #18232d;
-            border: 1px solid #2b3945;
-            border-radius: 20px;
+
+    .page-count-option:active {
+        transform: scale(0.95);
+    }
+
+
+    .page-count-cancel {
+        margin-top: 20px;
+
+        border: none;
+
+        background: transparent;
+
+        color: #777777;
+
+        cursor: pointer;
+
+        font-size: 15px;
+    }
+
+
+    @media (max-width: 500px) {
+
+        .page-count-box {
             padding: 25px;
+
+            border-radius: 20px;
         }
 
-        .recipe-panel ul,
-        .recipe-panel ol {
-            line-height: 1.8;
-            padding-left: 25px;
+        .page-count-options {
+            grid-template-columns:
+                repeat(3, 1fr);
         }
 
-        /* MOBILE */
+    }
 
-        @media (max-width: 600px) {
-            .screen {
-                padding: 20px;
-            }
+</style>
 
-            .logo {
-                font-size: 42px;
-            }
-
-            .cookbook-header {
-                align-items: flex-start;
-            }
-
-            .cookbook-title {
-                font-size: 28px;
-            }
-
-            .page-options {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-    </style>
 </head>
 
+
 <body>
+
+
+<div id="app">
+
 
 <!-- =====================================================
      HOME
 ===================================================== -->
 
-<section id="homeScreen" class="screen home active">
+<section
+    id="homeScreen"
+    class="screen"
+>
 
-    <div class="home-content">
+    <div class="home-container">
+
 
         <div class="logo">
-            🍽️ MealMind
+            🍽️
         </div>
 
+
+        <h1>
+            MealMind
+        </h1>
+
+
         <p class="subtitle">
-            Your smart digital cookbook
+
+            Your personal cookbook
+
         </p>
+
 
         <div class="home-buttons">
 
-            <button
-                class="main-button"
-                onclick="makeCookbook()"
-            >
-                📖 Make Cookbook
-            </button>
 
             <button
-                class="secondary-button"
-                onclick="joinCookbook()"
+                class="main-button"
+                data-action="make-cookbook"
             >
-                📚 Join Cookbook
+
+                📖 Make a Cookbook
+
             </button>
+
+
+            <button
+                class="main-button"
+                data-action="join-cookbook"
+            >
+
+                🔑 Join a Cookbook
+
+            </button>
+
+
+            <button
+                class="main-button"
+                data-action="public-books"
+            >
+
+                🌎 Public Cookbooks
+
+            </button>
+
 
         </div>
 
@@ -359,660 +236,833 @@
 </section>
 
 
-<!-- =====================================================
-     COOKBOOK
-===================================================== -->
-
-<section id="cookbookScreen" class="screen">
-
-    <div class="cookbook-header">
-
-        <button
-            class="back-button"
-            onclick="goHome()"
-        >
-            ← Home
-        </button>
-
-        <h1
-            id="cookbookTitle"
-            class="cookbook-title"
-        >
-            My Cookbook
-        </h1>
-
-    </div>
-
-
-    <div class="cookbook-card">
-
-        <div class="cookbook-icon">
-            📖
-        </div>
-
-        <h2 id="cookbookName">
-            My Cookbook
-        </h2>
-
-        <p>
-            Add recipes to your cookbook by scanning
-            recipe pages.
-        </p>
-
-
-        <div class="cookbook-actions">
-
-            <button
-                class="main-button"
-                onclick="openPageModal()"
-            >
-                📸 Scan Recipes
-            </button>
-
-            <button
-                class="secondary-button"
-                onclick="showRecipeResult()"
-            >
-                📋 View Current Recipe
-            </button>
-
-        </div>
-
-    </div>
-
-</section>
-
 
 <!-- =====================================================
-     SCAN SCREEN
+     MAKE COOKBOOK
 ===================================================== -->
 
 <section
-    id="scanScreen"
-    class="screen scan-screen"
+    id="makeScreen"
+    class="screen hidden"
 >
 
-    <button
-        class="back-button"
-        onclick="showScreen('cookbookScreen')"
-    >
-        ← Cookbook
-    </button>
-
-    <h1 class="scan-title">
-        Scan Recipes
-    </h1>
-
-    <p class="scan-description">
-        Choose your recipe pages below.
-    </p>
+    <div class="page-container">
 
 
-    <div class="file-area">
-
-        <input
-            id="recipeFiles"
-            type="file"
-            accept="image/*,.pdf"
-            multiple
+        <button
+            class="back-button"
+            data-action="home"
         >
 
-        <label
-            for="recipeFiles"
-            class="file-button"
-        >
-            Choose Recipe Pages
+            ← Back
+
+        </button>
+
+
+        <h1>
+            Create Cookbook
+        </h1>
+
+
+        <p class="page-description">
+
+            Create your own private cookbook.
+
+        </p>
+
+
+        <label>
+            Cookbook name
         </label>
 
-        <p
-            id="fileStatus"
-            class="file-status"
+
+        <input
+            id="cookbookName"
+            class="text-input"
+            type="text"
+            placeholder="My Cookbook"
         >
-            No pages selected.
-        </p>
+
+
+        <label>
+            Cookbook code
+        </label>
+
+
+        <input
+            id="cookbookPassword"
+            class="text-input"
+            type="password"
+            placeholder="At least 4 characters"
+        >
+
+
+        <label class="checkbox-row">
+
+            <input
+                id="showCreatePassword"
+                type="checkbox"
+            >
+
+            Show code
+
+        </label>
+
+
+        <label>
+            Privacy
+        </label>
+
+
+        <select
+            id="cookbookPrivacy"
+            class="text-input"
+        >
+
+            <option value="private">
+                Private
+            </option>
+
+            <option value="public">
+                Public
+            </option>
+
+        </select>
+
+
+        <button
+            class="main-button"
+            data-action="create-cookbook"
+        >
+
+            Create Cookbook
+
+        </button>
+
 
     </div>
 
 </section>
 
 
+
 <!-- =====================================================
-     PAGE COUNT MODAL
+     JOIN COOKBOOK
+===================================================== -->
+
+<section
+    id="joinScreen"
+    class="screen hidden"
+>
+
+    <div class="page-container">
+
+
+        <button
+            class="back-button"
+            data-action="home"
+        >
+
+            ← Back
+
+        </button>
+
+
+        <h1>
+            Join Cookbook
+        </h1>
+
+
+        <label>
+            Cookbook name
+        </label>
+
+
+        <input
+            id="joinName"
+            class="text-input"
+            type="text"
+            placeholder="Cookbook name"
+        >
+
+
+        <label>
+            Cookbook code
+        </label>
+
+
+        <input
+            id="joinPassword"
+            class="text-input"
+            type="password"
+            placeholder="Cookbook code"
+        >
+
+
+        <label class="checkbox-row">
+
+            <input
+                id="showJoinPassword"
+                type="checkbox"
+            >
+
+            Show code
+
+        </label>
+
+
+        <button
+            class="main-button"
+            data-action="join"
+        >
+
+            Join Cookbook
+
+        </button>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PUBLIC COOKBOOKS
+===================================================== -->
+
+<section
+    id="publicScreen"
+    class="screen hidden"
+>
+
+    <div class="page-container">
+
+
+        <button
+            class="back-button"
+            data-action="home"
+        >
+
+            ← Back
+
+        </button>
+
+
+        <h1>
+            Public Cookbooks
+        </h1>
+
+
+        <div id="publicBooksList"></div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     MAIN COOKBOOK
+===================================================== -->
+
+<section
+    id="mainScreen"
+    class="screen hidden"
+>
+
+
+    <header class="book-header">
+
+
+        <button
+            class="header-button"
+            data-action="home"
+        >
+
+            ←
+
+        </button>
+
+
+        <div class="book-title-area">
+
+            <h1 id="mainBookName">
+
+                Cookbook
+
+            </h1>
+
+        </div>
+
+
+        <button
+            class="header-button"
+            data-action="exit-book"
+        >
+
+            ✕
+
+        </button>
+
+
+    </header>
+
+
+    <main class="main-content">
+
+
+        <!-- SEARCH -->
+
+        <input
+            id="searchInput"
+            class="search-input"
+            type="search"
+            placeholder="🔍 Search recipes"
+        >
+
+
+        <!-- =================================================
+             SCAN RECIPE
+        ================================================== -->
+
+        <button
+            class="scan-button"
+            data-action="scan"
+            onclick="openMealMindPageSelector(event)"
+        >
+
+            📷
+
+            <span>
+                Scan Recipe
+            </span>
+
+        </button>
+
+
+        <!-- Existing camera input -->
+
+        <input
+            id="cameraInput"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            multiple
+            hidden
+        >
+
+
+        <!-- FOLDERS -->
+
+        <div class="section-header">
+
+
+            <h2>
+                Folders
+            </h2>
+
+
+            <button
+                class="small-button"
+                data-action="add-folder"
+            >
+
+                ＋ Folder
+
+            </button>
+
+
+        </div>
+
+
+        <div
+            id="folders"
+            class="folders"
+        ></div>
+
+
+        <!-- RECIPES -->
+
+        <div class="section-header">
+
+
+            <h2>
+                Recipes
+            </h2>
+
+
+        </div>
+
+
+        <div
+            id="recipes"
+            class="recipes"
+        ></div>
+
+
+    </main>
+
+</section>
+
+
+
+<!-- =====================================================
+     SCANNER
+===================================================== -->
+
+<section
+    id="scannerScreen"
+    class="screen hidden"
+>
+
+    <div class="page-container">
+
+
+        <button
+            class="back-button"
+            data-action="cancel-scan"
+        >
+
+            ← Back
+
+        </button>
+
+
+        <h1>
+            Scan Recipe
+        </h1>
+
+
+        <p class="page-description">
+
+            Select the recipe pages you want to scan.
+
+        </p>
+
+
+        <input
+            id="scannerInput"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            multiple
+        >
+
+
+        <p id="selectedPages">
+
+            No pages selected.
+
+        </p>
+
+
+        <button
+            class="main-button"
+            data-action="start-scan"
+        >
+
+            📷 Scan Pages
+
+        </button>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     RECIPE VIEWER
 ===================================================== -->
 
 <div
-    id="pageModal"
-    class="modal"
+    id="recipeViewer"
+    class="overlay hidden"
+></div>
+
+
+
+<!-- =====================================================
+     EDITOR
+===================================================== -->
+
+<div
+    id="editorModal"
+    class="overlay hidden"
+></div>
+
+
+
+<!-- =====================================================
+     SCANNER STATUS
+===================================================== -->
+
+<div
+    id="scannerStatus"
+    class="scanner-status hidden"
 >
 
-    <div class="modal-card">
+
+    <div class="spinner"></div>
+
+
+    <h2>
+        Reading recipe...
+    </h2>
+
+
+    <p id="scannerProgress">
+
+        Please wait.
+
+    </p>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     PAGE COUNT POPUP
+===================================================== -->
+
+<div
+    id="pageCountModal"
+    aria-hidden="true"
+>
+
+
+    <div class="page-count-box">
+
 
         <h2>
             How many would you like to scan?
         </h2>
 
+
         <p>
-            Choose between 1 and 5 recipe pages.
+            Choose the number of recipe pages.
         </p>
 
 
-        <div class="page-options">
+        <div class="page-count-options">
+
 
             <button
-                class="page-option"
-                onclick="selectPageCount(1)"
+                class="page-count-option"
+                onclick="selectMealMindPageCount(1)"
             >
                 1
             </button>
 
+
             <button
-                class="page-option"
-                onclick="selectPageCount(2)"
+                class="page-count-option"
+                onclick="selectMealMindPageCount(2)"
             >
                 2
             </button>
 
+
             <button
-                class="page-option"
-                onclick="selectPageCount(3)"
+                class="page-count-option"
+                onclick="selectMealMindPageCount(3)"
             >
                 3
             </button>
 
+
             <button
-                class="page-option"
-                onclick="selectPageCount(4)"
+                class="page-count-option"
+                onclick="selectMealMindPageCount(4)"
             >
                 4
             </button>
 
+
             <button
-                class="page-option"
-                onclick="selectPageCount(5)"
+                class="page-count-option"
+                onclick="selectMealMindPageCount(5)"
             >
                 5
             </button>
+
 
         </div>
 
 
         <button
-            class="cancel-button"
-            onclick="closePageModal()"
+            class="page-count-cancel"
+            onclick="closeMealMindPageSelector()"
         >
+
             Cancel
+
         </button>
+
 
     </div>
 
 </div>
 
 
+
+</div>
+
+
 <!-- =====================================================
-     RECIPE RESULT
+     PAGE COUNT LOGIC
 ===================================================== -->
-
-<section
-    id="recipeScreen"
-    class="screen"
->
-
-    <button
-        class="back-button"
-        onclick="showScreen('cookbookScreen')"
-    >
-        ← Cookbook
-    </button>
-
-
-    <div class="recipe-result">
-
-        <h1 class="recipe-title">
-            Scanned Recipe
-        </h1>
-
-
-        <div class="tabs">
-
-            <button
-                id="ingredientsTab"
-                class="tab active"
-                onclick="showTab('ingredients')"
-            >
-                🥕 Ingredients
-            </button>
-
-            <button
-                id="instructionsTab"
-                class="tab"
-                onclick="showTab('instructions')"
-            >
-                📝 Instructions
-            </button>
-
-        </div>
-
-
-        <div
-            id="ingredientsPanel"
-            class="recipe-panel"
-        >
-
-            <h2>
-                Ingredients
-            </h2>
-
-            <ul id="ingredientsList">
-
-                <li>
-                    Scanned ingredients will appear here.
-                </li>
-
-            </ul>
-
-        </div>
-
-
-        <div
-            id="instructionsPanel"
-            class="recipe-panel"
-            style="display:none;"
-        >
-
-            <h2>
-                Instructions
-            </h2>
-
-            <ol id="instructionsList">
-
-                <li>
-                    Scanned instructions will appear here.
-                </li>
-
-            </ol>
-
-        </div>
-
-    </div>
-
-</section>
-
 
 <script>
 
-    let selectedPageCount = 0;
+    /*
+     * Stores how many pages the user wants
+     * to scan.
+     */
 
-    let currentFiles = [];
-
-
-    /* =====================================================
-       SCREEN NAVIGATION
-    ===================================================== */
-
-    function showScreen(id) {
-
-        document
-            .querySelectorAll(".screen")
-            .forEach(function(screen) {
-
-                screen.classList.remove("active");
-
-            });
+    window.mealMindPageCount = 0;
 
 
-        document
-            .getElementById(id)
-            .classList.add("active");
+    function openMealMindPageSelector(event) {
 
-    }
+        /*
+         * Stop the existing script.js "scan"
+         * handler from opening the scanner
+         * immediately.
+         */
 
+        if (event) {
 
-    function goHome() {
+            event.preventDefault();
 
-        showScreen("homeScreen");
-
-    }
-
-
-    /* =====================================================
-       MAKE COOKBOOK
-    ===================================================== */
-
-    function makeCookbook() {
-
-        const name =
-            prompt(
-                "What would you like to name your cookbook?"
-            );
-
-
-        if (!name || !name.trim()) {
-
-            return;
+            event.stopPropagation();
 
         }
 
 
-        document.getElementById(
-            "cookbookName"
-        ).textContent = name.trim();
-
-
-        document.getElementById(
-            "cookbookTitle"
-        ).textContent = name.trim();
-
-
-        showScreen("cookbookScreen");
-
-    }
-
-
-    /* =====================================================
-       JOIN COOKBOOK
-    ===================================================== */
-
-    function joinCookbook() {
-
-        const code =
-            prompt(
-                "Enter your cookbook code:"
-            );
-
-
-        if (!code || !code.trim()) {
-
-            return;
-
-        }
-
-
-        document.getElementById(
-            "cookbookName"
-        ).textContent =
-            "Joined Cookbook";
-
-
-        document.getElementById(
-            "cookbookTitle"
-        ).textContent =
-            "Joined Cookbook";
-
-
-        showScreen("cookbookScreen");
-
-    }
-
-
-    /* =====================================================
-       PAGE COUNT MODAL
-    ===================================================== */
-
-    function openPageModal() {
-
-        document
-            .getElementById("pageModal")
-            .classList.add("active");
-
-    }
-
-
-    function closePageModal() {
-
-        document
-            .getElementById("pageModal")
-            .classList.remove("active");
-
-    }
-
-
-    /* =====================================================
-       SELECT PAGE COUNT
-    ===================================================== */
-
-    function selectPageCount(count) {
-
-        selectedPageCount = count;
-
-        closePageModal();
-
-        showScreen("scanScreen");
-
-
-        document.getElementById(
-            "fileStatus"
-        ).textContent =
-            "Please choose exactly " +
-            count +
-            (
-                count === 1
-                    ? " page."
-                    : " pages."
-            );
-
-
-        const fileInput =
+        const modal =
             document.getElementById(
-                "recipeFiles"
+                "pageCountModal"
             );
 
 
-        fileInput.value = "";
+        if (!modal) {
+            return;
+        }
+
+
+        modal.classList.add("show");
+
+        modal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
 
     }
 
 
-    /* =====================================================
-       FILE SELECTION
-    ===================================================== */
+    function closeMealMindPageSelector() {
 
-    document
-        .getElementById("recipeFiles")
-        .addEventListener(
-            "change",
-            function() {
-
-                currentFiles =
-                    Array.from(
-                        this.files
-                    );
+        const modal =
+            document.getElementById(
+                "pageCountModal"
+            );
 
 
-                const status =
+        if (!modal) {
+            return;
+        }
+
+
+        modal.classList.remove("show");
+
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+    function selectMealMindPageCount(count) {
+
+        window.mealMindPageCount =
+            Number(count);
+
+
+        closeMealMindPageSelector();
+
+
+        /*
+         * Open the existing scanner screen
+         * from your current MealMind code.
+         */
+
+        if (
+            typeof showScreen ===
+            "function"
+        ) {
+
+            showScreen(
+                "scannerScreen"
+            );
+
+        }
+
+
+        const input =
+            document.getElementById(
+                "scannerInput"
+            );
+
+
+        if (input) {
+
+            input.value = "";
+
+        }
+
+
+        const selected =
+            document.getElementById(
+                "selectedPages"
+            );
+
+
+        if (selected) {
+
+            selected.textContent =
+                count === 1
+                    ? "Choose 1 recipe page."
+                    : `Choose ${count} recipe pages.`;
+
+        }
+
+    }
+
+
+    /*
+     * Check the number of selected files.
+     */
+
+    document.addEventListener(
+        "change",
+        function(event) {
+
+            if (
+                event.target.id !==
+                "scannerInput"
+            ) {
+
+                return;
+
+            }
+
+
+            const files =
+                Array.from(
+                    event.target.files || []
+                );
+
+
+            if (
+                !window.mealMindPageCount
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                files.length !==
+                window.mealMindPageCount
+            ) {
+
+                alert(
+                    window.mealMindPageCount === 1
+                        ? "Please select exactly 1 recipe page."
+                        : `Please select exactly ${window.mealMindPageCount} recipe pages.`
+                );
+
+
+                event.target.value = "";
+
+
+                const selected =
                     document.getElementById(
-                        "fileStatus"
+                        "selectedPages"
                     );
 
 
-                if (
-                    currentFiles.length !==
-                    selectedPageCount
-                ) {
+                if (selected) {
 
-                    status.textContent =
-                        "You selected " +
-                        currentFiles.length +
-                        ". Please select exactly " +
-                        selectedPageCount +
-                        ".";
-
-                    return;
+                    selected.textContent =
+                        window.mealMindPageCount === 1
+                            ? "Choose 1 recipe page."
+                            : `Choose ${window.mealMindPageCount} recipe pages.`;
 
                 }
 
 
-                status.textContent =
-                    currentFiles.length +
-                    (
-                        currentFiles.length === 1
-                            ? " page is ready."
-                            : " pages are ready."
-                    );
+                return;
+
+            }
 
 
-                /*
-                    This is where the real scanner/OCR
-                    will process the selected pages.
-                */
-
-                setTimeout(
-                    showRecipeResult,
-                    300
+            const selected =
+                document.getElementById(
+                    "selectedPages"
                 );
 
-            }
-        );
 
+            if (selected) {
 
-    /* =====================================================
-       RECIPE RESULT
-    ===================================================== */
-
-    function showRecipeResult() {
-
-        showScreen("recipeScreen");
-
-
-        const ingredients = [
-
-            "Detected ingredient 1",
-
-            "Detected ingredient 2",
-
-            "Detected ingredient 3"
-
-        ];
-
-
-        const instructions = [
-
-            "Detected instruction 1",
-
-            "Detected instruction 2",
-
-            "Detected instruction 3"
-
-        ];
-
-
-        const ingredientList =
-            document.getElementById(
-                "ingredientsList"
-            );
-
-
-        ingredientList.innerHTML = "";
-
-
-        ingredients.forEach(
-            function(item) {
-
-                const li =
-                    document.createElement(
-                        "li"
-                    );
-
-                li.textContent = item;
-
-                ingredientList.appendChild(li);
+                selected.textContent =
+                    files.length === 1
+                        ? "1 page selected."
+                        : `${files.length} pages selected.`;
 
             }
-        );
-
-
-        const instructionList =
-            document.getElementById(
-                "instructionsList"
-            );
-
-
-        instructionList.innerHTML = "";
-
-
-        instructions.forEach(
-            function(item) {
-
-                const li =
-                    document.createElement(
-                        "li"
-                    );
-
-                li.textContent = item;
-
-                instructionList.appendChild(li);
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       RECIPE TABS
-    ===================================================== */
-
-    function showTab(tab) {
-
-        const ingredientsPanel =
-            document.getElementById(
-                "ingredientsPanel"
-            );
-
-        const instructionsPanel =
-            document.getElementById(
-                "instructionsPanel"
-            );
-
-        const ingredientsTab =
-            document.getElementById(
-                "ingredientsTab"
-            );
-
-        const instructionsTab =
-            document.getElementById(
-                "instructionsTab"
-            );
-
-
-        if (tab === "ingredients") {
-
-            ingredientsPanel.style.display =
-                "block";
-
-            instructionsPanel.style.display =
-                "none";
-
-            ingredientsTab.classList.add(
-                "active"
-            );
-
-            instructionsTab.classList.remove(
-                "active"
-            );
-
-        } else {
-
-            ingredientsPanel.style.display =
-                "none";
-
-            instructionsPanel.style.display =
-                "block";
-
-            ingredientsTab.classList.remove(
-                "active"
-            );
-
-            instructionsTab.classList.add(
-                "active"
-            );
 
         }
+    );
 
-    }
+
+    /*
+     * Close popup if the dark background
+     * itself is clicked.
+     */
+
+    document
+        .getElementById("pageCountModal")
+        ?.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target ===
+                    this
+                ) {
+
+                    closeMealMindPageSelector();
+
+                }
+
+            }
+        );
 
 </script>
 
+
+<script src="script.js"></script>
+
+
 </body>
+
 </html>
-
-
+```
