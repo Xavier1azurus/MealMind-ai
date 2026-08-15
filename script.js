@@ -3018,20 +3018,7 @@ document.addEventListener("change", event => {
     }
 
 
-    const pageCountText =
-        currentScanFiles.length === 1
-            ? "1 page"
-            : `${currentScanFiles.length} pages`;
-
-
-    const selectedPages =
-        document.getElementById(
-            "selectedPages"
-        );
-
-
-    if (selectedPages) {
-
+  
         selectedPages.textContent =
             pageCountText;
 
