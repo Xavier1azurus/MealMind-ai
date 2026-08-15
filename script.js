@@ -130,141 +130,192 @@ function setupHomeButtons() {
         "click",
         function(event) {
 
-            const actionElement =
+            const button =
                 event.target.closest(
                     "[data-action]"
                 );
 
 
-            if (!actionElement) {
+            if (!button) {
                 return;
             }
 
 
             const action =
-                actionElement.dataset.action;
-
-
-            if (
-                action ===
-                "home"
-            ) {
-
-                goHome();
-
-            }
-
-
-            if (
-                action ===
-                "make-cookbook"
-            ) {
-
-                showScreen(
-                    "makeScreen"
+                button.getAttribute(
+                    "data-action"
                 );
 
-            }
+
+            switch (action) {
 
 
-            if (
-                action ===
-                "join-cookbook"
-            ) {
+                /* =========================
+                   HOME
+                ========================= */
 
-                showScreen(
-                    "joinScreen"
-                );
+                case "home":
 
-            }
+                    goHome();
 
-
-            if (
-                action ===
-                "public-books"
-            ) {
-
-                renderPublicCookbooks();
-
-                showScreen(
-                    "publicScreen"
-                );
-
-            }
+                    break;
 
 
-            if (
-                action ===
-                "create-cookbook"
-            ) {
+                /* =========================
+                   MAKE COOKBOOK
+                ========================= */
 
-                createCookbook();
+                case "make-cookbook":
 
-            }
+                    showScreen(
+                        "makeScreen"
+                    );
 
-
-            if (
-                action ===
-                "join"
-            ) {
-
-                joinCookbook();
-
-            }
+                    break;
 
 
-            if (
-                action ===
-                "exit-book"
-            ) {
+                case "create-cookbook":
 
-                currentBook = null;
+                    createCookbook();
 
-                showScreen(
-                    "homeScreen"
-                );
-
-            }
+                    break;
 
 
-            if (
-                action ===
-                "scan"
-            ) {
+                /* =========================
+                   JOIN COOKBOOK
+                ========================= */
 
-                openPageCountModal();
+                case "join-cookbook":
 
-            }
+                    showScreen(
+                        "joinScreen"
+                    );
 
-
-            if (
-                action ===
-                "cancel-scan"
-            ) {
-
-                showScreen(
-                    "mainScreen"
-                );
-
-            }
+                    break;
 
 
-            if (
-                action ===
-                "start-scan"
-            ) {
+                case "join":
 
-                startScan();
+                    joinCookbook();
 
-            }
+                    break;
 
 
-            if (
-                action ===
-                "add-folder"
-            ) {
+                /* =========================
+                   PUBLIC COOKBOOKS
+                ========================= */
 
-                createFolder();
+                case "public-books":
+
+                    renderPublicCookbooks();
+
+                    showScreen(
+                        "publicScreen"
+                    );
+
+                    break;
+
+
+                /* =========================
+                   EXIT COOKBOOK
+                ========================= */
+
+                case "exit-book":
+
+                    currentBook = null;
+
+                    currentRecipe = null;
+
+                    currentFolder = "";
+
+                    showScreen(
+                        "homeScreen"
+                    );
+
+                    break;
+
+
+                /* =========================
+                   SCAN RECIPE
+                ========================= */
+
+                case "scan":
+
+                    openPageCountModal();
+
+                    break;
+
+
+                /* =========================
+                   CANCEL SCAN
+                ========================= */
+
+                case "cancel-scan":
+
+                    currentScanFiles = [];
+
+                    selectedPageCount = 0;
+
+                    showScreen(
+                        "mainScreen"
+                    );
+
+                    break;
+
+
+                /* =========================
+                   START SCAN
+                ========================= */
+
+                case "start-scan":
+
+                    startScan();
+
+                    break;
+
+
+                /* =========================
+                   ADD FOLDER
+                ========================= */
+
+                case "add-folder":
+
+                    createFolder();
+
+                    break;
+
+
+                /* =========================
+                   SAVE RECIPE
+                ========================= */
+
+                case "save-recipe":
+
+                    saveEditedRecipe();
+
+                    break;
+
+
+                /* =========================
+                   CANCEL EDIT
+                ========================= */
+
+                case "cancel-edit":
+
+                    closeRecipeEditor();
+
+                    break;
+
+
+                /* =========================
+                   CLOSE RECIPE
+                ========================= */
+
+                case "close-recipe":
+
+                    closeRecipeViewer();
+
+                    break;
 
             }
 
@@ -272,6 +323,8 @@ function setupHomeButtons() {
     );
 
 }
+
+
 
 
 /* =========================================================
