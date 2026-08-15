@@ -2962,22 +2962,82 @@ document.addEventListener("change", event => {
 
     const selectedPages =
         document.getElementById(
-            "selectedPages"
-        );
+        /* =========================================================
+   SELECT SCANNER PAGES
+   ========================================================= */
 
-    if (selectedPages) {
-        selectedPages.textContent =
-            pageCountText;
-    }
+document.addEventListener("change", event => {
 
-});
-        "scannerInput"
+    if (
+        event.target.id !== "scannerInput"
     ) {
         return;
     }
 
 
     const files =
+        Array.from(
+            event.target.files || []
+        );
+
+
+    if (!files.length) {
+
+        currentScanFiles = [];
+
+        const selectedPages =
+            document.getElementById(
+                "selectedPages"
+            );
+
+        if (selectedPages) {
+
+            selectedPages.textContent =
+                "No pages selected.";
+
+        }
+
+        return;
+    }
+
+
+    if (files.length > 5) {
+
+        alert(
+            "You can scan up to 5 pages."
+        );
+
+        currentScanFiles =
+            files.slice(0, 5);
+
+    } else {
+
+        currentScanFiles =
+            files;
+
+    }
+
+
+    const pageCountText =
+        currentScanFiles.length === 1
+            ? "1 page"
+            : `${currentScanFiles.length} pages`;
+
+
+    const selectedPages =
+        document.getElementById(
+            "selectedPages"
+        );
+
+
+    if (selectedPages) {
+
+        selectedPages.textContent =
+            pageCountText;
+
+    }
+
+});
         Array.from(
             event.target.files || []
         );
