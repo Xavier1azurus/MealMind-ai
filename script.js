@@ -1081,157 +1081,6 @@ function selectPageCount(count) {
 
 
 
-async function startScan() {
-
-    const input =
-        document.getElementById("scannerInput");
-
-    if (!input) {
-        alert("Scanner input was not found.");
-        return;
-    }
-
-    /*
-     * Make sure the user selected
-     * 1–5 pages first.
-     */
-    if (
-        !selectedPageCount ||
-        selectedPageCount < 1
-    ) {
-        alert(
-            "Please choose how many pages you want to scan first."
-        );
-        return;
-    }
-
-    /*
-     * Get the selected images.
-     */
-    const files =
-        Array.from(input.files || []);
-
-    /*
-     * Make sure the number of images
-     * matches the number chosen.
-     */
-    if (
-        files.length !==
-        selectedPageCount
-    ) {
-
-        alert(
-            selectedPageCount === 1
-                ? "Please select exactly 1 image."
-                : `Please select exactly ${selectedPageCount} images.`
-        );
-
-        return;
-    }
-
-    /*
-     * Store the selected pages.
-     */
-    currentScanFiles =
-        files;
-
-
-    showScannerStatus(
-        "Reading recipe pages..."
-    );
-
-
-    try {
-
-        const results = [];
-
-
-        /*
-         * Read every selected page.
-         */
-        for (
-            let i = 0;
-            i < files.length;
-            i++
-        ) {
-
-            updateScannerProgress(
-                `Reading page ${i + 1} of ${files.length}...`
-            );
-
-
-            const text =
-                await runOCR(
-                    files[i]
-                );
-
-
-            results.push(
-                text
-            );
-
-        }
-
-
-        /*
-         * Combine all scanned pages.
-         */
-        const combinedText =
-            results.join("\n");
-
-
-        updateScannerProgress(
-            "Organizing recipe..."
-        );
-
-
-        /*
-         * Turn the OCR text into:
-         * title
-         * ingredients
-         * instructions
-         */
-        const recipe =
-            parseRecipe(
-                combinedText
-            );
-
-
-        hideScannerStatus();
-
-
-        /*
-         * IMPORTANT:
-         *
-         * The recipe goes to the
-         * Edit & Save Recipe screen.
-         *
-         * It is NOT saved yet.
-         */
-        openRecipeEditor(
-            recipe
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "MealMind scan error:",
-            error
-        );
-
-
-        hideScannerStatus();
-
-
-        alert(
-            "MealMind couldn't read the recipe. Please try again."
-        );
-
-    }
-
-}
-```
 
 
 function createPageCountModal() {
@@ -1385,24 +1234,32 @@ function setupScanner() {
    START SCAN
 ========================================================= */
 
+/* =========================================================
+   START SCAN
+========================================================= */
+
 async function startScan() {
 
     const input =
-        document.getElementById(
-            "scannerInput"
-        );
-
+        document.getElementById("scannerInput");
 
     if (!input) {
+        alert("Scanner input was not found.");
         return;
     }
 
+    if (
+        !selectedPageCount ||
+        selectedPageCount < 1
+    ) {
+        alert(
+            "Please choose how many pages you want to scan first."
+        );
+        return;
+    }
 
     const files =
-        Array.from(
-            input.files || []
-        );
-
+        Array.from(input.files || []);
 
     if (
         files.length !==
@@ -1411,28 +1268,22 @@ async function startScan() {
 
         alert(
             selectedPageCount === 1
-                ? "Please select exactly 1 page."
-                : `Please select exactly ${selectedPageCount} pages.`
+                ? "Please select exactly 1 image."
+                : `Please select exactly ${selectedPageCount} images.`
         );
 
         return;
-
     }
 
-
-    currentScanFiles =
-        files;
-
+    currentScanFiles = files;
 
     showScannerStatus(
         "Reading recipe pages..."
     );
 
-
     try {
 
         const results = [];
-
 
         for (
             let i = 0;
@@ -1444,60 +1295,39 @@ async function startScan() {
                 `Reading page ${i + 1} of ${files.length}...`
             );
 
-
             const text =
-                await runOCR(
-                    files[i]
-                );
+                await runOCR(files[i]);
 
-
-            results.push(
-                text
-            );
-
+            results.push(text);
         }
 
-
         const combinedText =
-            results.join(
-                "\n"
-            );
-
+            results.join("\n");
 
         updateScannerProgress(
-            "Organizing ingredients and instructions..."
+            "Organizing recipe..."
         );
 
-
         const recipe =
-            parseRecipe(
-                combinedText
-            );
-
+            parseRecipe(combinedText);
 
         hideScannerStatus();
 
-
-        openRecipeEditor(
-            recipe
-        );
+        openRecipeEditor(recipe);
 
     } catch (error) {
 
         console.error(
+            "MealMind scan error:",
             error
         );
 
-
         hideScannerStatus();
-
 
         alert(
             "MealMind couldn't read the recipe. Please try again."
         );
-
     }
-
 }
 
 
