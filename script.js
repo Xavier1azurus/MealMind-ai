@@ -1954,45 +1954,92 @@ async function startScan() {
 
 
         const recipe =
-            await organizeRecipeWithMoonPlug(
-                combinedText
-            );
+            awaitasync function organizeRecipeWithMoonPlug(ocrText) {
 
-
-        hideScannerStatus();
-
-
-        openRecipeEditor(
-            recipe
+    if (!ocrText || !ocrText.trim()) {
+        throw new Error(
+            "MealMind AI received no recipe text."
         );
-
-
-    } catch (error) {
-
-        console.error(
-            "Scan error:",
-            error
-        );
-
-
-        hideScannerStatus();
-
-
-        alert(
-            error.message ||
-            "MealMind couldn't read the recipe."
-        );
-
-
-    } finally {
-
-        isScanning = false;
-
     }
 
+    updateScannerProgress(
+        "MealMind AI is understanding the recipe..."
+    );
+
+    const response = await fetch(
+        MEALMIND_API + "/api/recipe/parse",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                text: ocrText
+            })
+        }
+    );
+
+    let data;
+
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error(
+            "MealMind AI returned an invalid response."
+        );
+    }
+
+    if (!response.ok || !data.success) {
+        throw new Error(
+            data.error ||
+            "MealMind AI couldn't understand the recipe."
+        );
+    }
+
+    if (!data.recipe) {
+        throw new Error(
+            "MealMind AI did not return a recipe."
+        );
+    }
+
+    const recipe = data.recipe;
+
+    return {
+
+        title:
+            cleanRecipeTitle(
+                recipe.title || ""
+            ),
+
+        cuisine:
+            cleanRecipeText(
+                recipe.cuisine || ""
+            ),
+
+        servings:
+            cleanRecipeText(
+                recipe.servings || ""
+            ),
+
+        ingredients:
+            cleanRecipeList(
+                recipe.ingredients
+            ),
+
+        instructions:
+            cleanRecipeList(
+                recipe.instructions
+            ),
+
+        notes:
+            cleanRecipeText(
+                recipe.notes || ""
+            )
+
+    };
 }
-
-
 /* =========================================================
    OCR
 ========================================================= */
