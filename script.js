@@ -1,5 +1,3 @@
-
-
 /* =========================================================
    MEALMIND
    Complete JavaScript
@@ -16,12 +14,16 @@ let currentFolder = "";
 let currentScanFiles = [];
 let selectedPageCount = 0;
 
+const MOONPLUG_API =
+    "https://innovation-latinas-separately-accounting.trycloudflare.com";
+
 
 /* =========================================================
    STORAGE
 ========================================================= */
 
-const STORAGE_KEY = "mealmind_books";
+const STORAGE_KEY =
+    "mealmind_books";
 
 
 function getBooks() {
@@ -88,7 +90,9 @@ function showScreen(id) {
         .querySelectorAll(".screen")
         .forEach(function(screen) {
 
-            screen.classList.add("hidden");
+            screen.classList.add(
+                "hidden"
+            );
 
         });
 
@@ -137,7 +141,9 @@ function setupHomeButtons() {
 
 
             if (!button) {
+
                 return;
+
             }
 
 
@@ -223,9 +229,7 @@ function setupHomeButtons() {
                 case "exit-book":
 
                     currentBook = null;
-
                     currentRecipe = null;
-
                     currentFolder = "";
 
                     showScreen(
@@ -253,7 +257,6 @@ function setupHomeButtons() {
                 case "cancel-scan":
 
                     currentScanFiles = [];
-
                     selectedPageCount = 0;
 
                     showScreen(
@@ -325,8 +328,6 @@ function setupHomeButtons() {
 }
 
 
-
-
 /* =========================================================
    CREATE COOKBOOK
 ========================================================= */
@@ -352,7 +353,9 @@ function createCookbook() {
 
 
     if (!nameInput) {
+
         return;
+
     }
 
 
@@ -532,6 +535,7 @@ function openCookbook(book) {
 
     currentFolder = "";
 
+
     renderFolders();
 
     renderRecipes();
@@ -551,7 +555,9 @@ function openCookbook(book) {
 function normalizeBook(book) {
 
     if (!book) {
+
         return;
+
     }
 
 
@@ -592,7 +598,9 @@ function renderPublicCookbooks() {
 
 
     if (!container) {
+
         return;
+
     }
 
 
@@ -600,11 +608,16 @@ function renderPublicCookbooks() {
 
 
     const publicBooks =
-        getBooks().filter(function(book) {
+        getBooks().filter(
+            function(book) {
 
-            return book.privacy === "public";
+                return (
+                    book.privacy ===
+                    "public"
+                );
 
-        });
+            }
+        );
 
 
     if (
@@ -619,39 +632,42 @@ function renderPublicCookbooks() {
     }
 
 
-    publicBooks.forEach(function(book) {
+    publicBooks.forEach(
+        function(book) {
 
-        const button =
-            document.createElement(
-                "button"
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "main-button";
+
+
+            button.textContent =
+                "📖 " +
+                book.name;
+
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    openCookbook(
+                        book
+                    );
+
+                }
             );
 
 
-        button.className =
-            "main-button";
+            container.appendChild(
+                button
+            );
 
-
-        button.textContent =
-            "📖 " + book.name;
-
-
-        button.addEventListener(
-            "click",
-            function() {
-
-                openCookbook(
-                    book
-                );
-
-            }
-        );
-
-
-        container.appendChild(
-            button
-        );
-
-    });
+        }
+    );
 
 }
 
@@ -663,7 +679,9 @@ function renderPublicCookbooks() {
 function createFolder() {
 
     if (!currentBook) {
+
         return;
+
     }
 
 
@@ -674,7 +692,9 @@ function createFolder() {
 
 
     if (!name) {
+
         return;
+
     }
 
 
@@ -745,7 +765,9 @@ function renderFolders() {
 
 
     if (!container) {
+
         return;
+
     }
 
 
@@ -753,7 +775,9 @@ function renderFolders() {
 
 
     if (!currentBook) {
+
         return;
+
     }
 
 
@@ -787,6 +811,7 @@ function renderFolders() {
                     currentFolder =
                         folder.id;
 
+
                     renderRecipes();
 
                 }
@@ -816,7 +841,9 @@ function populateRecipeFolderPicker() {
 
 
     if (!select) {
+
         return;
+
     }
 
 
@@ -831,6 +858,7 @@ function populateRecipeFolderPicker() {
 
     firstOption.value = "";
 
+
     firstOption.textContent =
         "Choose a folder...";
 
@@ -841,7 +869,9 @@ function populateRecipeFolderPicker() {
 
 
     if (!currentBook) {
+
         return;
+
     }
 
 
@@ -891,7 +921,9 @@ function renderRecipes() {
 
 
     if (!container) {
+
         return;
+
     }
 
 
@@ -899,7 +931,9 @@ function renderRecipes() {
 
 
     if (!currentBook) {
+
         return;
+
     }
 
 
@@ -960,7 +994,8 @@ function renderRecipes() {
 
 
             card.textContent =
-                "🍴 " + title;
+                "🍴 " +
+                title;
 
 
             card.addEventListener(
@@ -982,22 +1017,7 @@ function renderRecipes() {
         }
     );
 
-}
-
-
-/* =========================================================
-   PAGE COUNT
-========================================================= */
-
-function openPageCountModal() {
-
-    const modal =
-        document.getElementById(
-            "pageCountModal"
-        );
-
-
-    if (!modal) {
+}    if (!modal) {
 
         /*
          * If the HTML popup wasn't added,
@@ -1035,7 +1055,6 @@ function closePageCountModal() {
     }
 
 }
-
 
 
 function selectPageCount(count) {
@@ -1078,9 +1097,6 @@ function selectPageCount(count) {
         input.setAttribute("multiple", "");
     }
 }
-
-
-
 
 
 function createPageCountModal() {
@@ -1339,12 +1355,12 @@ async function startScan() {
 
 
         updateScannerProgress(
-            "Organizing recipe..."
+            "MoonPlug is organizing the recipe..."
         );
 
 
         const recipe =
-            parseRecipe(
+            await organizeRecipeWithMoonPlug(
                 combinedText
             );
 
@@ -1375,6 +1391,83 @@ async function startScan() {
     }
 
 }
+
+
+/* =========================================================
+   MOONPLUG RECIPE AI
+========================================================= */
+
+async function organizeRecipeWithMoonPlug(ocrText) {
+
+    if (!ocrText || !ocrText.trim()) {
+        throw new Error(
+            "There was no OCR text to send to MoonPlug."
+        );
+    }
+
+    const response = await fetch(
+        MOONPLUG_API + "/api/recipe/parse",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                text: ocrText
+            })
+        }
+    );
+
+    let data;
+
+    try {
+        data = await response.json();
+    } catch (error) {
+        throw new Error(
+            "MoonPlug returned an invalid response."
+        );
+    }
+
+    if (!response.ok || !data.success) {
+        throw new Error(
+            data.error ||
+            "MoonPlug could not organize the recipe."
+        );
+    }
+
+    if (!data.recipe) {
+        throw new Error(
+            "MoonPlug did not return a recipe."
+        );
+    }
+
+    return {
+        title: typeof data.recipe.title === "string"
+            ? data.recipe.title.trim()
+            : "",
+
+        cuisine: typeof data.recipe.cuisine === "string"
+            ? data.recipe.cuisine.trim()
+            : "",
+
+        servings: typeof data.recipe.servings === "string"
+            ? data.recipe.servings.trim()
+            : "",
+
+        ingredients: Array.isArray(data.recipe.ingredients)
+            ? data.recipe.ingredients
+            : [],
+
+        instructions: Array.isArray(data.recipe.instructions)
+            ? data.recipe.instructions
+            : [],
+
+        notes: typeof data.recipe.notes === "string"
+            ? data.recipe.notes.trim()
+            : ""
+    };
+}
+
 
 /* =========================================================
    OCR
@@ -1421,33 +1514,43 @@ async function runOCR(file) {
                                 percent +
                                 "%"
                             );
+
                         }
 
                     }
                 }
             );
 
+
         if (
             !result ||
             !result.data
         ) {
+
             throw new Error(
                 "OCR returned no result."
             );
+
         }
+
 
         const text =
             result.data.text || "";
 
+
         if (
             text.trim().length === 0
         ) {
+
             throw new Error(
                 "No text was detected."
             );
+
         }
 
+
         return text;
+
 
     } catch (error) {
 
@@ -1461,6 +1564,8 @@ async function runOCR(file) {
     }
 
 }
+
+
 /* =========================================================
    OCR TEXT CLEANING
 ========================================================= */
@@ -1511,17 +1616,6 @@ function cleanRecipeTitle(title) {
             /�/g,
             ""
         )
-
-        /*
-         * TITLE ONLY:
-         *
-         * letters
-         * numbers
-         * spaces
-         * /
-         * .
-         * '
-         */
 
         .replace(
             /[^a-zA-Z0-9\s.'\/]/g,
@@ -1579,181 +1673,6 @@ function cleanRecipeList(items) {
 
 
 /* =========================================================
-   PARSE RECIPE
-========================================================= */
-
-function parseRecipe(text) {
-
-    const cleaned =
-        String(text || "")
-            .replace(/\r/g, "");
-
-
-    const lines =
-        cleaned
-            .split("\n")
-            .map(
-                function(line) {
-
-                    return cleanRecipeText(
-                        line
-                    );
-
-                }
-            )
-            .filter(
-                function(line) {
-
-                    return line.length > 0;
-
-                }
-            );
-
-
-    let title = "";
-
-
-    /*
-     * Do NOT automatically use
-     * "Scanned Recipe".
-     *
-     * Only use the first line if it
-     * looks like a reasonable title.
-     */
-
-    if (
-        lines.length > 0
-    ) {
-
-        const possibleTitle =
-            cleanRecipeTitle(
-                lines[0]
-            );
-
-
-        if (
-            possibleTitle.length >= 2 &&
-            possibleTitle.length <= 80
-        ) {
-
-            title =
-                possibleTitle;
-
-        }
-
-    }
-
-
-    const ingredients = [];
-
-    const instructions = [];
-
-
-    let mode =
-        "ingredients";
-
-
-    lines.forEach(
-        function(line, index) {
-
-            const lower =
-                line.toLowerCase();
-
-
-            if (
-                lower.includes(
-                    "ingredient"
-                )
-            ) {
-
-                mode =
-                    "ingredients";
-
-                return;
-
-            }
-
-
-            if (
-                lower.includes(
-                    "instruction"
-                ) ||
-                lower.includes(
-                    "directions"
-                ) ||
-                lower.includes(
-                    "method"
-                )
-            ) {
-
-                mode =
-                    "instructions";
-
-                return;
-
-            }
-
-
-            if (
-                index === 0 &&
-                title
-            ) {
-
-                return;
-
-            }
-
-
-            if (
-                mode ===
-                "ingredients"
-            ) {
-
-                ingredients.push(
-                    line
-                );
-
-            } else {
-
-                instructions.push(
-                    line
-                );
-
-            }
-
-        }
-    );
-
-
-    return {
-
-        title:
-            cleanRecipeTitle(
-                title
-            ),
-
-        cuisine: "",
-
-        servings: "",
-
-        ingredients:
-            cleanRecipeList(
-                ingredients
-            ),
-
-        instructions:
-            cleanRecipeList(
-                instructions
-            ),
-
-        notes: ""
-
-    };
-
-}
-
-
-/* =========================================================
    RECIPE EDITOR
 ========================================================= */
 
@@ -1762,10 +1681,6 @@ function openRecipeEditor(recipe) {
     currentRecipe =
         recipe;
 
-
-    /*
-     * Make sure the title is clean.
-     */
 
     currentRecipe.title =
         cleanRecipeTitle(
@@ -1784,11 +1699,6 @@ function openRecipeEditor(recipe) {
             currentRecipe.instructions
         );
 
-
-    /*
-     * Use the existing editor if your HTML
-     * already contains it.
-     */
 
     const modal =
         document.getElementById(
@@ -1940,11 +1850,6 @@ function fillRecipeEditor() {
 
     if (titleInput) {
 
-        /*
-         * If OCR couldn't find a valid title,
-         * leave it completely blank.
-         */
-
         titleInput.value =
             cleanRecipeTitle(
                 currentRecipe.title
@@ -2011,17 +1916,6 @@ function isValidRecipeTitle(title) {
     }
 
 
-    /*
-     * Only:
-     *
-     * letters
-     * numbers
-     * spaces
-     * /
-     * .
-     * '
-     */
-
     return /^[a-zA-Z0-9\s.'\/]+$/.test(
         cleaned
     );
@@ -2070,10 +1964,6 @@ function saveEditedRecipe() {
             : "";
 
 
-    /*
-     * TITLE IS REQUIRED.
-     */
-
     if (!title) {
 
         alert(
@@ -2082,9 +1972,7 @@ function saveEditedRecipe() {
 
 
         if (titleInput) {
-
             titleInput.focus();
-
         }
 
 
@@ -2092,10 +1980,6 @@ function saveEditedRecipe() {
 
     }
 
-
-    /*
-     * TITLE MUST BE CLEAN.
-     */
 
     if (
         !isValidRecipeTitle(
@@ -2109,9 +1993,7 @@ function saveEditedRecipe() {
 
 
         if (titleInput) {
-
             titleInput.focus();
-
         }
 
 
@@ -2312,9 +2194,7 @@ function openRecipe(recipe) {
 
 
     if (!viewer) {
-
         return;
-
     }
 
 
@@ -2680,5 +2560,1391 @@ document.addEventListener(
         initializeMealMind();
 
     }
-);
+);/* =========================================================
+   PAGE COUNT
+========================================================= */
 
+function openPageCountModal() {
+
+    const modal =
+        document.getElementById(
+            "pageCountModal"
+        );
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    const pageInput =
+        document.getElementById(
+            "pageCount"
+        );
+
+    if (pageInput) {
+        pageInput.value = "";
+        pageInput.focus();
+    }
+}
+
+
+/* =========================================================
+   SETUP SCANNER
+========================================================= */
+
+function setupScanner() {
+
+    const pageCountButton =
+        document.getElementById(
+            "confirmPageCount"
+        );
+
+    if (pageCountButton) {
+
+        pageCountButton.addEventListener(
+            "click",
+            function() {
+
+                const input =
+                    document.getElementById(
+                        "pageCount"
+                    );
+
+                const count =
+                    input
+                        ? parseInt(
+                            input.value,
+                            10
+                        )
+                        : NaN;
+
+                if (
+                    !Number.isInteger(count) ||
+                    count < 1 ||
+                    count > 5
+                ) {
+
+                    alert(
+                        "Please choose between 1 and 5 pages."
+                    );
+
+                    return;
+                }
+
+                selectedPageCount =
+                    count;
+
+                const modal =
+                    document.getElementById(
+                        "pageCountModal"
+                    );
+
+                if (modal) {
+
+                    modal.classList.add(
+                        "hidden"
+                    );
+                }
+
+                const scanner =
+                    document.getElementById(
+                        "scannerScreen"
+                    );
+
+                if (scanner) {
+
+                    scanner.classList.remove(
+                        "hidden"
+                    );
+                }
+
+                currentScanFiles = [];
+
+                updateScannerProgress(
+                    "Choose your recipe photos."
+                );
+            }
+        );
+    }
+
+
+    const fileInput =
+        document.getElementById(
+            "recipeImages"
+        );
+
+    if (fileInput) {
+
+        fileInput.addEventListener(
+            "change",
+            function() {
+
+                currentScanFiles =
+                    Array.from(
+                        this.files || []
+                    );
+
+                if (
+                    currentScanFiles.length >
+                    selectedPageCount
+                ) {
+
+                    currentScanFiles =
+                        currentScanFiles.slice(
+                            0,
+                            selectedPageCount
+                        );
+
+                    alert(
+                        "You can scan up to " +
+                        selectedPageCount +
+                        " page(s)."
+                    );
+                }
+
+                updateScannerProgress(
+                    currentScanFiles.length +
+                    " of " +
+                    selectedPageCount +
+                    " page(s) selected."
+                );
+            }
+        );
+    }
+}
+
+
+/* =========================================================
+   START SCAN
+========================================================= */
+
+async function startScan() {
+
+    if (
+        !selectedPageCount ||
+        selectedPageCount < 1
+    ) {
+
+        alert(
+            "Please choose how many pages you want to scan first."
+        );
+
+        return;
+    }
+
+
+    const fileInput =
+        document.getElementById(
+            "recipeImages"
+        );
+
+
+    const files =
+        currentScanFiles.length
+            ? currentScanFiles
+            : Array.from(
+                fileInput
+                    ? fileInput.files
+                    : []
+            );
+
+
+    if (!files.length) {
+
+        alert(
+            "Please select at least one recipe page."
+        );
+
+        return;
+    }
+
+
+    if (
+        files.length >
+        selectedPageCount
+    ) {
+
+        alert(
+            "Please select no more than " +
+            selectedPageCount +
+            " page(s)."
+        );
+
+        return;
+    }
+
+
+    currentScanFiles =
+        files.slice(
+            0,
+            selectedPageCount
+        );
+
+
+    showScannerStatus(
+        "Preparing recipe scan..."
+    );
+
+
+    try {
+
+        const ocrResults = [];
+
+
+        /* =========================================
+           OCR EACH PAGE
+        ========================================= */
+
+        for (
+            let i = 0;
+            i < currentScanFiles.length;
+            i++
+        ) {
+
+            updateScannerProgress(
+                "Reading recipe page " +
+                (i + 1) +
+                " of " +
+                currentScanFiles.length +
+                "..."
+            );
+
+
+            const file =
+                currentScanFiles[i];
+
+
+            const result =
+                await recognizeRecipeImage(
+                    file
+                );
+
+
+            if (
+                result &&
+                result.trim()
+            ) {
+
+                ocrResults.push(
+                    result.trim()
+                );
+            }
+        }
+
+
+        const combinedText =
+            ocrResults
+                .join("\n\n")
+                .trim();
+
+
+        if (!combinedText) {
+
+            throw new Error(
+                "MealMind could not read any text from the selected recipe pages."
+            );
+        }
+
+
+        /* =========================================
+           MOONPLUG ORGANIZATION
+        ========================================= */
+
+        updateScannerProgress(
+            "MoonPlug is organizing the recipe..."
+        );
+
+
+        const recipe =
+            await organizeRecipeWithMoonPlug(
+                combinedText
+            );
+
+
+        /* =========================================
+           OPEN EDITOR
+        ========================================= */
+
+        currentRecipe =
+            recipe;
+
+
+        openRecipeEditor(
+            recipe
+        );
+
+
+        hideScannerStatus();
+
+
+    } catch (error) {
+
+        console.error(
+            "Recipe scan failed:",
+            error
+        );
+
+
+        hideScannerStatus();
+
+
+        alert(
+            error &&
+            error.message
+                ? error.message
+                : "Something went wrong while scanning the recipe."
+        );
+    }
+}
+
+
+/* =========================================================
+   TESSERACT OCR
+========================================================= */
+
+async function recognizeRecipeImage(
+    file
+) {
+
+    if (!file) {
+
+        throw new Error(
+            "No recipe image was selected."
+        );
+    }
+
+
+    if (
+        typeof Tesseract ===
+        "undefined"
+    ) {
+
+        throw new Error(
+            "Tesseract OCR is not loaded. Make sure the Tesseract.js script is included in index.html."
+        );
+    }
+
+
+    try {
+
+        const result =
+            await Tesseract.recognize(
+                file,
+                "eng",
+                {
+                    logger:
+                        function(message) {
+
+                            if (
+                                !message
+                            ) {
+                                return;
+                            }
+
+
+                            if (
+                                typeof message.progress ===
+                                "number"
+                            ) {
+
+                                const percent =
+                                    Math.round(
+                                        message.progress *
+                                        100
+                                    );
+
+
+                                updateScannerProgress(
+                                    "Reading recipe... " +
+                                    percent +
+                                    "%"
+                                );
+                            }
+                        }
+                }
+            );
+
+
+        if (
+            !result ||
+            !result.data
+        ) {
+
+            return "";
+        }
+
+
+        return cleanOCRText(
+            result.data.text ||
+            ""
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "OCR error:",
+            error
+        );
+
+
+        throw new Error(
+            "MealMind could not read one of the recipe pages."
+        );
+    }
+}
+
+
+/* =========================================================
+   CLEAN OCR
+========================================================= */
+
+function cleanOCRText(
+    text
+) {
+
+    return String(
+        text || ""
+    )
+
+        .replace(
+            /\r/g,
+            ""
+        )
+
+        .replace(
+            /[ \t]+/g,
+            " "
+        )
+
+        .replace(
+            /\n{3,}/g,
+            "\n\n"
+        )
+
+        .trim();
+}
+
+
+/* =========================================================
+   MOONPLUG RECIPE ORGANIZER
+========================================================= */
+
+async function organizeRecipeWithMoonPlug(
+    ocrText
+) {
+
+    if (
+        !ocrText ||
+        !ocrText.trim()
+    ) {
+
+        throw new Error(
+            "There was no OCR text to send to MoonPlug."
+        );
+    }
+
+
+    const response =
+        await fetch(
+            MOONPLUG_API +
+            "/api/recipe/parse",
+            {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify({
+                        text:
+                            ocrText
+                    })
+            }
+        );
+
+
+    let data;
+
+
+    try {
+
+        data =
+            await response.json();
+
+    } catch (error) {
+
+        throw new Error(
+            "MoonPlug returned an invalid response."
+        );
+    }
+
+
+    if (
+        !response.ok ||
+        !data.success
+    ) {
+
+        throw new Error(
+            data.error ||
+            "MoonPlug could not organize the recipe."
+        );
+    }
+
+
+    if (!data.recipe) {
+
+        throw new Error(
+            "MoonPlug did not return a recipe."
+        );
+    }
+
+
+    return {
+
+        title:
+            typeof data.recipe.title ===
+            "string"
+                ? data.recipe.title.trim()
+                : "",
+
+        cuisine:
+            typeof data.recipe.cuisine ===
+            "string"
+                ? data.recipe.cuisine.trim()
+                : "",
+
+        servings:
+            typeof data.recipe.servings ===
+            "string"
+                ? data.recipe.servings.trim()
+                : "",
+
+        ingredients:
+            Array.isArray(
+                data.recipe.ingredients
+            )
+                ? data.recipe.ingredients
+                : [],
+
+        instructions:
+            Array.isArray(
+                data.recipe.instructions
+            )
+                ? data.recipe.instructions
+                : [],
+
+        notes:
+            typeof data.recipe.notes ===
+            "string"
+                ? data.recipe.notes.trim()
+                : ""
+    };
+}
+
+
+/* =========================================================
+   RECIPE EDITOR
+========================================================= */
+
+function openRecipeEditor(
+    recipe
+) {
+
+    const modal =
+        document.getElementById(
+            "editorModal"
+        );
+
+
+    if (!modal) {
+
+        console.error(
+            "editorModal was not found."
+        );
+
+        return;
+    }
+
+
+    currentRecipe =
+        recipe || {};
+
+
+    const titleInput =
+        document.getElementById(
+            "recipeTitle"
+        );
+
+
+    const ingredientsInput =
+        document.getElementById(
+            "recipeIngredients"
+        );
+
+
+    const instructionsInput =
+        document.getElementById(
+            "recipeInstructions"
+        );
+
+
+    const folderInput =
+        document.getElementById(
+            "recipeFolder"
+        );
+
+
+    if (titleInput) {
+
+        titleInput.value =
+            recipe.title ||
+            "";
+    }
+
+
+    if (ingredientsInput) {
+
+        ingredientsInput.value =
+            Array.isArray(
+                recipe.ingredients
+            )
+                ? recipe.ingredients.join(
+                    "\n"
+                )
+                : "";
+    }
+
+
+    if (instructionsInput) {
+
+        instructionsInput.value =
+            Array.isArray(
+                recipe.instructions
+            )
+                ? recipe.instructions.join(
+                    "\n"
+                )
+                : "";
+    }
+
+
+    populateRecipeFolderPicker();
+
+
+    if (folderInput) {
+
+        folderInput.value =
+            recipe.folderId ||
+            "";
+    }
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+}
+
+
+/* =========================================================
+   RECIPE TEXT CLEANING
+========================================================= */
+
+function cleanRecipeText(
+    text
+) {
+
+    return String(
+        text || ""
+    )
+
+        .replace(
+            /\s+/g,
+            " "
+        )
+
+        .trim();
+}
+
+
+function cleanRecipeTitle(
+    title
+) {
+
+    return String(
+        title || ""
+    )
+
+        .replace(
+            /[^a-zA-Z0-9\s\/.']/g,
+            ""
+        )
+
+        .replace(
+            /\s+/g,
+            " "
+        )
+
+        .trim();
+}
+
+
+function cleanRecipeList(
+    list
+) {
+
+    if (
+        !Array.isArray(list)
+    ) {
+
+        return [];
+    }
+
+
+    return list
+
+        .map(
+            function(item) {
+
+                return cleanRecipeText(
+                    item
+                );
+            }
+        )
+
+        .filter(
+            Boolean
+        );
+}
+
+
+/* =========================================================
+   SAVE EDITED RECIPE
+========================================================= */
+
+function saveEditedRecipe() {
+
+    if (!currentBook) {
+
+        alert(
+            "Please open a cookbook first."
+        );
+
+        return;
+    }
+
+
+    const titleInput =
+        document.getElementById(
+            "recipeTitle"
+        );
+
+
+    const ingredientsInput =
+        document.getElementById(
+            "recipeIngredients"
+        );
+
+
+    const instructionsInput =
+        document.getElementById(
+            "recipeInstructions"
+        );
+
+
+    const folderInput =
+        document.getElementById(
+            "recipeFolder"
+        );
+
+
+    const title =
+        titleInput
+            ? titleInput.value.trim()
+            : "";
+
+
+    if (
+        !/^[a-zA-Z0-9\s\/.']*$/.test(
+            title
+        )
+    ) {
+
+        alert(
+            "The title can only contain letters, numbers, spaces, /, . and '."
+        );
+
+
+        if (titleInput) {
+
+            titleInput.focus();
+        }
+
+
+        return;
+    }
+
+
+    const ingredients =
+        ingredientsInput
+            ? ingredientsInput.value
+                .split("\n")
+                .map(
+                    cleanRecipeText
+                )
+                .filter(Boolean)
+            : [];
+
+
+    const instructions =
+        instructionsInput
+            ? instructionsInput.value
+                .split("\n")
+                .map(
+                    cleanRecipeText
+                )
+                .filter(Boolean)
+            : [];
+
+
+    const folderId =
+        folderInput
+            ? folderInput.value
+            : "";
+
+
+    const recipe = {
+
+        id:
+            currentRecipe &&
+            currentRecipe.id
+                ? currentRecipe.id
+                : makeID(),
+
+        title:
+            cleanRecipeTitle(
+                title
+            ),
+
+        cuisine:
+            currentRecipe &&
+            currentRecipe.cuisine
+                ? cleanRecipeText(
+                    currentRecipe.cuisine
+                )
+                : "",
+
+        servings:
+            currentRecipe &&
+            currentRecipe.servings
+                ? currentRecipe.servings
+                : "",
+
+        ingredients:
+            cleanRecipeList(
+                ingredients
+            ),
+
+        instructions:
+            cleanRecipeList(
+                instructions
+            ),
+
+        notes:
+            currentRecipe &&
+            currentRecipe.notes
+                ? cleanRecipeText(
+                    currentRecipe.notes
+                )
+                : "",
+
+        folderId:
+            folderId,
+
+        pages:
+            currentScanFiles.length
+    };
+
+
+    const existingIndex =
+        currentBook.recipes.findIndex(
+            function(item) {
+
+                return (
+                    currentRecipe &&
+                    item.id ===
+                    currentRecipe.id
+                );
+            }
+        );
+
+
+    if (
+        existingIndex >= 0
+    ) {
+
+        currentBook.recipes[
+            existingIndex
+        ] = recipe;
+
+    } else {
+
+        currentBook.recipes.push(
+            recipe
+        );
+    }
+
+
+    currentRecipe =
+        recipe;
+
+
+    saveBooks(
+        getBooks().map(
+            function(book) {
+
+                return (
+                    book.id ===
+                    currentBook.id
+                )
+                    ? currentBook
+                    : book;
+            }
+        )
+    );
+
+
+    closeRecipeEditor();
+
+
+    renderFolders();
+    renderRecipes();
+
+
+    alert(
+        "Recipe saved!"
+    );
+}
+
+
+/* =========================================================
+   CLOSE EDITOR
+========================================================= */
+
+function closeRecipeEditor() {
+
+    const modal =
+        document.getElementById(
+            "editorModal"
+        );
+
+
+    if (modal) {
+
+        modal.classList.add(
+            "hidden"
+        );
+    }
+
+
+    currentRecipe =
+        null;
+}
+
+
+/* =========================================================
+   OPEN SAVED RECIPE
+========================================================= */
+
+function openRecipe(
+    recipe
+) {
+
+    currentRecipe =
+        recipe;
+
+
+    const viewer =
+        document.getElementById(
+            "recipeViewer"
+        );
+
+
+    if (!viewer) {
+
+        return;
+    }
+
+
+    viewer.innerHTML = `
+
+        <div class="recipe-view-box">
+
+            <h2>
+                ${escapeHTML(
+                    recipe.title ||
+                    "Untitled Recipe"
+                )}
+            </h2>
+
+            <h3>
+                Ingredients
+            </h3>
+
+            <ul>
+
+                ${(
+                    recipe.ingredients ||
+                    []
+                )
+
+                .map(
+                    function(item) {
+
+                        return `
+                            <li>
+                                ${escapeHTML(
+                                    item
+                                )}
+                            </li>
+                        `;
+                    }
+                )
+
+                .join("")}
+
+            </ul>
+
+
+            <h3>
+                Instructions
+            </h3>
+
+            <ol>
+
+                ${(
+                    recipe.instructions ||
+                    []
+                )
+
+                .map(
+                    function(item) {
+
+                        return `
+                            <li>
+                                ${escapeHTML(
+                                    item
+                                )}
+                            </li>
+                        `;
+                    }
+                )
+
+                .join("")}
+
+            </ol>
+
+
+            <button
+                onclick="closeRecipeViewer()"
+            >
+                Close
+            </button>
+
+        </div>
+    `;
+
+
+    viewer.classList.remove(
+        "hidden"
+    );
+}
+
+
+function closeRecipeViewer() {
+
+    const viewer =
+        document.getElementById(
+            "recipeViewer"
+        );
+
+
+    if (viewer) {
+
+        viewer.classList.add(
+            "hidden"
+        );
+    }
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+/* =========================================================
+   SCANNER STATUS
+========================================================= */
+
+function showScannerStatus(
+    message
+) {
+
+    const status =
+        document.getElementById(
+            "scannerStatus"
+        );
+
+
+    if (!status) {
+
+        return;
+    }
+
+
+    status.classList.remove(
+        "hidden"
+    );
+
+
+    const progress =
+        document.getElementById(
+            "scannerProgress"
+        );
+
+
+    if (progress) {
+
+        progress.textContent =
+            message;
+    }
+}
+
+
+function updateScannerProgress(
+    message
+) {
+
+    const progress =
+        document.getElementById(
+            "scannerProgress"
+        );
+
+
+    if (progress) {
+
+        progress.textContent =
+            message;
+    }
+}
+
+
+function hideScannerStatus() {
+
+    const status =
+        document.getElementById(
+            "scannerStatus"
+        );
+
+
+    if (status) {
+
+        status.classList.add(
+            "hidden"
+        );
+    }
+}
+
+
+/* =========================================================
+   PASSWORD SHOW / HIDE
+========================================================= */
+
+function setupPasswordToggles() {
+
+    const createPassword =
+        document.getElementById(
+            "showCreatePassword"
+        );
+
+
+    const createInput =
+        document.getElementById(
+            "cookbookPassword"
+        );
+
+
+    if (
+        createPassword &&
+        createInput
+    ) {
+
+        createPassword.addEventListener(
+            "change",
+            function() {
+
+                createInput.type =
+                    this.checked
+                        ? "text"
+                        : "password";
+            }
+        );
+    }
+
+
+    const joinPassword =
+        document.getElementById(
+            "showJoinPassword"
+        );
+
+
+    const joinInput =
+        document.getElementById(
+            "joinPassword"
+        );
+
+
+    if (
+        joinPassword &&
+        joinInput
+    ) {
+
+        joinPassword.addEventListener(
+            "change",
+            function() {
+
+                joinInput.type =
+                    this.checked
+                        ? "text"
+                        : "password";
+            }
+        );
+    }
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function setupSearch() {
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    if (!input) {
+
+        return;
+    }
+
+
+    input.addEventListener(
+        "input",
+        function() {
+
+            const query =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const cards =
+                document.querySelectorAll(
+                    ".recipe-card"
+                );
+
+
+            cards.forEach(
+                function(card) {
+
+                    const text =
+                        card.textContent
+                            .toLowerCase();
+
+
+                    card.style.display =
+                        !query ||
+                        text.includes(
+                            query
+                        )
+                            ? ""
+                            : "none";
+                }
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+function initializeMealMind() {
+
+    setupHomeButtons();
+
+    setupScanner();
+
+    setupPasswordToggles();
+
+    setupSearch();
+
+    showScreen(
+        "homeScreen"
+    );
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        initializeMealMind();
+
+    }
+);
