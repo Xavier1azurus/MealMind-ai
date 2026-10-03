@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -13,14 +15,16 @@
     <title>MealMind</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
 <div id="app">
 
+
     <!-- =====================================================
-         WELCOME / COOKBOOK LOGIN
+         WELCOME
     ====================================================== -->
 
     <section id="homeScreen" class="screen active">
@@ -40,6 +44,7 @@
             <div class="welcomeButtons">
 
                 <button
+                    type="button"
                     class="primaryButton"
                     data-action="make-cookbook"
                 >
@@ -48,6 +53,7 @@
                 </button>
 
                 <button
+                    type="button"
                     class="secondaryButton"
                     data-action="join-cookbook"
                 >
@@ -66,6 +72,7 @@
     </section>
 
 
+
     <!-- =====================================================
          CREATE COOKBOOK
     ====================================================== -->
@@ -75,6 +82,7 @@
         <header class="simpleHeader">
 
             <button
+                type="button"
                 class="backButton"
                 data-action="home"
             >
@@ -94,11 +102,12 @@
             <h1>Create your cookbook</h1>
 
             <p class="pageDescription">
-                Make a cookbook and share the code with
-                your family or friends.
+                Make a cookbook and share the code
+                with your family or friends.
             </p>
 
-            <label>
+
+            <label for="cookbookName">
                 Cookbook Name
             </label>
 
@@ -109,7 +118,8 @@
                 autocomplete="off"
             >
 
-            <label>
+
+            <label for="cookbookOwnerName">
                 Your Name
             </label>
 
@@ -120,7 +130,8 @@
                 autocomplete="name"
             >
 
-            <label>
+
+            <label for="cookbookCode">
                 Cookbook Code
             </label>
 
@@ -136,7 +147,8 @@
                 Anyone with this code can join your cookbook.
             </p>
 
-            <label>
+
+            <label for="cookbookPrivacy">
                 Cookbook Privacy
             </label>
 
@@ -152,7 +164,9 @@
 
             </select>
 
+
             <button
+                type="button"
                 class="primaryButton fullButton"
                 data-action="create-cookbook"
             >
@@ -164,6 +178,7 @@
     </section>
 
 
+
     <!-- =====================================================
          JOIN COOKBOOK
     ====================================================== -->
@@ -173,6 +188,7 @@
         <header class="simpleHeader">
 
             <button
+                type="button"
                 class="backButton"
                 data-action="home"
             >
@@ -195,7 +211,8 @@
                 Enter the code someone gave you.
             </p>
 
-            <label>
+
+            <label for="joinCode">
                 Cookbook Code
             </label>
 
@@ -207,7 +224,8 @@
                 autocomplete="off"
             >
 
-            <label>
+
+            <label for="joinName">
                 Your Name
             </label>
 
@@ -218,7 +236,9 @@
                 autocomplete="name"
             >
 
+
             <button
+                type="button"
                 class="primaryButton fullButton"
                 data-action="join"
             >
@@ -230,6 +250,7 @@
     </section>
 
 
+
     <!-- =====================================================
          PUBLIC COOKBOOKS
     ====================================================== -->
@@ -239,6 +260,7 @@
         <header class="simpleHeader">
 
             <button
+                type="button"
                 class="backButton"
                 data-action="home"
             >
@@ -258,6 +280,7 @@
     </section>
 
 
+
     <!-- =====================================================
          MAIN COOKBOOK
     ====================================================== -->
@@ -267,6 +290,7 @@
         <header class="appHeader">
 
             <div>
+
                 <p class="smallLabel">
                     COOKBOOK
                 </p>
@@ -274,9 +298,11 @@
                 <h1 id="mainBookName">
                     My Cookbook
                 </h1>
+
             </div>
 
             <button
+                type="button"
                 class="iconButton"
                 data-action="settings"
                 aria-label="Settings"
@@ -289,6 +315,9 @@
 
         <main class="mainContent">
 
+
+            <!-- SEARCH -->
+
             <div class="searchBox">
 
                 <span>🔍</span>
@@ -297,10 +326,14 @@
                     id="searchInput"
                     type="search"
                     placeholder="Search recipes..."
+                    autocomplete="off"
                 >
 
             </div>
 
+
+
+            <!-- RECIPES -->
 
             <section class="homeSection">
 
@@ -309,30 +342,40 @@
                     <h2>My Cookbook</h2>
 
                     <button
-                        data-action="open-books"
+                        type="button"
                         class="textButton"
+                        data-action="open-books"
                     >
                         See all
                     </button>
 
                 </div>
 
-                <div id="recipes" class="recipeGrid"></div>
+                <div
+                    id="recipes"
+                    class="recipeGrid"
+                ></div>
 
             </section>
 
 
+
+            <!-- FOLDERS -->
+
             <section class="homeSection">
 
                 <div class="sectionTitle">
+
                     <h2>Folders</h2>
 
                     <button
+                        type="button"
                         class="textButton"
                         data-action="add-folder"
                     >
                         + Add
                     </button>
+
                 </div>
 
                 <div
@@ -345,22 +388,31 @@
         </main>
 
 
-        <!-- Floating scan button -->
+
+        <!-- FLOATING SCAN -->
 
         <button
+            type="button"
             class="scanFloatingButton"
             data-action="scan"
         >
+
             <span>📷</span>
-            <strong>Scan</strong>
+
+            <strong>
+                Scan
+            </strong>
+
         </button>
 
 
-        <!-- Bottom navigation -->
+
+        <!-- BOTTOM NAV -->
 
         <nav class="bottomNav">
 
             <button
+                type="button"
                 class="navItem active"
                 data-action="main-home"
             >
@@ -369,6 +421,7 @@
             </button>
 
             <button
+                type="button"
                 class="navItem"
                 data-action="open-books"
             >
@@ -377,6 +430,7 @@
             </button>
 
             <button
+                type="button"
                 class="navItem"
                 data-action="scan"
             >
@@ -385,6 +439,7 @@
             </button>
 
             <button
+                type="button"
                 class="navItem"
                 data-action="settings"
             >
@@ -397,6 +452,54 @@
     </section>
 
 
+
+    <!-- =====================================================
+         SETTINGS
+    ====================================================== -->
+
+    <section id="settingsScreen" class="screen">
+
+        <header class="simpleHeader">
+
+            <button
+                type="button"
+                class="backButton"
+                data-action="main-home"
+            >
+                ←
+            </button>
+
+            <h2>Settings</h2>
+
+        </header>
+
+        <main class="formPage">
+
+            <div class="pageIcon">
+                ⚙️
+            </div>
+
+            <h1>Settings</h1>
+
+            <p class="pageDescription">
+                Manage your MealMind cookbook.
+            </p>
+
+
+            <button
+                type="button"
+                class="secondaryButton fullButton"
+                data-action="exit-book"
+            >
+                Leave Cookbook
+            </button>
+
+        </main>
+
+    </section>
+
+
+
     <!-- =====================================================
          SCANNER
     ====================================================== -->
@@ -406,6 +509,7 @@
         <header class="simpleHeader">
 
             <button
+                type="button"
                 class="backButton"
                 data-action="cancel-scan"
             >
@@ -416,19 +520,24 @@
 
         </header>
 
+
         <main class="scannerPage">
 
             <div class="scannerIcon">
                 📖
             </div>
 
-            <h1>Turn a recipe page into a MealMind recipe</h1>
+            <h1>
+                Turn a recipe page into a MealMind recipe
+            </h1>
 
             <p class="pageDescription">
                 Take clear photos of your recipe pages
                 and MealMind will organize them.
             </p>
 
+
+            <!-- PAGE COUNT -->
 
             <div class="pageCountCard">
 
@@ -441,14 +550,37 @@
                 </p>
 
                 <button
+                    type="button"
                     class="primaryButton fullButton"
                     id="openPageCount"
+                    data-action="open-page-count"
                 >
                     Choose Pages
                 </button>
 
+                <p
+                    id="selectedPages"
+                    class="inputHint"
+                >
+                    No pages selected
+                </p>
+
             </div>
 
+
+
+            <!-- FILE INPUT -->
+
+            <input
+                id="scannerInput"
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+            >
+
+
+            <!-- IMAGE PREVIEWS -->
 
             <div
                 id="recipeImages"
@@ -456,7 +588,11 @@
             ></div>
 
 
+
+            <!-- SCAN -->
+
             <button
+                type="button"
                 id="startScan"
                 class="primaryButton fullButton"
                 data-action="start-scan"
@@ -464,6 +600,9 @@
                 📷 Scan Recipe
             </button>
 
+
+
+            <!-- STATUS -->
 
             <div
                 id="scannerStatus"
@@ -483,6 +622,7 @@
     </section>
 
 
+
     <!-- =====================================================
          PAGE COUNT MODAL
     ====================================================== -->
@@ -495,6 +635,7 @@
         <div class="modalCard">
 
             <button
+                type="button"
                 class="modalClose"
                 data-action="close-page-count"
             >
@@ -510,15 +651,45 @@
                 class="pageCountOptions"
             >
 
-                <button data-pages="1">1</button>
-                <button data-pages="2">2</button>
-                <button data-pages="3">3</button>
-                <button data-pages="4">4</button>
-                <button data-pages="5">5</button>
+                <button
+                    type="button"
+                    data-pages="1"
+                >
+                    1
+                </button>
+
+                <button
+                    type="button"
+                    data-pages="2"
+                >
+                    2
+                </button>
+
+                <button
+                    type="button"
+                    data-pages="3"
+                >
+                    3
+                </button>
+
+                <button
+                    type="button"
+                    data-pages="4"
+                >
+                    4
+                </button>
+
+                <button
+                    type="button"
+                    data-pages="5"
+                >
+                    5
+                </button>
 
             </div>
 
             <button
+                type="button"
                 id="confirmPageCount"
                 class="primaryButton fullButton"
             >
@@ -528,6 +699,7 @@
         </div>
 
     </div>
+
 
 
     <!-- =====================================================
@@ -542,6 +714,7 @@
         <div class="modalCard largeModal">
 
             <button
+                type="button"
                 class="modalClose"
                 data-action="cancel-edit"
             >
@@ -552,7 +725,8 @@
                 Edit Recipe
             </h2>
 
-            <label>
+
+            <label for="recipeTitle">
                 Recipe Title
             </label>
 
@@ -562,7 +736,8 @@
                 placeholder="Recipe name"
             >
 
-            <label>
+
+            <label for="recipeIngredients">
                 Ingredients
             </label>
 
@@ -571,7 +746,8 @@
                 placeholder="One ingredient per line"
             ></textarea>
 
-            <label>
+
+            <label for="recipeInstructions">
                 Instructions
             </label>
 
@@ -580,17 +756,24 @@
                 placeholder="One step per line"
             ></textarea>
 
-            <label>
+
+            <label for="recipeFolder">
                 Folder
             </label>
 
             <select id="recipeFolder">
-                <option value="">No Folder</option>
+
+                <option value="">
+                    No Folder
+                </option>
+
             </select>
+
 
             <div class="modalActions">
 
                 <button
+                    type="button"
                     class="secondaryButton"
                     data-action="cancel-edit"
                 >
@@ -598,6 +781,7 @@
                 </button>
 
                 <button
+                    type="button"
                     class="primaryButton"
                     data-action="save-recipe"
                 >
@@ -609,6 +793,7 @@
         </div>
 
     </div>
+
 
 
     <!-- =====================================================
@@ -623,6 +808,7 @@
         <div class="modalCard largeModal">
 
             <button
+                type="button"
                 class="modalClose"
                 data-action="close-recipe"
             >
@@ -636,13 +822,18 @@
     </div>
 
 
+
     <!-- =====================================================
          TESSERACT OCR
     ====================================================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
+    <!-- YOUR MEALMIND JAVASCRIPT -->
     <script src="script.js"></script>
 
+</div>
+
 </body>
+
 </html>
