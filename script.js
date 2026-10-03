@@ -914,421 +914,551 @@ function renderRecipes() {
 ========================================================= */
 
 function openPageCountModal() {
-
-    const modal =
-        document.getElementById(
-            "pageCountModal"
-        );
-
+    const modal = document.getElementById("pageCountModal");
 
     if (!modal) {
-
         createPageCountModal();
-
         return;
-
     }
 
+    modal.classList.remove("hidden");
+    modal.classList.add("show");
 
-    modal.classList.remove(
-        "hidden"
-    );
+    // Clear old selection
+    document.querySelectorAll("#pageCount button").forEach(function(button) {
+        button.classList.remove("selected");
+    });
 
-
-    modal.classList.add(
-        "show"
-    );
-
-
-    setupPageCountButtons();
-
+    selectedPageCount = 0;
 }
 
 
 function closePageCountModal() {
+    const modal = document.getElementById("pageCountModal");
 
-    const modal =
-        document.getElementById(
-            "pageCountModal"
-        );
-
-
-    if (!modal) {
-        return;
+    if (modal) {
+        modal.classList.remove("show");
+        modal.classList.add("hidden");
     }
-
-
-    modal.classList.add(
-        "hidden"
-    );
-
-
-    modal.classList.remove(
-        "show"
-    );
-
 }
 
+
+/* =========================================================
+   SELECT 1–5 PAGES
+========================================================= */
 
 function setupPageCountButtons() {
-
-    const container =
-        document.getElementById(
-            "pageCount"
-        );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    const buttons =
-        container.querySelectorAll(
-            "[data-pages]"
-        );
-
-
-    buttons.forEach(
-        function(button) {
-
-            button.onclick =
-                function() {
-
-                    buttons.forEach(
-                        function(other) {
-
-                            other.classList.remove(
-                                "selected"
-                            );
-
-                        }
-                    );
-
-
-                    button.classList.add(
-                        "selected"
-                    );
-
-                };
-
-        }
+    const buttons = document.querySelectorAll(
+        "#pageCount button[data-pages]"
     );
 
+    buttons.forEach(function(button) {
+
+        button.addEventListener("click", function(event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Remove selection from all buttons
+            buttons.forEach(function(otherButton) {
+                otherButton.classList.remove("selected");
+            });
+
+            // Select this button
+            button.classList.add("selected");
+
+            selectedPageCount = Number(
+                button.getAttribute("data-pages")
+            );
+
+            console.log(
+                "Selected page count:",
+                selectedPageCount
+            );
+        });
+
+    });
+
+
+    /* =====================================================
+       THIS WAS THE MISSING PART
+       CONTINUE BUTTON
+    ===================================================== */
+
+    const continueButton =
+        document.getElementById("confirmPageCount");
+
+    if (continueButton) {
+
+        continueButton.addEventListener(
+            "click",
+            function(event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                console.log(
+                    "Continue clicked. Page count:",
+                    selectedPageCount
+                );
+
+                if (
+                    selectedPageCount < 1 ||
+                    selectedPageCount > 5
+                ) {
+
+                    alert(
+                        "Please choose how many pages you want to scan first."
+                    );
+
+                    return;
+                }
+
+                selectPageCount(
+                    selectedPageCount
+                );
+            }
+        );
+    }
 }
 
+
+/* =========================================================
+   SELECTED PAGE COUNT
+========================================================= */
 
 function selectPageCount(count) {
 
-    count =
-        Number(count);
-
+    selectedPageCount = Number(count);
 
     if (
-        count < 1 ||
-        count > 5
+        selectedPageCount < 1 ||
+        selectedPageCount > 5
     ) {
 
-        return;
+        selectedPageCount = 0;
 
+        return;
     }
 
-
-    selectedPageCount =
-        count;
-
-
-    currentScanFiles =
-        [];
-
+    // Clear previous photos
+    currentScanFiles = [];
 
     closePageCountModal();
 
+    // Open scanner screen
+    showScreen("scannerScreen");
 
-    showScreen(
-        "scannerScreen"
-    );
+    // Update text if it exists
+    const status =
+        document.getElementById("selectedPages");
 
-
-    clearRecipeImagePreviews();
-
-
-    updateSelectedPageText();
-
-
-    updateScanButtonState();
-
-
-    setTimeout(
-        function() {
-
-            openCameraForNextPage();
-
-        },
-        150
-    );
-
-}
-
-
-function confirmPageCount() {
-
-    const selected =
-        document.querySelector(
-            "#pageCount [data-pages].selected"
-        );
-
-
-    if (!selected) {
-
-        alert(
-            "Please choose how many pages you want to scan."
-        );
-
-        return;
-
-    }
-
-
-    selectPageCount(
-        Number(
-            selected.getAttribute(
-                "data-pages"
-            )
-        )
-    );
-
-}
-
-
-function createPageCountModal() {
-
-    const modal =
-        document.createElement(
-            "div"
-        );
-
-
-    modal.id =
-        "pageCountModal";
-
-
-    modal.className =
-        "modal show";
-
-
-    modal.innerHTML = `
-
-        <div class="modalCard">
-
-            <button
-                class="modalClose"
-                type="button"
-                onclick="closePageCountModal()"
-            >
-                ×
-            </button>
-
-            <h2>
-                How many pages?
-            </h2>
-
-            <p>
-                Choose between 1 and 5 pages.
-            </p>
-
-            <div
-                id="pageCount"
-                class="pageCountOptions"
-            >
-
-                <button
-                    type="button"
-                    data-pages="1"
-                >
-                    1
-                </button>
-
-                <button
-                    type="button"
-                    data-pages="2"
-                >
-                    2
-                </button>
-
-                <button
-                    type="button"
-                    data-pages="3"
-                >
-                    3
-                </button>
-
-                <button
-                    type="button"
-                    data-pages="4"
-                >
-                    4
-                </button>
-
-                <button
-                    type="button"
-                    data-pages="5"
-                >
-                    5
-                </button>
-
-            </div>
-
-            <button
-                id="confirmPageCount"
-                class="primaryButton fullButton"
-                type="button"
-            >
-                Continue
-            </button>
-
-        </div>
-
-    `;
-
-
-    document.body.appendChild(
-        modal
-    );
-
-
-    setupPageCountButtons();
-
-
-    const confirmButton =
-        document.getElementById(
-            "confirmPageCount"
-        );
-
-
-    if (confirmButton) {
-
-        confirmButton.onclick =
-            confirmPageCount;
-
-    }
-
-}
-
-
-function updateSelectedPageText() {
-
-    let status =
-        document.getElementById(
-            "selectedPages"
-        );
-
-
-    if (!status) {
-
-        status =
-            document.createElement(
-                "p"
-            );
-
-
-        status.id =
-            "selectedPages";
-
-
-        status.style.margin =
-            "10px 0";
-
-
-        status.style.color =
-            "#999";
-
-
-        const scanner =
-            document.querySelector(
-                ".scannerPage"
-            );
-
-
-        const images =
-            document.getElementById(
-                "recipeImages"
-            );
-
-
-        if (scanner) {
-
-            if (images) {
-
-                scanner.insertBefore(
-                    status,
-                    images
-                );
-
-            } else {
-
-                scanner.appendChild(
-                    status
-                );
-
-            }
-
-        }
-
-    }
-
-
-    if (
-        selectedPageCount === 0
-    ) {
-
-        status.textContent =
-            "Choose how many pages you want to scan.";
-
-        return;
-
-    }
-
-
-    if (
-        currentScanFiles.length === 0
-    ) {
+    if (status) {
 
         status.textContent =
             selectedPageCount === 1
-                ? "Ready for page 1 of 1."
-                : `Ready for page 1 of ${selectedPageCount}.`;
-
-        return;
-
+                ? "Choose 1 recipe page."
+                : `Choose ${selectedPageCount} recipe pages.`;
     }
 
+    // Create the hidden image picker
+    createScannerInput();
 
+    // Open camera/photo picker
+    setTimeout(function() {
+
+        const input =
+            document.getElementById("scannerInput");
+
+        if (input) {
+
+            input.value = "";
+
+            input.click();
+        }
+
+    }, 250);
+}
+
+
+/* =========================================================
+   CREATE PHOTO INPUT
+========================================================= */
+
+function createScannerInput() {
+
+    let input =
+        document.getElementById("scannerInput");
+
+    if (input) {
+        return input;
+    }
+
+    input =
+        document.createElement("input");
+
+    input.id = "scannerInput";
+
+    input.type = "file";
+
+    input.accept = "image/*";
+
+    input.setAttribute(
+        "capture",
+        "environment"
+    );
+
+    input.style.display = "none";
+
+    document.body.appendChild(input);
+
+    input.addEventListener(
+        "change",
+        handleScannerPhoto
+    );
+
+    return input;
+}
+
+
+/* =========================================================
+   HANDLE PHOTO
+========================================================= */
+
+function handleScannerPhoto(event) {
+
+    const input = event.target;
+
+    const files =
+        Array.from(
+            input.files || []
+        );
+
+    if (files.length === 0) {
+        return;
+    }
+
+    /*
+     * For now we take one photo at a time.
+     * This makes the camera flow work reliably
+     * on phones and iPads.
+     */
+
+    const file = files[0];
+
+    currentScanFiles.push(file);
+
+    console.log(
+        "Photo added:",
+        currentScanFiles.length,
+        "/",
+        selectedPageCount
+    );
+
+    showSelectedImages();
+
+    updateScanButtonState();
+
+    /*
+     * Reset input so the same camera/photo
+     * can be opened again.
+     */
+    input.value = "";
+
+    /*
+     * Need more pages?
+     */
     if (
         currentScanFiles.length <
         selectedPageCount
     ) {
 
-        const nextPage =
-            currentScanFiles.length + 1;
+        const remaining =
+            selectedPageCount -
+            currentScanFiles.length;
 
+        updateScannerProgressText(
+            `${currentScanFiles.length} of ${selectedPageCount} pages added. ${remaining} more needed.`
+        );
 
-        status.textContent =
-            `${currentScanFiles.length} of ${selectedPageCount} pages captured. ` +
-            `Ready for page ${nextPage}.`;
+        setTimeout(function() {
 
-        return;
+            const takeAnother =
+                confirm(
+                    `Page ${currentScanFiles.length} added.\n\nTake page ${currentScanFiles.length + 1} now?`
+                );
+
+            if (takeAnother) {
+
+                input.click();
+
+            }
+
+        }, 300);
+
+    } else {
+
+        updateScannerProgressText(
+            `${selectedPageCount} page${selectedPageCount === 1 ? "" : "s"} ready.`
+        );
 
     }
-
-
-    status.textContent =
-        `✓ ${selectedPageCount} of ${selectedPageCount} pages captured. ` +
-        "Ready to scan.";
-
 }
 
 
+/* =========================================================
+   SHOW SELECTED IMAGES
+========================================================= */
+
+function showSelectedImages() {
+
+    const container =
+        document.getElementById(
+            "recipeImages"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = "";
+
+    currentScanFiles.forEach(
+        function(file, index) {
+
+            const wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "recipeImagePreview";
+
+            const image =
+                document.createElement("img");
+
+            image.src =
+                URL.createObjectURL(file);
+
+            image.alt =
+                `Recipe page ${index + 1}`;
+
+            wrapper.appendChild(image);
+
+            const label =
+                document.createElement("p");
+
+            label.textContent =
+                `Page ${index + 1}`;
+
+            wrapper.appendChild(label);
+
+            container.appendChild(wrapper);
+        }
+    );
+}
+
+
+/* =========================================================
+   SCAN BUTTON STATE
+========================================================= */
+
+function updateScanButtonState() {
+
+    const button =
+        document.getElementById(
+            "startScan"
+        );
+
+    if (!button) {
+        return;
+    }
+
+    const ready =
+        selectedPageCount > 0 &&
+        currentScanFiles.length ===
+            selectedPageCount;
+
+    button.disabled =
+        !ready;
+
+    if (ready) {
+
+        button.style.opacity = "1";
+        button.style.pointerEvents = "auto";
+
+    } else {
+
+        button.style.opacity = "0.5";
+        button.style.pointerEvents = "none";
+    }
+}
+
+
+/* =========================================================
+   SCANNER STATUS TEXT
+========================================================= */
+
+function updateScannerProgressText(text) {
+
+    const progress =
+        document.getElementById(
+            "scannerProgress"
+        );
+
+    if (progress) {
+        progress.textContent = text;
+    }
+
+    const selectedPages =
+        document.getElementById(
+            "selectedPages"
+        );
+
+    if (selectedPages) {
+        selectedPages.textContent = text;
+    }
+}
+
+
+/* =========================================================
+   SETUP SCANNER
+========================================================= */
+
+function setupScanner() {
+
+    // Create photo input immediately
+    createScannerInput();
+
+    // Page count buttons
+    setupPageCountButtons();
+
+    // Make sure scan button starts disabled
+    updateScanButtonState();
+
+    // Choose Pages button
+    const choosePages =
+        document.getElementById(
+            "openPageCount"
+        );
+
+    if (choosePages) {
+
+        choosePages.addEventListener(
+            "click",
+            function(event) {
+
+                event.preventDefault();
+
+                openPageCountModal();
+            }
+        );
+    }
+}
+
+
+/* =========================================================
+   START SCAN
+========================================================= */
+
+async function startScan() {
+
+    if (
+        selectedPageCount === 0
+    ) {
+
+        alert(
+            "Please choose how many pages you want to scan first."
+        );
+
+        return;
+    }
+
+
+    if (
+        currentScanFiles.length !==
+        selectedPageCount
+    ) {
+
+        alert(
+            `Please add all ${selectedPageCount} recipe pages first.`
+        );
+
+        return;
+    }
+
+
+    showScannerStatus(
+        "Reading recipe pages..."
+    );
+
+
+    try {
+
+        const results = [];
+
+
+        for (
+            let i = 0;
+            i < currentScanFiles.length;
+            i++
+        ) {
+
+            updateScannerProgress(
+                `Reading page ${i + 1} of ${currentScanFiles.length}...`
+            );
+
+
+            const text =
+                await runOCR(
+                    currentScanFiles[i]
+                );
+
+
+            results.push(
+                `--- PAGE ${i + 1} ---\n${text}`
+            );
+        }
+
+
+        const combinedText =
+            results.join("\n\n");
+
+
+        updateScannerProgress(
+            "MoonPlug is organizing the recipe..."
+        );
+
+
+        const recipe =
+            await organizeRecipeWithMoonPlug(
+                combinedText
+            );
+
+
+        hideScannerStatus();
+
+
+        openRecipeEditor(
+            recipe
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Scan error:",
+            error
+        );
+
+
+        hideScannerStatus();
+
+
+        alert(
+            error.message ||
+            "MealMind couldn't read the recipe."
+        );
+    }
+}
 /* =========================================================
    SCANNER INPUT
 ========================================================= */
